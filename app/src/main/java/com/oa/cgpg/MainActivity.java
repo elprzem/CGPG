@@ -13,9 +13,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.app.Fragment;
+import android.app.FragmentManager;
 
-
-public class MapActivity extends Activity {
+public class MainActivity extends Activity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -27,7 +28,7 @@ public class MapActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_main);
 
         mTitle = mDrawerTitle = getTitle();
         mMenuTitles = getResources().getStringArray(R.array.menu_array);
@@ -83,7 +84,7 @@ public class MapActivity extends Activity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
-       // boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        // boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -119,14 +120,34 @@ public class MapActivity extends Activity {
             selectItem(position);
         }
     }
-
     private void selectItem(int position) {
-        // nowe aktywności
-
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
         setTitle(mMenuTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
+
+        if (position == MenuItems.MAP){
+            Fragment fragment = new MapFragment();
+
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        }
+        // nowy fragment - widok typu punktu usługowego (lista wszystkich punktów danego typu)
+        else if(position >= MenuItems.XERO && position <= MenuItems.BIKES){
+            Fragment fragment = new POIFragment();
+            Bundle args = new Bundle();
+            args.putInt(POIFragment.ARG_POI_NUMBER, position);
+            fragment.setArguments(args);
+
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+        }else if(position == MenuItems.LOGIN){//aktywność logowania lub rejestracji - info można przechować w klasie singleton
+            Fragment fragment = new LoginFragment();
+
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
-
-<!--Licensed under the Apache License, Version 2.0 (the "License");
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
@@ -10,21 +11,29 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-    -->
+-->
 <resources>
-<string name="app_name">Co i Gdzie na PG</string>
-<string-array name="menu_array">
-    <item>Mapa kampusu</item>
-    <item>Ksero</item>
-    <item>Bufety</item>
-    <item>Automaty</item>
-    <item>Czytelnie</item>
-    <item>Bankomaty</item>
-    <item>Odpoczynek</item>
-    <item>Dla rowerów</item>
-    <item>Logowanie</item>
-</string-array>
-<string name="drawer_open">Open navigation drawer</string>
-<string name="drawer_close">Close navigation drawer</string>
-<string name="action_settings">Ustawienia</string>
+
+    <string name="app_name">Co i Gdzie na PG</string>
+
+    <string-array name="menu_array">
+        <item>Mapa kampusu</item>
+        <item>Ksero</item>
+        <item>Bufety</item>
+        <item>Automaty</item>
+        <item>Czytelnie</item>
+        <item>Bankomaty</item>
+        <item>Odpoczynek</item>
+        <item>Dla rowerów</item>
+        <item>Logowanie</item>
+    </string-array>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Ustawienia</string>
+    <string name="title_activity_poi">POIActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main">MainActivity</string>
+
 </resources>
