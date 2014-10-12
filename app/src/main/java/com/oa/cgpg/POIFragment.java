@@ -52,6 +52,17 @@ public class POIFragment extends Fragment {
         listView.setDividerHeight(1);
         registerForContextMenu(listView);
 
+        //collapse other expanded items
+        listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            int previousGroup = -1;
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if(groupPosition != previousGroup)
+                    listView.collapseGroup(previousGroup);
+                previousGroup = groupPosition;
+            }
+        });
         //Creating static data in arraylist
         final ArrayList<ExpandableListParent> dummyList = buildDummyData();
 
@@ -77,7 +88,7 @@ public class POIFragment extends Fragment {
 
                 // Create Child class object
                 final ExpandableListChild child = new ExpandableListChild();
-                child.setText1("Child 0");
+                child.setText1("opis");
 
                 //Add Child class object to parent class object
                 parent.getChildren().add(child);
@@ -88,7 +99,7 @@ public class POIFragment extends Fragment {
 
                 // Create Child class object
                 final ExpandableListChild child = new ExpandableListChild();
-                child.setText1("Child 0");
+                child.setText1("opis");
 
                 //Add Child class object to parent class object
                 parent.getChildren().add(child);
@@ -99,7 +110,7 @@ public class POIFragment extends Fragment {
 
                 // Create Child class object
                 final ExpandableListChild child = new ExpandableListChild();
-                child.setText1("Child 0");
+                child.setText1("opis");
 
                 //Add Child class object to parent class object
                 parent.getChildren().add(child);
@@ -146,7 +157,7 @@ public class POIFragment extends Fragment {
 
         public MyExpandableListAdapter()
         {
-            // Create Layout Inflator
+            // Create Layout Inflater
             inflater = LayoutInflater.from(getActivity());
         }
 
