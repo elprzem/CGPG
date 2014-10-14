@@ -1,12 +1,14 @@
 package com.oa.cgpg;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import java.util.ArrayList;
@@ -195,6 +197,13 @@ public class POIFragment extends Fragment {
 
             // Get childrow.xml file elements and set values
             ((TextView) convertView.findViewById(R.id.text1)).setText(child.getText1());
+            ((Button) convertView.findViewById(R.id.button_opinions)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), OpinionsActivity.class);
+                    startActivity(intent);
+                }
+            });
             return convertView;
         }
 

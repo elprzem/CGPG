@@ -16,6 +16,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".OpinionsActivity"
+            android:label="@string/title_activity_opinions"
+            android:parentActivityName="com.oa.cgpg.MainActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.oa.cgpg.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
