@@ -6,7 +6,15 @@
     tools:context="com.oa.cgpg.POIFragment">
         <ExpandableListView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="477dp"
             android:id="@+id/expandableListView"
             android:layout_gravity="start|top" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Zobacz na mapie"
+        android:background="@drawable/rounded_button"
+        android:id="@+id/seeOnMapButton"
+        android:textColor="#ffffffff"
+        android:layout_gravity="bottom" />
 </FrameLayout>

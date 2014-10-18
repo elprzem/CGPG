@@ -1,8 +1,6 @@
 package com.oa.cgpg;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -62,7 +60,7 @@ public class POIFragment extends Fragment {
             public void onGroupExpand(int groupPosition) {
                 if(groupPosition != previousGroup)
                     listView.collapseGroup(previousGroup);
-                previousGroup = groupPosition;
+                    previousGroup = groupPosition;
             }
         });
         //Creating static data in arraylist
@@ -149,7 +147,7 @@ public class POIFragment extends Fragment {
     }
 
     /**
-     * A Custom adapter to create Parent view (Used grouprow.xml) and Child View((Used childrow.xml).
+     * A Custom adapter to create Parent view (Used poi_grouprowprow.xml) and Child View((Used poi_childrow.xml.xml).
      */
     private class MyExpandableListAdapter extends BaseExpandableListAdapter
     {
@@ -172,10 +170,10 @@ public class POIFragment extends Fragment {
         {
             final ExpandableListParent parent = parents.get(groupPosition);
 
-            // Inflate grouprow.xml file for parent rows
-            convertView = inflater.inflate(R.layout.grouprow, parentView, false);
+            // Inflate poi_grouprow.xml.xml file for parent rows
+            convertView = inflater.inflate(R.layout.poi_grouprow, parentView, false);
 
-            // Get grouprow.xml file elements and set values
+            // Get poi_grouprow.xml.xml file elements and set values
             ((TextView) convertView.findViewById(R.id.text1)).setText(parent.getTitle());
 
             //Log.i("onCheckedChanged", "isChecked: "+parent.isChecked());
@@ -192,10 +190,10 @@ public class POIFragment extends Fragment {
             final ExpandableListParent parent = parents.get(groupPosition);
             final ExpandableListChild child = parent.getChildren().get(childPosition);
 
-            // Inflate childrow.xml file for child rows
-            convertView = inflater.inflate(R.layout.childrow, parentView, false);
+            // Inflate poi_childrowdrow.xml file for child rows
+            convertView = inflater.inflate(R.layout.poi_childrow, parentView, false);
 
-            // Get childrow.xml file elements and set values
+            // Get poi_childrowdrow.xml file elements and set values
             ((TextView) convertView.findViewById(R.id.text1)).setText(child.getText1());
             ((Button) convertView.findViewById(R.id.button_opinions)).setOnClickListener(new View.OnClickListener() {
                 @Override
