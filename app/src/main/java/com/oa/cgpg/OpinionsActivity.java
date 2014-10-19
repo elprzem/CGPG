@@ -20,22 +20,36 @@ import java.util.ArrayList;
 
 public class OpinionsActivity extends Activity {
 
-    private ArrayList<String> data;
+    private ArrayList<String> comments;//komentarze pobrane z bazy mają również użytkownika, datę itd
     public ExpandableListView listViewCommTypes;
     public ListView listViewComm;
     private int ParentClickStatus=-1;
     private int ChildClickStatus=-1;
     private ArrayList<ExpandableListParent> parents;
+    private Button newOpinion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opinions);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        data = new ArrayList<String>();
-        data.add("1");
-        data.add("2");
-        data.add("3");
+
+        Intent intent = getIntent();
+        String title = intent.getStringExtra("poi");
+        setTitle(title);
+        newOpinion = (Button) findViewById(R.id.newOpinion);
+        newOpinion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), NewOpinionActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        comments = new ArrayList<String>();
+        comments.add("1");
+        comments.add("2");
+        comments.add("3");
 
         listViewComm = (ListView) findViewById(R.id.commList);
         loadHosts();
@@ -104,7 +118,7 @@ public class OpinionsActivity extends Activity {
         @Override
         public Object getItem(int position) {
             // TODO Auto-generated method stub
-            return data.get(position);
+            return comments.get(position);
         }
 
         @Override
@@ -120,7 +134,7 @@ public class OpinionsActivity extends Activity {
             if (rowView == null)
                 rowView = inflater.inflate(R.layout.opinion_row, null);
             TextView opinion = (TextView) rowView.findViewById(R.id.opinionText);
-            opinion.setText(data.get(position));
+            opinion.setText(comments.get(position));
             return rowView;
         }
     }

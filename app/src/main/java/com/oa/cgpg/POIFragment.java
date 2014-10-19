@@ -184,7 +184,7 @@ public class POIFragment extends Fragment {
 
         // This Function used to inflate child rows view
         @Override
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
+        public View getChildView(final int groupPosition, int childPosition, boolean isLastChild,
                                  View convertView, ViewGroup parentView)
         {
             final ExpandableListParent parent = parents.get(groupPosition);
@@ -199,6 +199,7 @@ public class POIFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), OpinionsActivity.class);
+                    intent.putExtra("poi", parents.get(groupPosition).getTitle());
                     startActivity(intent);
                 }
             });
