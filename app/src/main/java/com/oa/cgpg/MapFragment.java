@@ -1,16 +1,20 @@
 package com.oa.cgpg;
 
 import android.app.Fragment;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.FloatMath;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,6 +41,7 @@ public class MapFragment extends Fragment {
     private Matrix matrix;
     private PointF mid;
     private int mode;
+    private View view;
 
     public MapFragment() {
         // Required empty public constructor
@@ -48,7 +53,7 @@ public class MapFragment extends Fragment {
 
         initializeSourceMapBitmap();
         offset = new Point(0,0);
-        scale = 1.f;
+        scale = 2.f;
     }
 
     private void initializeSourceMapBitmap() {
@@ -60,12 +65,14 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_map, container, false);
+        view = inflater.inflate(R.layout.fragment_map, container, false);
+        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        Log.i("viewDimensions", String.valueOf(view.getMeasuredWidth() + view.getMeasuredHeight()));
 
         initializeFragmentSize(view);
-        initializeVisibleBitmap();
 
-        mapImageView = (ImageView) view.findViewById(R.id.mapImageView);
+        initializeVisibleBitmap();
+        mapImageView = (ImageView) (view != null ? view.findViewById(R.id.mapImageView) : null);
         mapImageView.setOnTouchListener(new OnTouchMapListener());
 //        mapImageView.setImageResource(R.drawable.image_from_wikimedia);
 
@@ -74,10 +81,42 @@ public class MapFragment extends Fragment {
         return view;
     }
 
-    private void initializeFragmentSize(View view) {
-        int x = view.getWidth();
-        int y = view.getHeight();
-        fragmentSize = new Point(x,y);
+    /**
+     * Called when the fragment's activity has been created and this
+     * fragment's view hierarchy instantiated.  It can be used to do final
+     * initialization once these pieces are in place, such as retrieving
+     * views or restoring state.  It is also useful for fragments that use
+     * {@link #setRetainInstance(boolean)} to retain their instance,
+     * as this callback tells the fragment when it is fully associated with
+     * the new activity instance.  This is called after {@link #onCreateView}
+     * and before {@link #onViewStateRestored(android.os.Bundle)}.
+     *
+     * @param savedInstanceState If the fragment is being re-created from
+     *                           a previous saved state, this is the state.
+     */
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    private void initializeFragmentSize(final View view) {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+
+        int fragmentWidth  = displaymetrics.widthPixels;
+        int fragmentHeight = displaymetrics.heightPixels;
+
+        final TypedArray styledAttributes = getActivity().getTheme().obtainStyledAttributes(
+                new int[]{android.R.attr.actionBarSize});
+        int actionBarSize = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
+
+        fragmentSize = new Point(fragmentWidth, fragmentHeight - actionBarSize);
     }
 
     private void initializeVisibleBitmap() {
@@ -87,15 +126,17 @@ public class MapFragment extends Fragment {
                 Bitmap.Config.ARGB_8888
         );
         workingBitmapCanvas = new Canvas(workingBitmap);
+        workingBitmapCanvas.drawColor(Color.GREEN);
         workingBitmapCanvas.drawBitmap(sourceMapBitmap, new Matrix(), new Paint());
 
         //TODO whole stuff to draw on workingBitmap
 
         visibleBitmap = Bitmap.createBitmap(
-                1, 1,
+                fragmentSize.x, fragmentSize.y,
                 Bitmap.Config.ARGB_8888
         );
         visibleBitmapCanvas = new Canvas(visibleBitmap);
+        visibleBitmapCanvas.drawColor(Color.RED);
         visibleBitmapCanvas.drawBitmap(
                 workingBitmap,
                 new Rect(offset.x, offset.y,
@@ -103,6 +144,7 @@ public class MapFragment extends Fragment {
                 new Rect(0,0, fragmentSize.x, fragmentSize.y),
                 new Paint()
         );
+        visibleBitmapCanvas.drawBitmap(workingBitmap,new Matrix(), new Paint());
     }
 
     private class OnTouchMapListener implements View.OnTouchListener{

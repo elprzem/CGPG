@@ -31,3 +31,8 @@ proguard/
 /.idea/libraries
 .DS_Store
 /build
+.idea/libraries/support_annotations_20_0_0.xml
+.idea/libraries/support_annotations_20_0_0.xml
+.idea/libraries/support_v4_20_0_0.xml
+.idea/workspace.xml
+app/app.iml
