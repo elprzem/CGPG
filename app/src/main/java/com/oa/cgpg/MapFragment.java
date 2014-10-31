@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ZoomControls;
 
 /** Fragment containing map
  *
@@ -41,7 +42,7 @@ public class MapFragment extends Fragment {
     private Matrix matrix;
     private PointF mid;
     private int mode;
-    private View view;
+    private final Float ZOOM_FACTOR = 1.2f;
 
     public MapFragment() {
         // Required empty public constructor
@@ -53,30 +54,52 @@ public class MapFragment extends Fragment {
 
         initializeSourceMapBitmap();
         offset = new Point(0,0);
-        scale = 2.f;
+        scale =1.0f;
     }
 
     private void initializeSourceMapBitmap() {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inMutable = true;
-        sourceMapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher, options);
+        sourceMapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.temp_pg_map, options);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_map, container, false);
+        View view = inflater.inflate(R.layout.fragment_map, container, false);
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        Log.i("viewDimensions", String.valueOf(view.getMeasuredWidth() + view.getMeasuredHeight()));
+        Log.i("viewDimensions", String.valueOf(view.getMeasuredWidth()) + " , " + String.valueOf(view.getMeasuredHeight()));
 
-        initializeFragmentSize(view);
+        initializeFragmentSize();
 
         initializeVisibleBitmap();
-        mapImageView = (ImageView) (view != null ? view.findViewById(R.id.mapImageView) : null);
+        mapImageView = (ImageView) (view.findViewById(R.id.mapImageView));
         mapImageView.setOnTouchListener(new OnTouchMapListener());
 //        mapImageView.setImageResource(R.drawable.image_from_wikimedia);
 
         mapImageView.setImageBitmap(visibleBitmap);
+
+        ZoomControls zoomControls = (ZoomControls) view.findViewById(R.id.zoomControls);
+        zoomControls.setOnZoomInClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scale *= ZOOM_FACTOR;
+                Point newOffset = new Point(
+                        (int) (offset.x + (fragmentSize.x * (ZOOM_FACTOR - 1)) / (2 * scale)),
+                        (int) (offset.y + (fragmentSize.y * (ZOOM_FACTOR - 1)) / (2 * scale)));
+                checkAndRedrawVisibleBitmap(newOffset);
+            }
+        });
+        zoomControls.setOnZoomOutClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scale /= ZOOM_FACTOR;
+                Point newOffset = new Point(
+                        (int) (offset.y - ((fragmentSize.y * (ZOOM_FACTOR - 1)) / (2 * ZOOM_FACTOR * scale))),
+                        (int) (offset.y - ((fragmentSize.y * (ZOOM_FACTOR - 1)) / (2 * ZOOM_FACTOR * scale))));
+                checkAndRedrawVisibleBitmap(newOffset);
+            }
+        });
 
         return view;
     }
@@ -104,7 +127,7 @@ public class MapFragment extends Fragment {
         super.onResume();
     }
 
-    private void initializeFragmentSize(final View view) {
+    private void initializeFragmentSize() {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 
@@ -136,21 +159,23 @@ public class MapFragment extends Fragment {
                 Bitmap.Config.ARGB_8888
         );
         visibleBitmapCanvas = new Canvas(visibleBitmap);
-        visibleBitmapCanvas.drawColor(Color.RED);
+        visibleBitmapCanvas.drawColor(Color.BLUE);
         visibleBitmapCanvas.drawBitmap(
                 workingBitmap,
                 new Rect(offset.x, offset.y,
-                        (int) (fragmentSize.x / scale), (int) (fragmentSize.y / scale)),
+                        offset.x + (int) ((fragmentSize.x)/ scale),
+                        offset.y + (int) ((fragmentSize.y)/ scale)),
                 new Rect(0,0, fragmentSize.x, fragmentSize.y),
                 new Paint()
         );
-        visibleBitmapCanvas.drawBitmap(workingBitmap,new Matrix(), new Paint());
+//        visibleBitmapCanvas.drawBitmap(workingBitmap,new Matrix(), new Paint());
     }
 
     private class OnTouchMapListener implements View.OnTouchListener{
 
         private PointF offsetDelta;
         private float oldDist;
+        private View view;
 
         /**
          * Called when a touch event is dispatched to a view. This allows listeners to
@@ -167,40 +192,46 @@ public class MapFragment extends Fragment {
                 case MotionEvent.ACTION_DOWN:
                     offsetDelta = null;
                     offsetDelta = new PointF(event.getX(), event.getY());
+                    Log.i("ACTION_DOWN", "offsetDelta: " + offsetDelta.toString());
                     return true;
                 case MotionEvent.ACTION_UP:
                     Point newOffset = new Point(
-                            (int)(offset.x + offsetDelta.x - event.getX()),
-                            (int)(offset.y + offsetDelta.y - event.getY())
+                            (int)(offset.x + (offsetDelta.x - event.getX()) / scale),
+                            (int)(offset.y + (offsetDelta.y - event.getY()) / scale)
                     );
+                    Log.i("ACTION_UP", "newoffset: " + newOffset.toString());
                     checkAndRedrawVisibleBitmap(newOffset);
+                    Log.i("ACTION_UP", "offset: " + offset.toString());
                     return true;
 
-                /**
-                 * Code below inspired by http://stackoverflow.com/questions/10630373/android-image-view-pinch-zooming
-                 */
+                ///
+                ///Code below inspired by http://stackoverflow.com/questions/10630373/android-image-view-pinch-zooming
+                ///
+
                 case MotionEvent.ACTION_POINTER_DOWN:
                     oldDist = spacing(event);
                     if (oldDist > 10f) {
-                        savedMatrix.set(matrix);
+                        //savedMatrix.set(matrix);
                         midPoint(mid, event);
                         mode = ZOOM;
                     }
+                    Log.i("ACTION_POINTER_DOWN", "oldDist: " + oldDist);
                     return true;
                 case MotionEvent.ACTION_MOVE:
                     if (mode == ZOOM) {
                         float newDist = spacing(event);
                         if (newDist > 10f) {
-                            matrix.set(savedMatrix);
-                            float scale = newDist / oldDist;
-                            matrix.postScale(scale, scale, mid.x, mid.y);
-                            mapImageView.setImageMatrix(matrix);
+                            //matrix.set(savedMatrix);
+                            scale = newDist / oldDist;
+                            //matrix.postScale(scale, scale, mid.x, mid.y);
+                            //mapImageView.setImageMatrix(matrix);
                         }
+                        Log.i("ACTION_MOVE", "newDist: " + newDist);
                     }
                     return true;
-                /**
-                 * End. Next inspired code: spacing and midPoint
-                 */
+                ///
+                ///End. Next inspired code: spacing and midPoint
+                ///
 
                 default:
                     return false;
@@ -230,15 +261,28 @@ public class MapFragment extends Fragment {
      */
 
     private void checkAndRedrawVisibleBitmap(Point newOffset) {
-        if(newOffset.x < 0)
+        if(newOffset.x <= 0)
             newOffset.x = 0;
-        else if(newOffset.x > fragmentSize.x)
-            newOffset.x = fragmentSize.x;
+        else if(newOffset.x > sourceMapBitmap.getWidth() - fragmentSize.x/scale){
+            if(sourceMapBitmap.getWidth() > fragmentSize.x/scale){
+                newOffset.x = (int) (sourceMapBitmap.getWidth() - fragmentSize.x/scale);
+            }
+            else {
+                newOffset.x = 0;
+            }
+        }
 
-        if(newOffset.y < 0)
+
+        if(newOffset.y <= 0)
             newOffset.y = 0;
-        else if(newOffset.y > fragmentSize.y)
-            newOffset.y = fragmentSize.y;
+        else if(newOffset.y > sourceMapBitmap.getHeight() - fragmentSize.y/scale){
+            if(sourceMapBitmap.getHeight() > fragmentSize.y/scale){
+                newOffset.y = (int) (sourceMapBitmap.getHeight() - fragmentSize.y/scale);
+            }
+            else {
+                newOffset.y = 0;
+            }
+        }
 
         offset = new Point(newOffset);
 
@@ -246,13 +290,17 @@ public class MapFragment extends Fragment {
     }
 
     private void redrawVisibleBitmap() {
+        visibleBitmapCanvas.drawColor(Color.BLUE);
         visibleBitmapCanvas.drawBitmap(
                 workingBitmap,
                 new Rect(offset.x, offset.y,
-                        (int) (fragmentSize.x / scale), (int) (fragmentSize.y / scale)),
+                        offset.x + (int) ((fragmentSize.x)/ scale),
+                        offset.y + (int) ((fragmentSize.y)/ scale)),
                 new Rect(0,0, fragmentSize.x, fragmentSize.y),
                 new Paint()
         );
+        Log.d("redrawVisibleBitmap", "scale: " + scale);
+        mapImageView.setImageBitmap(visibleBitmap);
     }
 
 }

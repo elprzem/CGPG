@@ -36,3 +36,8 @@ proguard/
 .idea/libraries/support_v4_20_0_0.xml
 .idea/workspace.xml
 app/app.iml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/libraries/support_annotations_20_0_0.xml
+.idea/libraries/support_v4_20_0_0.xml
+.idea/workspace.xml
+app/app.iml
