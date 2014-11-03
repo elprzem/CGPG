@@ -3,4 +3,6 @@
     <color name="dark_gray">#ff7b7b80</color>
     <color name="light_gray">#ffe0e0e0</color>
     <color name="white">#ffffffff</color>
+    <color name="buttonBlue">#0099FF</color>
+    <color name="buttonHighlight">#1F3D7A</color>
 </resources>

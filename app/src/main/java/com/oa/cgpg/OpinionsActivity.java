@@ -3,7 +3,6 @@ package com.oa.cgpg;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.BaseAdapter;
@@ -21,11 +20,15 @@ import java.util.ArrayList;
 public class OpinionsActivity extends Activity {
 
     private ArrayList<String> comments;//komentarze pobrane z bazy mają również użytkownika, datę itd
+    private ArrayList<String> commentsOnScreen;
+    private final int POSITIVE = 0;
+    private final int NEGATIVE = 1;
+    private final int ALL = 2;
     public ExpandableListView listViewCommTypes;
     public ListView listViewComm;
     private int ParentClickStatus=-1;
     private int ChildClickStatus=-1;
-    private ArrayList<ExpandableListParent> parents;
+    private ArrayList<ExpandableListParent> commTypes;
     private Button newOpinion;
 
     @Override
@@ -51,6 +54,9 @@ public class OpinionsActivity extends Activity {
         comments.add("2");
         comments.add("3");
 
+        commentsOnScreen = new ArrayList<String>();
+        commentsOnScreen.addAll(comments);
+
         listViewComm = (ListView) findViewById(R.id.commList);
         loadHosts();
 
@@ -69,6 +75,42 @@ public class OpinionsActivity extends Activity {
                 if(groupPosition != previousGroup)
                     listViewCommTypes.collapseGroup(previousGroup);
                 previousGroup = groupPosition;
+            }
+        });
+
+        listViewCommTypes.setOnChildClickListener(new ExpandableListView.OnChildClickListener(){
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                ArrayList<String> selectedComments = new ArrayList<String>();
+                switch(childPosition){//selekcjonowanie komentarzy
+                    case POSITIVE:
+                        for(int i = 0; i < comments.size(); i++){
+                            if (comments.get(i).equals(new String("1"))){
+                                selectedComments.add(comments.get(i));
+                            }
+                        }
+                        break;
+                    case NEGATIVE:
+                        for(int i = 0; i < comments.size(); i++){
+                            if (comments.get(i).equals(new String("2"))){
+                                selectedComments.add(comments.get(i));
+                            }
+                        }
+                        break;
+                    case ALL:
+                        for(int i = 0; i < comments.size(); i++){
+                             selectedComments.add(comments.get(i));
+                        }
+                        break;
+                }
+                commentsOnScreen.clear();
+                commentsOnScreen.addAll(selectedComments);
+                ((OpinionsAdapter)listViewComm.getAdapter()).notifyDataSetChanged();
+                String childTitle = commTypes.get(0).getChildren().get(childPosition).getText1();
+                commTypes.get(0).setTitle(childTitle);
+
+               listViewCommTypes.collapseGroup(0);
+                return true;
             }
         });
         //Creating static data in arraylist
@@ -112,13 +154,13 @@ public class OpinionsActivity extends Activity {
         @Override
         public int getCount() {
             // TODO Auto-generated method stub
-            return 3;
+            return commentsOnScreen.size();
         }
 
         @Override
         public Object getItem(int position) {
             // TODO Auto-generated method stub
-            return comments.get(position);
+            return commentsOnScreen.get(position);
         }
 
         @Override
@@ -134,7 +176,7 @@ public class OpinionsActivity extends Activity {
             if (rowView == null)
                 rowView = inflater.inflate(R.layout.opinion_row, null);
             TextView opinion = (TextView) rowView.findViewById(R.id.opinionText);
-            opinion.setText(comments.get(position));
+            opinion.setText(commentsOnScreen.get(position));
             return rowView;
         }
     }
@@ -177,7 +219,7 @@ public class OpinionsActivity extends Activity {
         if (newParents == null)
             return;
 
-        parents = newParents;
+        commTypes = newParents;
 
         // Check for ExpandableListAdapter object
         if (listViewCommTypes.getExpandableListAdapter() == null)
@@ -231,7 +273,7 @@ public class OpinionsActivity extends Activity {
         public View getGroupView(int groupPosition, boolean isExpanded,
                                  View convertView, ViewGroup parentView)
         {
-            final ExpandableListParent parent = parents.get(groupPosition);
+            final ExpandableListParent parent = commTypes.get(groupPosition);
 
             // Inflate poi_grouprow.xml.xml file for parent rows
             convertView = inflater.inflate(R.layout.opinion_grouprow, parentView, false);
@@ -250,7 +292,7 @@ public class OpinionsActivity extends Activity {
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                                  View convertView, ViewGroup parentView)
         {
-            final ExpandableListParent parent = parents.get(groupPosition);
+            final ExpandableListParent parent = commTypes.get(groupPosition);
             final ExpandableListChild child = parent.getChildren().get(childPosition);
 
             // Inflate poi_childrowdrow.xml file for child rows
@@ -267,7 +309,7 @@ public class OpinionsActivity extends Activity {
         public Object getChild(int groupPosition, int childPosition)
         {
             //Log.i("Childs", groupPosition+"=  getChild =="+childPosition);
-            return parents.get(groupPosition).getChildren().get(childPosition);
+            return commTypes.get(groupPosition).getChildren().get(childPosition);
         }
 
         //Call when child row clicked
@@ -297,13 +339,13 @@ public class OpinionsActivity extends Activity {
         {
             //Log.i("Parent", groupPosition+"=  getGroup ");
 
-            return parents.get(groupPosition);
+            return commTypes.get(groupPosition);
         }
 
         @Override
         public int getGroupCount()
         {
-            return parents.size();
+            return commTypes.size();
         }
 
         //Call when parent row clicked
@@ -333,7 +375,7 @@ public class OpinionsActivity extends Activity {
         @Override
         public boolean isEmpty()
         {
-            return ((parents == null) || parents.isEmpty());
+            return ((commTypes == null) || commTypes.isEmpty());
         }
 
         @Override

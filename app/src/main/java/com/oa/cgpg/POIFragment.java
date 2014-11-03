@@ -1,5 +1,6 @@
 package com.oa.cgpg;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -28,6 +29,7 @@ import android.widget.BaseExpandableListAdapter;
 public class POIFragment extends Fragment {
     public static String ARG_POI_NUMBER;
     public ExpandableListView listView;
+    private int typePOI;
     private int ParentClickStatus=-1;
     private int ChildClickStatus=-1;
     private ArrayList<ExpandableListParent> parents;
@@ -40,11 +42,23 @@ public class POIFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_poi, container, false);
-        int i = getArguments().getInt(ARG_POI_NUMBER);
-        String title = getResources().getStringArray(R.array.menu_array)[i];
+        typePOI = getArguments().getInt(ARG_POI_NUMBER);
+        String title = getResources().getStringArray(R.array.menu_array)[typePOI];
 
         getActivity().setTitle(title);
 
+        Button seeOnMap = (Button) rootView.findViewById(R.id.seeOnMapButton);
+        seeOnMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new MapFragment();
+                Bundle args = new Bundle();
+                args.putInt("type", typePOI);
+                fragment.setArguments(args);
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+            }
+        });
         listView = (ExpandableListView) rootView.findViewById(R.id.expandableListView);
         // Set ExpandableListView values
 
@@ -63,6 +77,7 @@ public class POIFragment extends Fragment {
                     previousGroup = groupPosition;
             }
         });
+
         //Creating static data in arraylist
         final ArrayList<ExpandableListParent> dummyList = buildDummyData();
 

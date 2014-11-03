@@ -72,6 +72,9 @@ public class MapFragment extends Fragment {
 
         initializeFragmentSize();
 
+        if(getArguments() != null)//gdy fragment został otwarty w celu wyświetlenia pozycji na mapie wybranego rodzaju POI
+        Log.i("type",String.valueOf(getArguments().getInt("type")));
+
         initializeVisibleBitmap();
         mapImageView = (ImageView) (view.findViewById(R.id.mapImageView));
         mapImageView.setOnTouchListener(new OnTouchMapListener());

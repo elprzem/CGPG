@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.oa.cgpg.POIFragment">
+    tools:context="com.oa.cgpg.POIFragment"
+    android:background="#ffb9d2e0">
         <ExpandableListView
             android:layout_width="match_parent"
             android:layout_height="477dp"
@@ -13,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Zobacz na mapie"
-        android:background="@drawable/rounded_button"
+        android:background="@drawable/bottom_button"
         android:id="@+id/seeOnMapButton"
         android:textColor="#ffffffff"
         android:layout_gravity="bottom" />
