@@ -56,7 +56,7 @@ public class POIFragment extends Fragment {
                 args.putInt("type", typePOI);
                 fragment.setArguments(args);
                 FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
             }
         });
         listView = (ExpandableListView) rootView.findViewById(R.id.expandableListView);
