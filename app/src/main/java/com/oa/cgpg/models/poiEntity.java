@@ -8,7 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "poiDB")
 public class poiEntity {
-    @DatabaseField(generatedId = true, canBeNull = false)
+    @DatabaseField(generatedId = false, canBeNull = false)
     private int idPoi;
 
     @DatabaseField(canBeNull = false)

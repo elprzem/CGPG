@@ -8,7 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "versionDB")
 public class versionEntity {
-    @DatabaseField(generatedId = true, canBeNull = false)
+    @DatabaseField(generatedId = false, canBeNull = false)
     private int versionNumber;
 
     public versionEntity() {

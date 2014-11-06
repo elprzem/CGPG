@@ -27,17 +27,17 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    private Dao<buildingEntity,Integer> buildingDAO = null;
-    private Dao<typeEntity,Integer> typeDAO = null;
-    private Dao<poiEntity,Integer> poiDAO = null;
+    private Dao<buildingEntity, Integer> buildingDAO = null;
+    private Dao<typeEntity, Integer> typeDAO = null;
+    private Dao<poiEntity, Integer> poiDAO = null;
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource) {
         Log.i(dataBaseHelper.class.getName(), "onCreate");
         try {
-            TableUtils.createTable(connectionSource,buildingEntity.class);
-            TableUtils.createTable(connectionSource,typeEntity.class);
-            TableUtils.createTable(connectionSource,poiEntity.class);
+            TableUtils.createTable(connectionSource, buildingEntity.class);
+            TableUtils.createTable(connectionSource, typeEntity.class);
+            TableUtils.createTable(connectionSource, poiEntity.class);
         } catch (SQLException e) {
             Log.e(dataBaseHelper.class.getName(), "Can't create database", e);
         }
@@ -47,28 +47,30 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource, int i, int i2) {
         Log.i(dataBaseHelper.class.getName(), "onUpgrade");
         try {
-            TableUtils.dropTable(connectionSource,poiEntity.class,true);
-            TableUtils.dropTable(connectionSource,typeEntity.class,true);
-            TableUtils.dropTable(connectionSource,buildingEntity.class,true);
+            TableUtils.dropTable(connectionSource, poiEntity.class, true);
+            TableUtils.dropTable(connectionSource, typeEntity.class, true);
+            TableUtils.dropTable(connectionSource, buildingEntity.class, true);
         } catch (SQLException e) {
             Log.e(dataBaseHelper.class.getName(), "Can't drop database", e);
         }
 
     }
 
-    public Dao<buildingEntity,Integer> getBuildingDAO() throws SQLException{
+    public Dao<buildingEntity, Integer> getBuildingDAO() throws SQLException {
         if (this.buildingDAO == null) {
             this.buildingDAO = getDao(buildingEntity.class);
         }
         return this.buildingDAO;
     }
-    public Dao<typeEntity,Integer> getTypeDAO() throws SQLException{
+
+    public Dao<typeEntity, Integer> getTypeDAO() throws SQLException {
         if (this.typeDAO == null) {
             this.typeDAO = getDao(typeEntity.class);
         }
         return this.typeDAO;
     }
-    public Dao<poiEntity,Integer> getPoiDAO() throws SQLException{
+
+    public Dao<poiEntity, Integer> getPoiDAO() throws SQLException {
         if (this.poiDAO == null) {
             this.poiDAO = getDao(poiEntity.class);
         }
@@ -76,7 +78,7 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     @Override
-    public void close(){
+    public void close() {
         super.close();
         this.poiDAO = null;
         this.typeDAO = null;
