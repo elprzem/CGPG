@@ -1,5 +1,6 @@
 package com.oa.cgpg.db;
 
+import com.j256.ormlite.android.apptools.OrmLiteBaseListActivity;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.oa.cgpg.models.buildingEntity;
@@ -10,21 +11,29 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Bundle;
 import android.util.Log;
 
 /**
  * Created by Tomasz on 2014-11-05.
  */
-public class dbOps {
+public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
     private Dao<buildingEntity, Integer> buildingDAO;
     private Dao<typeEntity, Integer> typeDAO;
     private Dao<poiEntity, Integer> poiDAO;
+    //dataBaseHelper databaseHelper = null;
 
-    dbOps(final dataBaseHelper databaseHelper) {
+    public dbOps(final dataBaseHelper databaseHelper) {
         this.buildingDAO = getBuildingDAO(databaseHelper);
         this.typeDAO = getTypeDAO(databaseHelper);
         this.poiDAO = getPoiDAO(databaseHelper);
     }
+   /* public dbOps() {
+        databaseHelper = getHelper();
+        this.buildingDAO = getBuildingDAO(databaseHelper);
+        this.typeDAO = getTypeDAO(databaseHelper);
+        this.poiDAO = getPoiDAO(databaseHelper);
+    }*/
 
     private Dao<poiEntity, Integer> getPoiDAO(final dataBaseHelper databaseHelper) {
         if (null == this.poiDAO) {
@@ -67,7 +76,6 @@ public class dbOps {
             return this.buildingDAO.queryForAll();
         } catch (final SQLException e) {
             Log.e("DbOPS", "Unable to load DAO: " + e.getMessage());
-            e.printStackTrace();
         }
         return new ArrayList<buildingEntity>();
     }
@@ -77,7 +85,6 @@ public class dbOps {
             return this.typeDAO.queryForAll();
         } catch (final SQLException e) {
             Log.e("DbOPS", "Unable to load DAO: " + e.getMessage());
-            e.printStackTrace();
         }
         return new ArrayList<typeEntity>();
     }
@@ -87,24 +94,27 @@ public class dbOps {
             return this.poiDAO.queryForAll();
         } catch (final SQLException e) {
             Log.e("DbOPS", "Unable to load DAO: " + e.getMessage());
-            e.printStackTrace();
+
         }
         return new ArrayList<poiEntity>();
     }
 
     public void clearData() {
         final List<poiEntity> pois = getPois();
-        for (final poiEntity poi : pois) {
-            deletePoi(poi);
-        }
+        if (!pois.isEmpty())
+            for (final poiEntity poi : pois) {
+                deletePoi(poi);
+            }
         final List<buildingEntity> buildings = getBuildings();
-        for (final buildingEntity build : buildings) {
-            deleteBuilding(build);
-        }
+        if (!buildings.isEmpty())
+            for (final buildingEntity build : buildings) {
+                deleteBuilding(build);
+            }
         final List<typeEntity> types = getTypes();
-        for (final typeEntity type : types) {
-            deleteType(type);
-        }
+        if (!types.isEmpty())
+            for (final typeEntity type : types) {
+                deleteType(type);
+            }
     }
 
     public void deletePoi(poiEntity poi) {
@@ -112,7 +122,6 @@ public class dbOps {
             this.poiDAO.delete(poi);
         } catch (SQLException e) {
             Log.e("DbOPS", "Unable to delete POI: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -123,7 +132,6 @@ public class dbOps {
             this.buildingDAO.delete(build);
         } catch (SQLException e) {
             Log.e("DbOPS", "Unable to delete Building: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -134,34 +142,30 @@ public class dbOps {
             this.typeDAO.delete(type);
         } catch (SQLException e) {
             Log.e("DbOPS", "Unable to delete Type: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
     public void commitPOI(poiEntity poi) {
-        try{
+        try {
             this.poiDAO.createOrUpdate(poi);
-        }catch (SQLException e){
+        } catch (SQLException e) {
             Log.e("DbOPS", "Unable to commit POI: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
     public void commitType(typeEntity type) {
-        try{
+        try {
             this.typeDAO.createOrUpdate(type);
-        }catch (SQLException e){
+        } catch (SQLException e) {
             Log.e("DbOPS", "Unable to commit Type: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
     public void commitBuilding(buildingEntity build) {
-        try{
+        try {
             this.buildingDAO.createOrUpdate(build);
-        }catch (SQLException e){
+        } catch (SQLException e) {
             Log.e("DbOPS", "Unable to commit Building: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }

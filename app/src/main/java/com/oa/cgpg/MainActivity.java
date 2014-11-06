@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +17,15 @@ import android.widget.ListView;
 import android.app.Fragment;
 import android.app.FragmentManager;
 
-public class MainActivity extends Activity {
+import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.oa.cgpg.db.dataBaseHelper;
+import com.j256.ormlite.android.apptools.OrmLiteBaseListActivity;
+import com.oa.cgpg.db.*;
+import com.oa.cgpg.models.poiEntity;
+
+import java.util.List;
+
+public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>{
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -25,10 +34,18 @@ public class MainActivity extends Activity {
     private CharSequence mTitle;
     private String[] mMenuTitles;
 
+    private dbOps dbOps;
+    private createTestEntities testEntities;
+    dataBaseHelper dbHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dbHelper = getHelper();
+        dbOps = new dbOps(dbHelper);
+     //   dbOps.clearData();
+        testEntities = new createTestEntities(dbOps);
+        testEntities.generateTemplateEntities();
 
         mTitle = mDrawerTitle = getTitle();
         mMenuTitles = getResources().getStringArray(R.array.menu_array);
@@ -135,6 +152,7 @@ public class MainActivity extends Activity {
         // nowy fragment - widok typu punktu usługowego (lista wszystkich punktów danego typu)
         else if(position >= MenuItems.XERO && position <= MenuItems.BIKES){
             Fragment fragment = new POIFragment();
+            ((POIFragment)fragment).setDbOps(dbOps);
             Bundle args = new Bundle();
             args.putInt(POIFragment.ARG_POI_NUMBER, position);
             fragment.setArguments(args);

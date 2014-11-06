@@ -2,7 +2,6 @@ package com.oa.cgpg.models;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
@@ -11,7 +10,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "buildingDB")
 public class buildingEntity {
-    @DatabaseField(generatedId = false, canBeNull = false)
+    @DatabaseField(canBeNull = false,id=true)
     private int idBuilding;
 
     @DatabaseField(canBeNull = false)
@@ -47,12 +46,27 @@ public class buildingEntity {
     @DatabaseField(canBeNull = false)
     private String linkToImage;
 
-    @ForeignCollectionField
     private ForeignCollection<poiEntity> pois;
 
     public buildingEntity() {
 
     }
+
+    public buildingEntity(int idBuilding, String name, String description, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, String linkToImage) {
+        this.idBuilding = idBuilding;
+        this.name = name;
+        this.description = description;
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.x3 = x3;
+        this.y3 = y3;
+        this.x4 = x4;
+        this.y4 = y4;
+        this.linkToImage = linkToImage;
+    }
+
     public ForeignCollection<poiEntity> getPois() {
         return pois;
     }

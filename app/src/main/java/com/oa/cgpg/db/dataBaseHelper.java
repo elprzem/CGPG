@@ -21,7 +21,7 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "cgpg.db";
     // any time you make changes to your database objects, you may have to increase the database version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     public dataBaseHelper(final Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -32,7 +32,7 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
     private Dao<poiEntity, Integer> poiDAO = null;
 
     @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource) {
+    public void onCreate(SQLiteDatabase sqLiteDatabase, final ConnectionSource connectionSource) {
         Log.i(dataBaseHelper.class.getName(), "onCreate");
         try {
             TableUtils.createTable(connectionSource, buildingEntity.class);
@@ -44,12 +44,14 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource, int i, int i2) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, final ConnectionSource connectionSource, int i, int i2) {
         Log.i(dataBaseHelper.class.getName(), "onUpgrade");
         try {
             TableUtils.dropTable(connectionSource, poiEntity.class, true);
             TableUtils.dropTable(connectionSource, typeEntity.class, true);
             TableUtils.dropTable(connectionSource, buildingEntity.class, true);
+            Log.i(dataBaseHelper.class.getName(), "DB dropped");
+            onCreate(sqLiteDatabase,connectionSource);
         } catch (SQLException e) {
             Log.e(dataBaseHelper.class.getName(), "Can't drop database", e);
         }

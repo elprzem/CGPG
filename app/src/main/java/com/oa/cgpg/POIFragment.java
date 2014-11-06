@@ -11,7 +11,12 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.List;
+
 import android.widget.BaseExpandableListAdapter;
+
+import com.oa.cgpg.db.dbOps;
+import com.oa.cgpg.models.poiEntity;
 
 
 /**
@@ -33,9 +38,13 @@ public class POIFragment extends Fragment {
     private int ParentClickStatus=-1;
     private int ChildClickStatus=-1;
     private ArrayList<ExpandableListParent> parents;
-
+    private dbOps dbOps;
     public POIFragment() {
         // Empty constructor required for fragment subclasses
+    }
+
+    public void setDbOps(dbOps dbOps) {
+        this.dbOps = dbOps;
     }
 
     @Override
@@ -91,13 +100,14 @@ public class POIFragment extends Fragment {
     {
         // Creating ArrayList of type parent class to store parent class objects
         final ArrayList<ExpandableListParent> list = new ArrayList<ExpandableListParent>();
-        for (int i = 1; i < 4; i++)
+        List<poiEntity> pois = dbOps.getPois();
+        for(poiEntity poi : pois)
         {
             //Create parent class object
             final ExpandableListParent parent = new ExpandableListParent();
 
             // Set values in parent class object
-            if(i==1){
+            /*if(i==1){
                 parent.setTitle("punkt 1");
                 parent.setChildren(new ArrayList<ExpandableListChild>());
 
@@ -129,8 +139,16 @@ public class POIFragment extends Fragment {
 
                 //Add Child class object to parent class object
                 parent.getChildren().add(child);
-            }
+            }*/
+            parent.setTitle(poi.getName());
+            parent.setChildren(new ArrayList<ExpandableListChild>());
 
+            // Create Child class object
+            final ExpandableListChild child = new ExpandableListChild();
+            child.setText1(poi.getDescription());
+
+            //Add Child class object to parent class object
+            parent.getChildren().add(child);
             //Adding Parent class object to ArrayList
             list.add(parent);
         }

@@ -8,19 +8,19 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "poiDB")
 public class poiEntity {
-    @DatabaseField(generatedId = false, canBeNull = false)
+    @DatabaseField(canBeNull = false, id = true)
     private int idPoi;
 
     @DatabaseField(canBeNull = false)
     private String name;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "idBuilding", canBeNull = false)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "building_idBuilding", canBeNull = false )
     private buildingEntity building;
 
     @DatabaseField(canBeNull = false)
     private String description;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "idType", canBeNull = false)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "type_idType", canBeNull = false)
     private typeEntity type;
 
     @DatabaseField(canBeNull = false)
@@ -33,6 +33,17 @@ public class poiEntity {
     private String linkToImage;
 
     public poiEntity() {
+    }
+
+    public poiEntity(int idPoi, String name, buildingEntity building, String description, typeEntity type, int ratingPlus, int ratingMinus, String linkToImage) {
+        this.idPoi = idPoi;
+        this.name = name;
+        this.building = building;
+        this.description = description;
+        this.type = type;
+        this.ratingPlus = ratingPlus;
+        this.ratingMinus = ratingMinus;
+        this.linkToImage = linkToImage;
     }
 
     public int getIdPoi() {
