@@ -105,22 +105,23 @@ public class POIFragment extends Fragment {
         {
             //Create parent class object
             final POIItem poiItem = new POIItem();
+            if(poi.getType().getIdType() == typePOI) {
+                // Set values in parent class object
+                poiItem.setTitle(poi.getName());
+                poiItem.setDetails(new ArrayList<POIDetails>());
 
-            // Set values in parent class object
-            poiItem.setTitle(poi.getName());
-            poiItem.setDetails(new ArrayList<POIDetails>());
+                // Create Child class object
+                final POIDetails details = new POIDetails();
+                details.setDescription(poi.getDescription());
+                //details.setPlusesCount
+                //details.setMinusesCount
+                //details.setImagePath
 
-            // Create Child class object
-            final POIDetails details = new POIDetails();
-            details.setDescription(poi.getDescription());
-            //details.setPlusesCount
-            //details.setMinusesCount
-            //details.setImagePath
-
-            //Add Child class object to parent class object
-            poiItem.getDetails().add(details);
-            //Adding Parent class object to ArrayList
-            list.add(poiItem);
+                //Add Child class object to parent class object
+                poiItem.getDetails().add(details);
+                //Adding Parent class object to ArrayList
+                list.add(poiItem);
+            }
         }
         return list;
     }
