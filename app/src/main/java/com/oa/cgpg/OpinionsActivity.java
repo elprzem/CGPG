@@ -28,7 +28,7 @@ public class OpinionsActivity extends Activity {
     public ListView listViewComm;
     private int ParentClickStatus=-1;
     private int ChildClickStatus=-1;
-    private ArrayList<ExpandableListParent> commTypes;
+    private ArrayList<CommentTypes> commTypes;
     private Button newOpinion;
 
     @Override
@@ -106,7 +106,7 @@ public class OpinionsActivity extends Activity {
                 commentsOnScreen.clear();
                 commentsOnScreen.addAll(selectedComments);
                 ((OpinionsAdapter)listViewComm.getAdapter()).notifyDataSetChanged();
-                String childTitle = commTypes.get(0).getChildren().get(childPosition).getText1();
+                String childTitle = commTypes.get(0).getTypes().get(childPosition).getDescription();
                 commTypes.get(0).setTitle(childTitle);
 
                listViewCommTypes.collapseGroup(0);
@@ -114,7 +114,7 @@ public class OpinionsActivity extends Activity {
             }
         });
         //Creating static data in arraylist
-        final ArrayList<ExpandableListParent> dummyList = buildDummyData();
+        final ArrayList<CommentTypes> dummyList = buildDummyData();
 
         // Adding ArrayList data to ExpandableListView values
         loadHosts(dummyList);
@@ -181,45 +181,45 @@ public class OpinionsActivity extends Activity {
         }
     }
 
-    private ArrayList<ExpandableListParent> buildDummyData()
+    private ArrayList<CommentTypes> buildDummyData()
     {
         // Creating ArrayList of type parent class to store parent class objects
-        final ArrayList<ExpandableListParent> list = new ArrayList<ExpandableListParent>();
-        ExpandableListParent parent = new ExpandableListParent();
-        parent.setTitle("Wszystkie");
-        parent.setChildren(new ArrayList<ExpandableListChild>());
+        final ArrayList<CommentTypes> list = new ArrayList<CommentTypes>();
+        CommentTypes typesList = new CommentTypes();
+        typesList.setTitle("Wszystkie");
+        typesList.setTypes(new ArrayList<CommentType>());
 
         // Create Child class object
-        final ExpandableListChild child1 = new ExpandableListChild();
-        child1.setText1("Pozytywne");
+        final CommentType type1 = new CommentType();
+        type1.setDescription("Pozytywne");
 
         //Add Child class object to parent class object
-        parent.getChildren().add(child1);
+        typesList.getTypes().add(type1);
         // Create Child class object
-        final ExpandableListChild child2 = new ExpandableListChild();
-        child2.setText1("Negatywne");
+        final CommentType type2 = new CommentType();
+        type2.setDescription("Negatywne");
 
         //Add Child class object to parent class object
-        parent.getChildren().add(child2);
+        typesList.getTypes().add(type2);
 
         // Create Child class object
-        final ExpandableListChild child3 = new ExpandableListChild();
-        child3.setText1("Wszystkie");
+        final CommentType type3 = new CommentType();
+        type3.setDescription("Wszystkie");
 
         //Add Child class object to parent class object
-        parent.getChildren().add(child3);
+        typesList.getTypes().add(type3);
 
-         list.add(parent);
+        list.add(typesList);
         return list;
     }
 
 
-    private void loadHosts(final ArrayList<ExpandableListParent> newParents)
+    private void loadHosts(final ArrayList<CommentTypes> newTypesList)
     {
-        if (newParents == null)
+        if (newTypesList == null)
             return;
 
-        commTypes = newParents;
+        commTypes = newTypesList;
 
         // Check for ExpandableListAdapter object
         if (listViewCommTypes.getExpandableListAdapter() == null)
@@ -273,13 +273,13 @@ public class OpinionsActivity extends Activity {
         public View getGroupView(int groupPosition, boolean isExpanded,
                                  View convertView, ViewGroup parentView)
         {
-            final ExpandableListParent parent = commTypes.get(groupPosition);
+            final CommentTypes typesList = commTypes.get(groupPosition);
 
             // Inflate poi_grouprow.xml.xml file for parent rows
             convertView = inflater.inflate(R.layout.opinion_grouprow, parentView, false);
 
             // Get poi_grouprow.xml.xml file elements and set values
-            ((TextView) convertView.findViewById(R.id.text1)).setText(parent.getTitle());
+            ((TextView) convertView.findViewById(R.id.text1)).setText(typesList.getTitle());
 
             //Log.i("onCheckedChanged", "isChecked: "+parent.isChecked());
 
@@ -292,14 +292,14 @@ public class OpinionsActivity extends Activity {
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                                  View convertView, ViewGroup parentView)
         {
-            final ExpandableListParent parent = commTypes.get(groupPosition);
-            final ExpandableListChild child = parent.getChildren().get(childPosition);
+            final CommentTypes typesList = commTypes.get(groupPosition);
+            final CommentType type = typesList.getTypes().get(childPosition);
 
             // Inflate poi_childrowdrow.xml file for child rows
             convertView = inflater.inflate(R.layout.opinion_childrow, parentView, false);
 
             // Get poi_childrowdrow.xml file elements and set values
-            ((TextView) convertView.findViewById(R.id.text1)).setText(child.getText1());
+            ((TextView) convertView.findViewById(R.id.text1)).setText(type.getDescription());
 
             return convertView;
         }
@@ -309,7 +309,7 @@ public class OpinionsActivity extends Activity {
         public Object getChild(int groupPosition, int childPosition)
         {
             //Log.i("Childs", groupPosition+"=  getChild =="+childPosition);
-            return commTypes.get(groupPosition).getChildren().get(childPosition);
+            return commTypes.get(groupPosition).getTypes().get(childPosition);
         }
 
         //Call when child row clicked

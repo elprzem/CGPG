@@ -4,10 +4,10 @@ package com.oa.cgpg;
  * Created by Izabela on 2014-10-11.
  */
 import java.util.ArrayList;
-public class ExpandableListParent {
+public class POIItem {
     private String title;
     private boolean checked;
-    private ArrayList<ExpandableListChild> children;
+    private ArrayList<POIDetails> details;
 
     public String getTitle(){
         return title;
@@ -21,10 +21,8 @@ public class ExpandableListParent {
     public void setChecked(boolean checked){
         this.checked = checked;
     }
-    public ArrayList<ExpandableListChild> getChildren(){
-        return children;
-    }
-    public void setChildren(ArrayList<ExpandableListChild> children){
-        this.children = children;
+    public ArrayList<POIDetails> getDetails(){return details;}
+    public void setDetails(ArrayList<POIDetails> details){
+        this.details = details;
     }
 }

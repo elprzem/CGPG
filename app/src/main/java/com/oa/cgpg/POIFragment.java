@@ -37,7 +37,7 @@ public class POIFragment extends Fragment {
     private int typePOI;
     private int ParentClickStatus=-1;
     private int ChildClickStatus=-1;
-    private ArrayList<ExpandableListParent> parents;
+    private ArrayList<POIItem> poiItems;
     private dbOps dbOps;
     public POIFragment() {
         // Empty constructor required for fragment subclasses
@@ -88,7 +88,7 @@ public class POIFragment extends Fragment {
         });
 
         //Creating static data in arraylist
-        final ArrayList<ExpandableListParent> dummyList = buildDummyData();
+        final ArrayList<POIItem> dummyList = buildDummyData();
 
         // Adding ArrayList data to ExpandableListView values
         loadHosts(dummyList);
@@ -96,72 +96,42 @@ public class POIFragment extends Fragment {
         return rootView;
     }
 
-    private ArrayList<ExpandableListParent> buildDummyData()
+    private ArrayList<POIItem> buildDummyData()
     {
         // Creating ArrayList of type parent class to store parent class objects
-        final ArrayList<ExpandableListParent> list = new ArrayList<ExpandableListParent>();
+        final ArrayList<POIItem> list = new ArrayList<POIItem>();
         List<poiEntity> pois = dbOps.getPois();
         for(poiEntity poi : pois)
         {
             //Create parent class object
-            final ExpandableListParent parent = new ExpandableListParent();
+            final POIItem poiItem = new POIItem();
 
             // Set values in parent class object
-            /*if(i==1){
-                parent.setTitle("punkt 1");
-                parent.setChildren(new ArrayList<ExpandableListChild>());
-
-                // Create Child class object
-                final ExpandableListChild child = new ExpandableListChild();
-                child.setText1("opis");
-
-                //Add Child class object to parent class object
-                parent.getChildren().add(child);
-            }
-            else if(i==2){
-                parent.setTitle("punkt 2");
-                parent.setChildren(new ArrayList<ExpandableListChild>());
-
-                // Create Child class object
-                final ExpandableListChild child = new ExpandableListChild();
-                child.setText1("opis");
-
-                //Add Child class object to parent class object
-                parent.getChildren().add(child);
-            }
-            else if(i==3){
-                parent.setTitle("punkt 3");
-                parent.setChildren(new ArrayList<ExpandableListChild>());
-
-                // Create Child class object
-                final ExpandableListChild child = new ExpandableListChild();
-                child.setText1("opis");
-
-                //Add Child class object to parent class object
-                parent.getChildren().add(child);
-            }*/
-            parent.setTitle(poi.getName());
-            parent.setChildren(new ArrayList<ExpandableListChild>());
+            poiItem.setTitle(poi.getName());
+            poiItem.setDetails(new ArrayList<POIDetails>());
 
             // Create Child class object
-            final ExpandableListChild child = new ExpandableListChild();
-            child.setText1(poi.getDescription());
+            final POIDetails details = new POIDetails();
+            details.setDescription(poi.getDescription());
+            //details.setPlusesCount
+            //details.setMinusesCount
+            //details.setImagePath
 
             //Add Child class object to parent class object
-            parent.getChildren().add(child);
+            poiItem.getDetails().add(details);
             //Adding Parent class object to ArrayList
-            list.add(parent);
+            list.add(poiItem);
         }
         return list;
     }
 
 
-    private void loadHosts(final ArrayList<ExpandableListParent> newParents)
+    private void loadHosts(final ArrayList<POIItem> newPoiItems)
     {
-        if (newParents == null)
+        if (newPoiItems == null)
             return;
 
-        parents = newParents;
+        poiItems = newPoiItems;
 
         // Check for ExpandableListAdapter object
         if (listView.getExpandableListAdapter() == null)
@@ -201,7 +171,7 @@ public class POIFragment extends Fragment {
         public View getGroupView(int groupPosition, boolean isExpanded,
                                  View convertView, ViewGroup parentView)
         {
-            final ExpandableListParent parent = parents.get(groupPosition);
+            final POIItem parent = poiItems.get(groupPosition);
 
             // Inflate poi_grouprow.xml.xml file for parent rows
             convertView = inflater.inflate(R.layout.poi_grouprow, parentView, false);
@@ -220,19 +190,19 @@ public class POIFragment extends Fragment {
         public View getChildView(final int groupPosition, int childPosition, boolean isLastChild,
                                  View convertView, ViewGroup parentView)
         {
-            final ExpandableListParent parent = parents.get(groupPosition);
-            final ExpandableListChild child = parent.getChildren().get(childPosition);
+            final POIItem poiItem = poiItems.get(groupPosition);
+            final POIDetails details = poiItem.getDetails().get(childPosition);
 
             // Inflate poi_childrowdrow.xml file for child rows
             convertView = inflater.inflate(R.layout.poi_childrow, parentView, false);
 
             // Get poi_childrowdrow.xml file elements and set values
-            ((TextView) convertView.findViewById(R.id.text1)).setText(child.getText1());
+            ((TextView) convertView.findViewById(R.id.text1)).setText(details.getDescription());
             ((Button) convertView.findViewById(R.id.button_opinions)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), OpinionsActivity.class);
-                    intent.putExtra("poi", parents.get(groupPosition).getTitle());
+                    intent.putExtra("poi", poiItems.get(groupPosition).getTitle());
                     startActivity(intent);
                 }
             });
@@ -244,7 +214,7 @@ public class POIFragment extends Fragment {
         public Object getChild(int groupPosition, int childPosition)
         {
             //Log.i("Childs", groupPosition+"=  getChild =="+childPosition);
-            return parents.get(groupPosition).getChildren().get(childPosition);
+            return poiItems.get(groupPosition).getDetails().get(childPosition);
         }
 
         //Call when child row clicked
@@ -266,8 +236,8 @@ public class POIFragment extends Fragment {
         public int getChildrenCount(int groupPosition)
         {
             int size=0;
-            if(parents.get(groupPosition).getChildren()!=null)
-                size = parents.get(groupPosition).getChildren().size();
+            if(poiItems.get(groupPosition).getDetails()!=null)
+                size = poiItems.get(groupPosition).getDetails().size();
             return size;
         }
 
@@ -277,13 +247,13 @@ public class POIFragment extends Fragment {
         {
             //Log.i("Parent", groupPosition+"=  getGroup ");
 
-            return parents.get(groupPosition);
+            return poiItems.get(groupPosition);
         }
 
         @Override
         public int getGroupCount()
         {
-            return parents.size();
+            return poiItems.size();
         }
 
         //Call when parent row clicked
@@ -291,10 +261,6 @@ public class POIFragment extends Fragment {
         public long getGroupId(int groupPosition)
         {
            // Log.i("Parent", groupPosition+"=  getGroupId "+ParentClickStatus);
-
-            if(groupPosition==2 && ParentClickStatus!=groupPosition){
-
-            }
 
             ParentClickStatus=groupPosition;
             if(ParentClickStatus==0)
@@ -313,7 +279,7 @@ public class POIFragment extends Fragment {
         @Override
         public boolean isEmpty()
         {
-            return ((parents == null) || parents.isEmpty());
+            return ((poiItems == null) || poiItems.isEmpty());
         }
 
         @Override
