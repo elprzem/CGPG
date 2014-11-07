@@ -197,14 +197,21 @@ public class MapFragment extends Fragment {
                     offsetDelta = new PointF(event.getX(), event.getY());
                     Log.i("ACTION_DOWN", "offsetDelta: " + offsetDelta.toString());
                     return true;
+                case MotionEvent.ACTION_MOVE:
                 case MotionEvent.ACTION_UP:
-                    Point newOffset = new Point(
-                            (int)(offset.x + (offsetDelta.x - event.getX()) / scale),
-                            (int)(offset.y + (offsetDelta.y - event.getY()) / scale)
-                    );
-                    Log.i("ACTION_UP", "newoffset: " + newOffset.toString());
-                    checkAndRedrawVisibleBitmap(newOffset);
-                    Log.i("ACTION_UP", "offset: " + offset.toString());
+                    if(Math.abs(offsetDelta.x - event.getX()) < 5  && Math.abs(offsetDelta.y - event.getY()) < 5){
+                        onClick((int) event.getX(), (int) event.getY());
+                    }
+                    else {
+                        Point newOffset = new Point(
+                                (int)(offset.x + (offsetDelta.x - event.getX()) / scale),
+                                (int)(offset.y + (offsetDelta.y - event.getY()) / scale)
+                        );
+                        Log.i("ACTION_UP", "newoffset: " + newOffset.toString());
+                        checkAndRedrawVisibleBitmap(newOffset);
+                        Log.i("ACTION_UP", "offset: " + offset.toString());
+                        offsetDelta = new PointF(event.getX(), event.getY());
+                    }
                     return true;
 
                 ///
@@ -220,6 +227,7 @@ public class MapFragment extends Fragment {
                     }
                     Log.i("ACTION_POINTER_DOWN", "oldDist: " + oldDist);
                     return true;
+                /*
                 case MotionEvent.ACTION_MOVE:
                     if (mode == ZOOM) {
                         float newDist = spacing(event);
@@ -232,6 +240,7 @@ public class MapFragment extends Fragment {
                         Log.i("ACTION_MOVE", "newDist: " + newDist);
                     }
                     return true;
+                    */
                 ///
                 ///End. Next inspired code: spacing and midPoint
                 ///
@@ -240,6 +249,41 @@ public class MapFragment extends Fragment {
                     return false;
             }
         }
+    }
+
+    private void onClick(int x, int y) {
+        Log.i("onClick", "x: " + x + " ,y: " + y);
+        Integer placeId = whatIsHere(x, y);
+
+        if(placeId == null)
+            return;
+
+//        PlaceDialog placeDialog = new
+    }
+
+    //TODO: I need data from database. Return type will be something like Place
+    /// shape:
+    //  __________
+    //  |1       2|
+    //  |         |
+    //  |4       3|
+    /// ----------
+    private Integer whatIsHere(int x, int y) {
+        /*
+        for(Place place : places){
+            if(x > place.getCoordinates().getFirstPoint().getX() &&
+                    y < place.getCoordinates().getFirstPoint().getY() &&
+                    x < place.getCoordinates().getSecondPoint().getX() &&
+                    y < place.getCoordinates().getSecondPoint().getY() &&
+                    x < place.getCoordinates().getThirdPoint().getX() &&
+                    y > place.getCoordinates().getThirdPoint().getY() &&
+                    x > place.getCoordinates().getFourthPoint().getX() &&
+                    y > place.getCoordinates().getFourthPoint().getY()){
+                return place.getId();
+            }
+        }
+        */
+        return null;
     }
 
     /**
