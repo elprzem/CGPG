@@ -1,4 +1,4 @@
-package com.oa.cgpg.db;
+package com.oa.cgpg.dataOperations;
 
 import com.oa.cgpg.models.buildingEntity;
 import com.oa.cgpg.models.poiEntity;

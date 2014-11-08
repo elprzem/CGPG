@@ -1,29 +1,25 @@
 package com.oa.cgpg;
 //Sobczak
-import android.app.Activity;
-import android.content.Intent;
+
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.app.Fragment;
-import android.app.FragmentManager;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
-import com.oa.cgpg.db.dataBaseHelper;
-import com.j256.ormlite.android.apptools.OrmLiteBaseListActivity;
-import com.oa.cgpg.db.*;
-import com.oa.cgpg.models.poiEntity;
-
-import java.util.List;
+import com.oa.cgpg.dataOperations.XMLParsing;
+import com.oa.cgpg.dataOperations.createTestEntities;
+import com.oa.cgpg.dataOperations.dataBaseHelper;
+import com.oa.cgpg.dataOperations.dbOps;
 
 public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>{
     private DrawerLayout mDrawerLayout;
@@ -36,7 +32,11 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>{
 
     private dbOps dbOps;
     private createTestEntities testEntities;
-    dataBaseHelper dbHelper;
+    private dataBaseHelper dbHelper;
+
+    private XMLParsing parser;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +46,14 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>{
      //   dbOps.clearData();
         testEntities = new createTestEntities(dbOps);
         testEntities.generateTemplateEntities();
+
+        
+        /*String x = null;
+        (new XMLParsing(this,x)).execute();
+
+        System.out.println(x.length());
+        Log.i(getClass().getName(),x.length()+"");*/
+
 
         mTitle = mDrawerTitle = getTitle();
         mMenuTitles = getResources().getStringArray(R.array.menu_array);

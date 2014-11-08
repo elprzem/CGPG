@@ -15,7 +15,7 @@ import java.util.List;
 
 import android.widget.BaseExpandableListAdapter;
 
-import com.oa.cgpg.db.dbOps;
+import com.oa.cgpg.dataOperations.dbOps;
 import com.oa.cgpg.models.poiEntity;
 
 

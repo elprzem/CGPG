@@ -1,16 +1,16 @@
-package com.oa.cgpg.db;
+package com.oa.cgpg.dataOperations;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.table.TableUtils;
-import com.oa.cgpg.models.*;
-
-import android.app.ActionBar;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
+import com.oa.cgpg.models.buildingEntity;
+import com.oa.cgpg.models.poiEntity;
+import com.oa.cgpg.models.typeEntity;
 
 import java.sql.SQLException;
 
@@ -18,7 +18,7 @@ import java.sql.SQLException;
  * Created by Tomasz on 2014-11-05.
  */
 public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
-
+    private XMLParsing parser;
     private static final String DATABASE_NAME = "cgpg.db";
     // any time you make changes to your database objects, you may have to increase the database version
     private static final int DATABASE_VERSION = 3;

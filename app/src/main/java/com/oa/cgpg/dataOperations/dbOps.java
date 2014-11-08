@@ -1,4 +1,4 @@
-package com.oa.cgpg.db;
+package com.oa.cgpg.dataOperations;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseListActivity;
 import com.j256.ormlite.dao.Dao;
@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.os.Bundle;
 import android.util.Log;
 
 /**
