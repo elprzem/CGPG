@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,12 +17,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLParsing;
 import com.oa.cgpg.dataOperations.createTestEntities;
 import com.oa.cgpg.dataOperations.dataBaseHelper;
 import com.oa.cgpg.dataOperations.dbOps;
 
-public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>{
+public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> implements AsyncResponse {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -48,12 +50,10 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>{
         testEntities.generateTemplateEntities();
 
         
-        /*String x = null;
-        (new XMLParsing(this,x)).execute();
-
-        System.out.println(x.length());
-        Log.i(getClass().getName(),x.length()+"");*/
-
+        String x = null;
+        XMLParsing xmlPars = new XMLParsing(this, x);
+        xmlPars.delegate = this;
+        xmlPars.execute();
 
         mTitle = mDrawerTitle = getTitle();
         mMenuTitles = getResources().getStringArray(R.array.menu_array);
@@ -136,6 +136,10 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>{
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+    public void processFinish(String output){
+        //this you will received result fired from async class of onPostExecute(result) method.
+        Log.i("async response: ","xml has come! length="+output.length());
     }
 
     /* The click listner for ListView in the navigation drawer */

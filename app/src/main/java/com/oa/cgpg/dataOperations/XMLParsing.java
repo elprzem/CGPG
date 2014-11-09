@@ -30,11 +30,11 @@ import javax.xml.parsers.ParserConfigurationException;
  * Created by Tomasz on 2014-11-07.
  */
 public class XMLParsing extends AsyncTask<Void, Void, Void> {
-    private static final String HTTP_URL = "http://cgpg.byethost10.com/output.xml";
+    private static final String HTTP_URL = "http://cgpg.zz.mu/output.xml";
     private String xml;
     private ProgressDialog progressDialog;
     private Context context;
-
+    public AsyncResponse delegate=null;
 
     public XMLParsing(Context c, String s) {
         this.context = c;
@@ -42,11 +42,12 @@ public class XMLParsing extends AsyncTask<Void, Void, Void> {
     }
     @Override
     protected void onPreExecute() {
-        progressDialog = ProgressDialog.show(context, "Proszê czekaæ", "Wysy³anie zg³oszenia", true, false);
+        progressDialog = ProgressDialog.show(context, "Pobierane danych", "Proszę czekać...", true, false);
     }
 
     @Override
     protected void onPostExecute(Void  D) {
+        delegate.processFinish(xml);
         progressDialog.dismiss();
 
     }
