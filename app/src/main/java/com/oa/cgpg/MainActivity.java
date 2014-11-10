@@ -139,7 +139,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> implements
     }
     public void processFinish(String output){
         //this you will received result fired from async class of onPostExecute(result) method.
-        Log.i("async response: ","xml has come! length="+output.length());
+//        Log.i("async response: ","xml has come! length="+output.length());
     }
 
     /* The click listner for ListView in the navigation drawer */

@@ -31,9 +31,9 @@ public class createTestEntities {
 
     public List<poiEntity> generatePOIs(buildingEntity building,typeEntity type, int id_first){
         List<poiEntity> listPoi = new ArrayList<poiEntity>();
-        listPoi.add(new poiEntity(id_first, "punkt 1 typu: "+type.getName(), building, "dsa", type, 0,0, "dsadas"));
-        listPoi.add(new poiEntity(id_first+1, "punkt 2 typu: "+type.getName(), building, "dsa", type, 0,0, "dsadas"));
-        listPoi.add(new poiEntity(id_first+2, "punkt 3 typu:"+type.getName(), building, "dsa", type, 0,0, "dsadas"));
+        listPoi.add(new poiEntity(id_first, "punkt 1 typu: "+type.getName(), building, "I am getting data from xml for line break in following format; line1 \\n line2.but on setting this string in textview its displaying line1 \\n line2 intead of; line1 line2. if i hardcode the the value in textview its giving correct result but getting data from xml is not showing properly...", type, 0,0, "obr3.png"));
+        listPoi.add(new poiEntity(id_first+1, "punkt 2 typu: "+type.getName(), building, "I am getting data from xml for line break in following format; line1 \\n line2.but on setting this string in textview its displaying line1 \\n line2 intead of; line1 line2. if i hardcode the the value in textview its giving correct result but getting data from xml is not showing properly...", type, 0,0, "obr3.png"));
+        listPoi.add(new poiEntity(id_first+2, "punkt 3 typu:"+type.getName(), building, "dsa", type, 0,0, "obr3.png"));
         return listPoi;
     }
 

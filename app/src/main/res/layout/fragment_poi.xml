@@ -9,6 +9,7 @@
             android:layout_width="match_parent"
             android:layout_height="477dp"
             android:id="@+id/expandableListView"
+            android:transcriptMode="normal"
             android:layout_gravity="start|top" />
     <Button
         android:layout_width="match_parent"
