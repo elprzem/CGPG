@@ -1,17 +1,31 @@
 package com.oa.cgpg;
 
+import android.app.ActionBar;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.text.Layout;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.InputStream;
 
 import android.widget.BaseExpandableListAdapter;
 
@@ -39,6 +53,7 @@ public class POIFragment extends Fragment {
     private int ChildClickStatus=-1;
     private ArrayList<POIItem> poiItems;
     private dbOps dbOps;
+    private Button seeOnMap;
     public POIFragment() {
         // Empty constructor required for fragment subclasses
     }
@@ -56,7 +71,7 @@ public class POIFragment extends Fragment {
 
         getActivity().setTitle(title);
 
-        Button seeOnMap = (Button) rootView.findViewById(R.id.seeOnMapButton);
+        seeOnMap = (Button) rootView.findViewById(R.id.seeOnMapButton);
         seeOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,22 +96,55 @@ public class POIFragment extends Fragment {
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                if(groupPosition != previousGroup)
+                if (groupPosition != previousGroup)
                     listView.collapseGroup(previousGroup);
-                    previousGroup = groupPosition;
+                previousGroup = groupPosition;
             }
         });
 
         //Creating static data in arraylist
-        final ArrayList<POIItem> dummyList = buildDummyData();
+        final ArrayList<POIItem> dataFromDB = getDataFromDB();
 
         // Adding ArrayList data to ExpandableListView values
-        loadHosts(dummyList);
+        loadDataIntoAdapter(dataFromDB);
 
         return rootView;
     }
-
-    private ArrayList<POIItem> buildDummyData()
+    @Override
+    public void onResume() {
+        super.onResume();
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        int width = displaymetrics.widthPixels;
+        int seeOnMapButtonHeight = seeOnMap.getHeight();
+        Log.i("seeOnMapButtonHeight:", String.valueOf(seeOnMapButtonHeight));
+        int navBarHeight = getNavigationBarHeight(getActivity(), getActivity().getResources().getConfiguration().orientation);
+        Log.i("navBarHeight:", String.valueOf(navBarHeight));
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) listView.getLayoutParams();
+        params.height = height - 2*navBarHeight - getStatusBarHeight();
+        listView.setLayoutParams(params);
+        Log.i("wysokosc:", String.valueOf(listView.getLayoutParams().height));
+    }
+    private int getNavigationBarHeight(Context context, int orientation) {
+        Resources resources = context.getResources();
+        int id = resources.getIdentifier(
+                orientation == Configuration.ORIENTATION_PORTRAIT ? "navigation_bar_height" : "navigation_bar_height_landscape",
+                "dimen", "android");
+        if (id > 0) {
+            return resources.getDimensionPixelSize(id);
+        }
+        return 0;
+    }
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+    private ArrayList<POIItem> getDataFromDB()
     {
         // Creating ArrayList of type parent class to store parent class objects
         final ArrayList<POIItem> list = new ArrayList<POIItem>();
@@ -109,13 +157,12 @@ public class POIFragment extends Fragment {
                 // Set values in parent class object
                 poiItem.setTitle(poi.getName());
                 poiItem.setDetails(new ArrayList<POIDetails>());
-
                 // Create Child class object
                 final POIDetails details = new POIDetails();
                 details.setDescription(poi.getDescription());
-                //details.setPlusesCount
-                //details.setMinusesCount
-                //details.setImagePath
+                details.setImagePath(poi.getLinkToImage());
+                details.setPlusesCount(poi.getRatingPlus());
+                details.setMinusesCount(poi.getRatingMinus());
 
                 //Add Child class object to parent class object
                 poiItem.getDetails().add(details);
@@ -127,7 +174,7 @@ public class POIFragment extends Fragment {
     }
 
 
-    private void loadHosts(final ArrayList<POIItem> newPoiItems)
+    private void loadDataIntoAdapter(final ArrayList<POIItem> newPoiItems)
     {
         if (newPoiItems == null)
             return;
@@ -149,7 +196,20 @@ public class POIFragment extends Fragment {
             ((MyExpandableListAdapter)listView.getExpandableListAdapter()).notifyDataSetChanged();
         }
     }
+    public Drawable getImageFromAsstes(String path) {
+        try {
+            // get input stream
+            InputStream ims = getActivity().getAssets().open(path);
+            // load image as Drawable
+            Drawable d = Drawable.createFromStream(ims, null);
+            // set image to ImageView
+           return d;
+        }
+        catch(IOException ex) {
+            return null;
+        }
 
+    }
     /**
      * A Custom adapter to create Parent view (Used poi_grouprowprow.xml) and Child View((Used poi_childrow.xml.xml).
      */
@@ -198,7 +258,12 @@ public class POIFragment extends Fragment {
             convertView = inflater.inflate(R.layout.poi_childrow, parentView, false);
 
             // Get poi_childrowdrow.xml file elements and set values
+            DisplayMetrics displaymetrics = new DisplayMetrics();
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+            int width = displaymetrics.widthPixels;
             ((TextView) convertView.findViewById(R.id.text1)).setText(details.getDescription());
+            ((TextView) convertView.findViewById(R.id.text1)).setWidth(2*width/3);
+            ((ImageView)convertView.findViewById(R.id.image)).setImageDrawable(getImageFromAsstes(details.getImagePath()));
             ((Button) convertView.findViewById(R.id.button_opinions)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
