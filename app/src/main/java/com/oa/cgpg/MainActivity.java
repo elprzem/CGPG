@@ -17,11 +17,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
-import com.oa.cgpg.dataOperations.AsyncResponse;
-import com.oa.cgpg.dataOperations.XMLParsing;
-import com.oa.cgpg.dataOperations.createTestEntities;
-import com.oa.cgpg.dataOperations.dataBaseHelper;
-import com.oa.cgpg.dataOperations.dbOps;
+import com.oa.cgpg.dataOperations.*;
+import com.oa.cgpg.models.opinionNetEntity;
+
+import java.util.List;
 
 public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> implements AsyncResponse {
     private DrawerLayout mDrawerLayout;
@@ -50,10 +49,14 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> implements
         testEntities.generateTemplateEntities();
 
         
-        String x = null;
+       /* String x = null;
         XMLParsing xmlPars = new XMLParsing(this, x);
         xmlPars.delegate = this;
-        xmlPars.execute();
+        xmlPars.execute();*/
+
+        XMLOpinionParsing opinionParser = new XMLOpinionParsing(this,1,5);
+        opinionParser.delegate=this;
+        opinionParser.execute();
 
         mTitle = mDrawerTitle = getTitle();
         mMenuTitles = getResources().getStringArray(R.array.menu_array);
@@ -140,6 +143,13 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> implements
     public void processFinish(String output){
         //this you will received result fired from async class of onPostExecute(result) method.
         Log.i("async response: ","xml has come! length="+output.length());
+    }
+
+    @Override
+    public void processFinishOpinion(List<opinionNetEntity> list) {
+        for(opinionNetEntity op : list){
+            System.out.println(op.toString());
+        }
     }
 
     /* The click listner for ListView in the navigation drawer */
