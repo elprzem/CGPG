@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/opinionLayout"
     android:background="@drawable/rounded_layout_red">
     <View
         android:layout_width="match_parent"
@@ -11,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Nowa opinia"
-        android:textSize="20dp"
+        android:textSize="17dp"
         android:layout_margin="10dp"
         android:id="@+id/opinionText" />
     <View
@@ -33,10 +34,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
         android:text="Data"
         android:id="@+id/dateText" />
-    <LinearLayout
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
@@ -45,6 +47,7 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/plusText"
             android:id="@+id/plusButton" />
 
         <TextView
@@ -53,11 +56,14 @@
             android:text="Plusy"
             android:gravity="right"
             android:layout_margin="10dp"
-            android:id="@+id/plusText" />
+            android:id="@+id/plusText"
+            android:layout_toLeftOf="@+id/minusButton"
+            android:layout_marginLeft="0dp" />
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/minusText"
             android:id="@+id/minusButton" />
 
         <TextView
@@ -66,8 +72,9 @@
             android:layout_margin="10dp"
             android:text="Minusy"
             android:id="@+id/minusText"
-            android:gravity="right" />
+            android:layout_marginLeft="0dp"
+            android:layout_alignParentRight="true" />
 
-    </LinearLayout>
+    </RelativeLayout>
     </LinearLayout>
 </LinearLayout>
