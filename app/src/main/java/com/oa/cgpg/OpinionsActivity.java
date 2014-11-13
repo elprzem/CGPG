@@ -1,8 +1,9 @@
 package com.oa.cgpg;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.BaseAdapter;
@@ -12,23 +13,31 @@ import android.view.LayoutInflater;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.oa.cgpg.dataOperations.AsyncResponse;
+import com.oa.cgpg.dataOperations.XMLOpinionParsing;
+import com.oa.cgpg.dataOperations.dataBaseHelper;
+import com.oa.cgpg.models.opinionNetEntity;
+import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+
 import java.util.ArrayList;
+import java.util.List;
 
-public class OpinionsActivity extends Activity {
+public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implements AsyncResponse {
 
-    private ArrayList<String> comments;//komentarze pobrane z bazy mają również użytkownika, datę itd
-    private ArrayList<String> commentsOnScreen;
+    private ArrayList<opinionNetEntity> opinions;
+    private ArrayList<opinionNetEntity> opinionsPresented;
     private final int POSITIVE = 0;
     private final int NEGATIVE = 1;
     private final int ALL = 2;
-    public ExpandableListView listViewCommTypes;
-    public ListView listViewComm;
+    public ExpandableListView listViewOpinionTypes;
+    public ListView listViewOpinions;
     private int ParentClickStatus=-1;
     private int ChildClickStatus=-1;
-    private ArrayList<CommentTypes> commTypes;
+    private ArrayList<OpinionTypes> opinionTypes;
     private Button newOpinion;
 
     @Override
@@ -36,6 +45,10 @@ public class OpinionsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opinions);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        XMLOpinionParsing opinionParser = new XMLOpinionParsing(this,1,5);
+        opinionParser.delegate=this;
+        opinionParser.execute();
 
         Intent intent = getIntent();
         String title = intent.getStringExtra("poi");
@@ -49,75 +62,70 @@ public class OpinionsActivity extends Activity {
             }
         });
 
-        comments = new ArrayList<String>();
-        comments.add("1");
-        comments.add("2");
-        comments.add("3");
+        opinions = new ArrayList<opinionNetEntity>();
+        opinionsPresented = new ArrayList<opinionNetEntity>();
 
-        commentsOnScreen = new ArrayList<String>();
-        commentsOnScreen.addAll(comments);
+        listViewOpinions = (ListView) findViewById(R.id.commList);
+        loadOpinionsIntoAdapter();
 
-        listViewComm = (ListView) findViewById(R.id.commList);
-        loadHosts();
-
-        listViewCommTypes = (ExpandableListView) findViewById(R.id.typeListView);
+        listViewOpinionTypes = (ExpandableListView) findViewById(R.id.typeListView);
         // Set ExpandableListView values
-        listViewCommTypes.setGroupIndicator(null);
-        listViewCommTypes.setDividerHeight(1);
-        registerForContextMenu(listViewCommTypes);
+        listViewOpinionTypes.setGroupIndicator(null);
+        listViewOpinionTypes.setDividerHeight(1);
+        registerForContextMenu(listViewOpinionTypes);
 
         //collapse other expanded items
-        listViewCommTypes.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+        listViewOpinionTypes.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             int previousGroup = -1;
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                if(groupPosition != previousGroup)
-                    listViewCommTypes.collapseGroup(previousGroup);
+                if (groupPosition != previousGroup)
+                    listViewOpinionTypes.collapseGroup(previousGroup);
                 previousGroup = groupPosition;
             }
         });
 
-        listViewCommTypes.setOnChildClickListener(new ExpandableListView.OnChildClickListener(){
+        listViewOpinionTypes.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                ArrayList<String> selectedComments = new ArrayList<String>();
-                switch(childPosition){//selekcjonowanie komentarzy
+                ArrayList<opinionNetEntity> selectedComments = new ArrayList<opinionNetEntity>();
+                switch (childPosition) {//selekcjonowanie komentarzy
                     case POSITIVE:
-                        for(int i = 0; i < comments.size(); i++){
-                            if (comments.get(i).equals(new String("1"))){
-                                selectedComments.add(comments.get(i));
+                        for (int i = 0; i < opinions.size(); i++) {
+                            if (opinions.get(i).getOpinionType() == POSITIVE ) {
+                                selectedComments.add(opinions.get(i));
                             }
                         }
                         break;
                     case NEGATIVE:
-                        for(int i = 0; i < comments.size(); i++){
-                            if (comments.get(i).equals(new String("2"))){
-                                selectedComments.add(comments.get(i));
+                        for (int i = 0; i < opinions.size(); i++) {
+                            if (opinions.get(i).getOpinionType() == NEGATIVE) {
+                                selectedComments.add(opinions.get(i));
                             }
                         }
                         break;
                     case ALL:
-                        for(int i = 0; i < comments.size(); i++){
-                             selectedComments.add(comments.get(i));
+                        for (int i = 0; i < opinions.size(); i++) {
+                            selectedComments.add(opinions.get(i));
                         }
                         break;
                 }
-                commentsOnScreen.clear();
-                commentsOnScreen.addAll(selectedComments);
-                ((OpinionsAdapter)listViewComm.getAdapter()).notifyDataSetChanged();
-                String childTitle = commTypes.get(0).getTypes().get(childPosition).getDescription();
-                commTypes.get(0).setTitle(childTitle);
+                opinionsPresented.clear();
+                opinionsPresented.addAll(selectedComments);
+                ((OpinionsAdapter) listViewOpinions.getAdapter()).notifyDataSetChanged();
+                String childTitle = opinionTypes.get(0).getTypes().get(childPosition).getDescription();
+                opinionTypes.get(0).setTitle(childTitle);
 
-               listViewCommTypes.collapseGroup(0);
+                listViewOpinionTypes.collapseGroup(0);
                 return true;
             }
         });
         //Creating static data in arraylist
-        final ArrayList<CommentTypes> dummyList = buildDummyData();
+       final ArrayList<OpinionTypes> types = getOpinionTypes();
 
         // Adding ArrayList data to ExpandableListView values
-        loadHosts(dummyList);
+        loadOpinionTypesIntoAdapter(types);
     }
 
 
@@ -141,7 +149,19 @@ public class OpinionsActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+    @Override
+    public void processFinishOpinion(List<opinionNetEntity> list) {
+        for(opinionNetEntity op : list){
+            Log.i("opinia: ", op.toString());
+            opinions.add(op);
+            opinionsPresented.add(op);
+        }
+        ((OpinionsAdapter) listViewOpinions.getAdapter()).notifyDataSetChanged();
+    }
+    @Override
+    public void processFinish(String output) {
 
+    }
     class OpinionsAdapter extends BaseAdapter {
 
         private LayoutInflater inflater = null;
@@ -154,13 +174,13 @@ public class OpinionsActivity extends Activity {
         @Override
         public int getCount() {
             // TODO Auto-generated method stub
-            return commentsOnScreen.size();
+            return opinionsPresented.size();
         }
 
         @Override
         public Object getItem(int position) {
             // TODO Auto-generated method stub
-            return commentsOnScreen.get(position);
+            return opinionsPresented.get(position);
         }
 
         @Override
@@ -170,40 +190,65 @@ public class OpinionsActivity extends Activity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent) {//setting opinion values in row
             // TODO Auto-generated method stub
             View rowView = convertView;
             if (rowView == null)
                 rowView = inflater.inflate(R.layout.opinion_row, null);
             TextView opinion = (TextView) rowView.findViewById(R.id.opinionText);
-            opinion.setText(commentsOnScreen.get(position));
+            opinion.setText(opinionsPresented.get(position).getOpinionText());
+            TextView username = (TextView) rowView.findViewById(R.id.usernameText);
+            username.setText(opinionsPresented.get(position).getUsername());
+            TextView date = (TextView) rowView.findViewById(R.id.dateText);
+            DateFormat df = new android.text.format.DateFormat();
+            date.setText( df.format("dd/MM/yy", opinionsPresented.get(position).getAddDate()));
+            TextView pluses = (TextView) rowView.findViewById(R.id.plusText);
+            pluses.setText(String.valueOf(opinionsPresented.get(position).getRatingPlus()));
+            TextView minuses = (TextView) rowView.findViewById(R.id.minusText);
+            minuses.setText(String.valueOf(opinionsPresented.get(position).getRatingMinus()));
+            LinearLayout opinionLayout = (LinearLayout) rowView.findViewById(R.id.opinionLayout);
+
+            int sdk = android.os.Build.VERSION.SDK_INT;
+            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                if(opinionsPresented.get(position).getOpinionType() == POSITIVE){
+                    opinionLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.rounded_layout_green));
+                }else{
+                    opinionLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.rounded_layout_red));
+                }
+            } else {
+                if(opinionsPresented.get(position).getOpinionType() == POSITIVE){
+                    opinionLayout.setBackground(getResources().getDrawable(R.drawable.rounded_layout_green));
+                }else{
+                    opinionLayout.setBackground(getResources().getDrawable(R.drawable.rounded_layout_red));
+                }
+            }
             return rowView;
         }
     }
 
-    private ArrayList<CommentTypes> buildDummyData()
+    private ArrayList<OpinionTypes> getOpinionTypes()
     {
         // Creating ArrayList of type parent class to store parent class objects
-        final ArrayList<CommentTypes> list = new ArrayList<CommentTypes>();
-        CommentTypes typesList = new CommentTypes();
+        final ArrayList<OpinionTypes> list = new ArrayList<OpinionTypes>();
+        OpinionTypes typesList = new OpinionTypes();
         typesList.setTitle("Wszystkie");
-        typesList.setTypes(new ArrayList<CommentType>());
+        typesList.setTypes(new ArrayList<OpinionType>());
 
         // Create Child class object
-        final CommentType type1 = new CommentType();
+        final OpinionType type1 = new OpinionType();
         type1.setDescription("Pozytywne");
 
         //Add Child class object to parent class object
         typesList.getTypes().add(type1);
         // Create Child class object
-        final CommentType type2 = new CommentType();
+        final OpinionType type2 = new OpinionType();
         type2.setDescription("Negatywne");
 
         //Add Child class object to parent class object
         typesList.getTypes().add(type2);
 
         // Create Child class object
-        final CommentType type3 = new CommentType();
+        final OpinionType type3 = new OpinionType();
         type3.setDescription("Wszystkie");
 
         //Add Child class object to parent class object
@@ -214,41 +259,41 @@ public class OpinionsActivity extends Activity {
     }
 
 
-    private void loadHosts(final ArrayList<CommentTypes> newTypesList)
+    private void loadOpinionTypesIntoAdapter(final ArrayList<OpinionTypes> newTypesList)
     {
         if (newTypesList == null)
             return;
 
-        commTypes = newTypesList;
+        opinionTypes = newTypesList;
 
         // Check for ExpandableListAdapter object
-        if (listViewCommTypes.getExpandableListAdapter() == null)
+        if (listViewOpinionTypes.getExpandableListAdapter() == null)
         {
             //Create ExpandableListAdapter Object
             final MyExpandableListAdapter mAdapter = new MyExpandableListAdapter();
 
             // Set Adapter to ExpandableList Adapter
-            listViewCommTypes.setAdapter(mAdapter);
+            listViewOpinionTypes.setAdapter(mAdapter);
         }
         else
         {
             // Refresh ExpandableListView data
-            ((MyExpandableListAdapter)listViewCommTypes.getExpandableListAdapter()).notifyDataSetChanged();
+            ((MyExpandableListAdapter) listViewOpinionTypes.getExpandableListAdapter()).notifyDataSetChanged();
         }
     }
-    private void loadHosts(){
-        if (listViewComm.getAdapter() == null)
+    private void loadOpinionsIntoAdapter(){
+        if (listViewOpinions.getAdapter() == null)
         {
             //Create ExpandableListAdapter Object
             final OpinionsAdapter mAdapter = new OpinionsAdapter();
 
             // Set Adapter to ExpandableList Adapter
-            listViewComm.setAdapter(mAdapter);
+            listViewOpinions.setAdapter(mAdapter);
         }
         else
         {
             // Refresh ExpandableListView data
-            ((OpinionsAdapter)listViewComm.getAdapter()).notifyDataSetChanged();
+            ((OpinionsAdapter) listViewOpinions.getAdapter()).notifyDataSetChanged();
         }
     }
     /**
@@ -273,7 +318,7 @@ public class OpinionsActivity extends Activity {
         public View getGroupView(int groupPosition, boolean isExpanded,
                                  View convertView, ViewGroup parentView)
         {
-            final CommentTypes typesList = commTypes.get(groupPosition);
+            final OpinionTypes typesList = opinionTypes.get(groupPosition);
 
             // Inflate poi_grouprow.xml.xml file for parent rows
             convertView = inflater.inflate(R.layout.opinion_grouprow, parentView, false);
@@ -292,8 +337,8 @@ public class OpinionsActivity extends Activity {
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                                  View convertView, ViewGroup parentView)
         {
-            final CommentTypes typesList = commTypes.get(groupPosition);
-            final CommentType type = typesList.getTypes().get(childPosition);
+            final OpinionTypes typesList = opinionTypes.get(groupPosition);
+            final OpinionType type = typesList.getTypes().get(childPosition);
 
             // Inflate poi_childrowdrow.xml file for child rows
             convertView = inflater.inflate(R.layout.opinion_childrow, parentView, false);
@@ -309,7 +354,7 @@ public class OpinionsActivity extends Activity {
         public Object getChild(int groupPosition, int childPosition)
         {
             //Log.i("Childs", groupPosition+"=  getChild =="+childPosition);
-            return commTypes.get(groupPosition).getTypes().get(childPosition);
+            return opinionTypes.get(groupPosition).getTypes().get(childPosition);
         }
 
         //Call when child row clicked
@@ -339,13 +384,13 @@ public class OpinionsActivity extends Activity {
         {
             //Log.i("Parent", groupPosition+"=  getGroup ");
 
-            return commTypes.get(groupPosition);
+            return opinionTypes.get(groupPosition);
         }
 
         @Override
         public int getGroupCount()
         {
-            return commTypes.size();
+            return opinionTypes.size();
         }
 
         //Call when parent row clicked
@@ -375,7 +420,7 @@ public class OpinionsActivity extends Activity {
         @Override
         public boolean isEmpty()
         {
-            return ((commTypes == null) || commTypes.isEmpty());
+            return ((opinionTypes == null) || opinionTypes.isEmpty());
         }
 
         @Override
