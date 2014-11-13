@@ -3,7 +3,7 @@ package com.oa.cgpg;
 /**
  * Created by Izabela on 2014-11-07.
  */
-public class OpinionType {
+public class CommentType {
     private String description;
 
     public String getDescription(){return description;}

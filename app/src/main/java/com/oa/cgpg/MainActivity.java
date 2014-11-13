@@ -1,7 +1,6 @@
 package com.oa.cgpg;
 //Sobczak
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.Configuration;
@@ -23,7 +22,7 @@ import com.oa.cgpg.models.opinionNetEntity;
 
 import java.util.List;
 
-public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> {
+public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> implements AsyncResponse {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -54,6 +53,10 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> {
         XMLParsing xmlPars = new XMLParsing(this, x);
         xmlPars.delegate = this;
         xmlPars.execute();*/
+
+        XMLOpinionParsing opinionParser = new XMLOpinionParsing(this,1,5);
+        opinionParser.delegate=this;
+        opinionParser.execute();
 
         mTitle = mDrawerTitle = getTitle();
         mMenuTitles = getResources().getStringArray(R.array.menu_array);
@@ -142,12 +145,12 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> {
 //        Log.i("async response: ","xml has come! length="+output.length());
     }
 
-   /* @Override
+    @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
         for(opinionNetEntity op : list){
             System.out.println(op.toString());
         }
-    }*/
+    }
 
     /* The click listner for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
