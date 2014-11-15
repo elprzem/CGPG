@@ -1,7 +1,6 @@
 package com.oa.cgpg;
 //Sobczak
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.Configuration;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,10 +16,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
-import com.oa.cgpg.dataOperations.*;
-import com.oa.cgpg.models.opinionNetEntity;
-
-import java.util.List;
+import com.oa.cgpg.dataOperations.XMLParsing;
+import com.oa.cgpg.dataOperations.createTestEntities;
+import com.oa.cgpg.dataOperations.dataBaseHelper;
+import com.oa.cgpg.dataOperations.dbOps;
 
 public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> {
     private DrawerLayout mDrawerLayout;
@@ -164,6 +162,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> {
 
         if (position == MenuItems.MAP){
             Fragment fragment = new MapFragment();
+            ((MapFragment)fragment).setArguments(dbOps);
 
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();

@@ -22,6 +22,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ZoomControls;
 
+import com.oa.cgpg.dataOperations.dbOps;
+import com.oa.cgpg.models.buildingEntity;
+
+import java.util.List;
+
 /** Fragment containing map
  *
  */
@@ -43,6 +48,14 @@ public class MapFragment extends Fragment {
     private PointF mid;
     private int mode;
     private final Float ZOOM_FACTOR = 1.2f;
+    private dbOps database;
+
+    public void setArguments(dbOps database){
+        this.database = database;
+        List<buildingEntity> list = database.getBuildings();
+        Log.d("test", String.valueOf(list.size()));
+        Log.d("test", list.get(0).getDescription());
+    }
 
     public MapFragment() {
         // Required empty public constructor
