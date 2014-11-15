@@ -1,36 +1,32 @@
 package com.oa.cgpg;
 
-import android.app.ActionBar;
-import android.app.FragmentManager;
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.text.Layout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.InputStream;
-
-import android.widget.BaseExpandableListAdapter;
-
 import com.oa.cgpg.dataOperations.dbOps;
 import com.oa.cgpg.models.poiEntity;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -46,6 +42,9 @@ import com.oa.cgpg.models.poiEntity;
  * Fragment that appears in the "content_frame", shows a planet
  */
 public class POIFragment extends Fragment {
+
+    private OnPOIFragmentListener listener;
+
     public static String ARG_POI_NUMBER;
     public ExpandableListView listView;
     private int typePOI;
@@ -63,6 +62,17 @@ public class POIFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            listener = (OnPOIFragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnPOIFragmentListener");
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_poi, container, false);
@@ -75,12 +85,14 @@ public class POIFragment extends Fragment {
         seeOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = new MapFragment();
+                listener.startMapFragment(typePOI);
+                //TODO to remove, now it is moved to MainActivity
+/*                Fragment fragment = new MapFragment();
                 Bundle args = new Bundle();
                 args.putInt("type", typePOI);
-                fragment.setArguments(args);
+                fragment.setDatabaseRef(args);
                 FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();*/
             }
         });
         listView = (ExpandableListView) rootView.findViewById(R.id.expandableListView);
@@ -366,4 +378,15 @@ public class POIFragment extends Fragment {
             return true;
         }
     }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
+    public interface OnPOIFragmentListener{
+        void startMapFragment(Integer typePOI);
+    }
+
 }
