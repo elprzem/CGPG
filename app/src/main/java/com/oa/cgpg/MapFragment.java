@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ZoomControls;
 
+import com.oa.cgpg.customControls.PlaceDialog;
 import com.oa.cgpg.dataOperations.dbOps;
 import com.oa.cgpg.models.buildingEntity;
 
@@ -34,6 +35,7 @@ public class MapFragment extends Fragment {
 
     private static final int ZOOM = 1;
     private static final int DRAG = 2;
+    private static final String TEST_TAG = "testTag";
     private ImageView mapImageView;
     private Point fragmentSize;
     private Point offset;
@@ -271,7 +273,8 @@ public class MapFragment extends Fragment {
         if(placeId == null)
             return;
 
-//        PlaceDialog placeDialog = new
+        Log.d(TEST_TAG, placeId.toString());
+        PlaceDialog placeDialog = new PlaceDialog(getActivity());
     }
 
     //TODO: I need data from database. Return type will be something like Place
@@ -282,20 +285,20 @@ public class MapFragment extends Fragment {
     //  |4       3|
     /// ----------
     private Integer whatIsHere(int x, int y) {
-        /*
-        for(Place place : places){
-            if(x > place.getCoordinates().getFirstPoint().getX() &&
-                    y < place.getCoordinates().getFirstPoint().getY() &&
-                    x < place.getCoordinates().getSecondPoint().getX() &&
-                    y < place.getCoordinates().getSecondPoint().getY() &&
-                    x < place.getCoordinates().getThirdPoint().getX() &&
-                    y > place.getCoordinates().getThirdPoint().getY() &&
-                    x > place.getCoordinates().getFourthPoint().getX() &&
-                    y > place.getCoordinates().getFourthPoint().getY()){
-                return place.getId();
+        for(buildingEntity building : database.getBuildings()){
+            Log.d(TEST_TAG, building.toString());
+            if(x > building.getX1() &&
+                    y < building.getY1() &&
+                    x < building.getX2() &&
+                    y < building.getY2() &&
+                    x < building.getX3() &&
+                    y > building.getY3() &&
+                    x > building.getX4() &&
+                    y > building.getY4()){
+                return building.getIdBuilding();
             }
         }
-        */
+
         return null;
     }
 
