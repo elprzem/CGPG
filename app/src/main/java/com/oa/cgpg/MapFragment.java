@@ -1,5 +1,7 @@
 package com.oa.cgpg;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -19,16 +21,26 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.ZoomControls;
+
+import com.oa.cgpg.dataOperations.dbOps;
+import com.oa.cgpg.models.buildingEntity;
+
+import java.util.List;
 
 /** Fragment containing map
  *
  */
 public class MapFragment extends Fragment {
 
+    private OnMapFragmentListener listener;
+
     private static final int ZOOM = 1;
     private static final int DRAG = 2;
+    private static final String TEST_TAG = "testTag";
     private ImageView mapImageView;
     private Point fragmentSize;
     private Point offset;
@@ -43,6 +55,14 @@ public class MapFragment extends Fragment {
     private PointF mid;
     private int mode;
     private final Float ZOOM_FACTOR = 1.2f;
+    private dbOps database;
+
+    public void setDatabaseRef(dbOps database){
+        this.database = database;
+        List<buildingEntity> list = database.getBuildings();
+        Log.d("test", String.valueOf(list.size()));
+        Log.d("test", list.get(0).getDescription());
+    }
 
     public MapFragment() {
         // Required empty public constructor
@@ -61,6 +81,18 @@ public class MapFragment extends Fragment {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inMutable = true;
         sourceMapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.temp_pg_map, options);
+    }
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            listener = (OnMapFragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnMapFragmentListener");
+        }
     }
 
     @Override
@@ -252,16 +284,43 @@ public class MapFragment extends Fragment {
     }
 
     private void onClick(int x, int y) {
-        Log.i("onClick", "x: " + x + " ,y: " + y);
-        Integer placeId = whatIsHere(x, y);
+        if(database != null){
+            Log.i("onClick", "x: " + x + " ,y: " + y);
+            Integer placeId = whatIsHere(x, y);
 
-        if(placeId == null)
-            return;
+            //TODO only temporary line below
+            placeId = 0;
 
-//        PlaceDialog placeDialog = new
+            if(placeId == null)
+                return;
+
+            Log.d(TEST_TAG, placeId.toString());
+            //TODO later it will be:
+            //buildingEntity building = database.getBuilding(placeId);
+            buildingEntity building = database.getBuildings().get(placeId);
+            String buildingName = building.getName();
+            String buildingDescription = building.getDescription();
+    //        final PlaceDialog placeDialog = new PlaceDialog(getActivity(), buildingName, buildingDescription);
+            final Dialog placeDialog = new Dialog(getActivity());
+            placeDialog.setTitle(buildingName);
+            placeDialog.setContentView(R.layout.place_dialog);
+            ((TextView) placeDialog.findViewById(R.id.txt_title)).setVisibility(View.INVISIBLE);
+            ((TextView) placeDialog.findViewById(R.id.txtDescription)).setText(buildingDescription);
+            final Integer finalPlaceId = placeId;
+            final Button showListButton = (Button) placeDialog.findViewById(R.id.btn_show_list);
+            showListButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    placeDialog.hide();
+                    placeDialog.dismiss();
+                    listener.startPOIFragment(finalPlaceId);
+                }
+            });
+            placeDialog.show();
+
+        }
     }
 
-    //TODO: I need data from database. Return type will be something like Place
     /// shape:
     //  __________
     //  |1       2|
@@ -269,20 +328,22 @@ public class MapFragment extends Fragment {
     //  |4       3|
     /// ----------
     private Integer whatIsHere(int x, int y) {
-        /*
-        for(Place place : places){
-            if(x > place.getCoordinates().getFirstPoint().getX() &&
-                    y < place.getCoordinates().getFirstPoint().getY() &&
-                    x < place.getCoordinates().getSecondPoint().getX() &&
-                    y < place.getCoordinates().getSecondPoint().getY() &&
-                    x < place.getCoordinates().getThirdPoint().getX() &&
-                    y > place.getCoordinates().getThirdPoint().getY() &&
-                    x > place.getCoordinates().getFourthPoint().getX() &&
-                    y > place.getCoordinates().getFourthPoint().getY()){
-                return place.getId();
+        if(database != null){
+            for(buildingEntity building : database.getBuildings()){
+                Log.d(TEST_TAG, building.toString());
+                if(x > building.getX1() &&
+                        y < building.getY1() &&
+                        x < building.getX2() &&
+                        y < building.getY2() &&
+                        x < building.getX3() &&
+                        y > building.getY3() &&
+                        x > building.getX4() &&
+                        y > building.getY4()){
+                    return building.getIdBuilding();
+                }
             }
         }
-        */
+
         return null;
     }
 
@@ -348,6 +409,16 @@ public class MapFragment extends Fragment {
         );
         Log.d("redrawVisibleBitmap", "scale: " + scale);
         mapImageView.setImageBitmap(visibleBitmap);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
+    public interface OnMapFragmentListener{
+        void startPOIFragment(Integer buildingId);
     }
 
 }

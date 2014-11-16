@@ -1,7 +1,6 @@
 package com.oa.cgpg;
 //Sobczak
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.Configuration;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,12 +16,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
-import com.oa.cgpg.dataOperations.*;
-import com.oa.cgpg.models.opinionNetEntity;
+import com.oa.cgpg.dataOperations.XMLParsing;
+import com.oa.cgpg.dataOperations.createTestEntities;
+import com.oa.cgpg.dataOperations.dataBaseHelper;
+import com.oa.cgpg.dataOperations.dbOps;
 
-import java.util.List;
-
-public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> {
+public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
+    implements MapFragment.OnMapFragmentListener,
+                POIFragment.OnPOIFragmentListener{
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -142,6 +142,32 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> {
 //        Log.i("async response: ","xml has come! length="+output.length());
     }
 
+    @Override
+    public void startPOIFragment(Integer buildingId) {
+        Fragment fragment = new POIFragment();
+        ((POIFragment)fragment).setDbOps(dbOps);
+        Bundle args = new Bundle();
+
+        //TODO Gdzie przekazać buildingId?
+        //TODO Jak wołać ten fragemnt? Bez, czy z setDatabaseRef?
+        args.putInt(POIFragment.ARG_POI_NUMBER, 0);
+        fragment.setArguments(args);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+    }
+
+    @Override
+    public void startMapFragment(Integer typePOI) {
+        Fragment fragment = new MapFragment();
+        Bundle args = new Bundle();
+        args.putInt("type", typePOI);
+        fragment.setArguments(args);
+        ((MapFragment)fragment).setDatabaseRef(dbOps);
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
+    }
+
    /* @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
         for(opinionNetEntity op : list){
@@ -164,6 +190,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper> {
 
         if (position == MenuItems.MAP){
             Fragment fragment = new MapFragment();
+            ((MapFragment)fragment).setDatabaseRef(dbOps);
 
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();

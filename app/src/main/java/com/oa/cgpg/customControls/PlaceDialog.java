@@ -3,25 +3,28 @@ package com.oa.cgpg.customControls;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.oa.cgpg.R;
 
 /**
  * Created by NieJa on 11/7/2014.
  */
-public class PlaceDialog extends Dialog implements
-        android.view.View.OnClickListener {
+public class PlaceDialog extends Dialog{//} implements
+       // android.view.View.OnClickListener {
 
     public Activity c;
     public Dialog d;
-    public Button yes, no;
+    public Button showListButton;
+    public String title;
+    public String description;
 
-    public PlaceDialog(Activity a) {
+    public PlaceDialog(Activity a, String title, String description) {
         super(a);
-        // TODO Auto-generated constructor stub
+        this.title = title;
+        this.description = description;
         this.c = a;
     }
 
@@ -30,25 +33,21 @@ public class PlaceDialog extends Dialog implements
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.place_dialog);
-        yes = (Button) findViewById(R.id.btn_yes);
-        no = (Button) findViewById(R.id.btn_no);
-        yes.setOnClickListener(this);
-        no.setOnClickListener(this);
-
+        showListButton = (Button) findViewById(R.id.btn_show_list);
+        ((TextView)findViewById(R.id.txt_title)).setText(title);
+        ((TextView)findViewById(R.id.txtDescription)).setText(description);
     }
 
-    @Override
+/*    @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_yes:
-                c.finish();
-                break;
-            case R.id.btn_no:
-                dismiss();
+            case R.id.btn_show_list:
+
+                this.dismiss();
                 break;
             default:
                 break;
         }
         dismiss();
-    }
+    }*/
 }
