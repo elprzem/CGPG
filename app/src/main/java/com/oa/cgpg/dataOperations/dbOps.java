@@ -1,8 +1,10 @@
 package com.oa.cgpg.dataOperations;
 
+import android.util.Log;
 import com.j256.ormlite.android.apptools.OrmLiteBaseListActivity;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.oa.cgpg.models.buildingEntity;
 import com.oa.cgpg.models.poiEntity;
 import com.oa.cgpg.models.typeEntity;
@@ -10,8 +12,6 @@ import com.oa.cgpg.models.typeEntity;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import android.util.Log;
 
 /**
  * Created by Tomasz on 2014-11-05.
@@ -96,6 +96,20 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
 
         }
         return new ArrayList<poiEntity>();
+    }
+
+    public buildingEntity getBuildingById(int id){
+        buildingEntity build = null;
+            try { QueryBuilder<buildingEntity,Integer> getById = buildingDAO.queryBuilder();
+
+            getById.where().eq("idBuilding",id);
+            List<buildingEntity> list = getById.query();
+            build = list.get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return build;
     }
 
     public void clearData() {
