@@ -109,4 +109,18 @@ public class poiEntity {
     public void setLinkToImage(String linkToImage) {
         this.linkToImage = linkToImage;
     }
+
+    @Override
+    public String toString () {
+        return "poiEntity{" +
+                       "idPoi=" + idPoi +
+                       ", name='" + name + '\'' +
+                       ", building=" + building +
+                       ", description='" + description + '\'' +
+                       ", type=" + type +
+                       ", ratingPlus=" + ratingPlus +
+                       ", ratingMinus=" + ratingMinus +
+                       ", linkToImage='" + linkToImage + '\'' +
+                       '}';
+    }
 }

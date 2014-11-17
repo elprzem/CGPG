@@ -21,4 +21,11 @@ public class versionEntity {
     public void setVersionNumber(int versionNumber) {
         this.versionNumber = versionNumber;
     }
+
+    @Override
+    public String toString () {
+        return "versionEntity{" +
+                       "versionNumber=" + versionNumber +
+                       '}';
+    }
 }

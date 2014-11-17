@@ -46,4 +46,13 @@ public class typeEntity {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString () {
+        return "typeEntity{" +
+                       "idType=" + idType +
+                       ", name='" + name + '\'' +
+                       ", pois=" + pois +
+                       '}';
+    }
 }
