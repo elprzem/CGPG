@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -135,7 +136,6 @@ public class MapFragment extends Fragment {
                 checkAndRedrawVisibleBitmap(newOffset);
             }
         });
-
         return view;
     }
 
@@ -221,6 +221,7 @@ public class MapFragment extends Fragment {
          *              the event.
          * @return True if the listener has consumed the event, false otherwise.
          */
+
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()){
@@ -296,7 +297,7 @@ public class MapFragment extends Fragment {
 
             Log.d(TEST_TAG, placeId.toString());
             //TODO later it will be:
-            //buildingEntity building = database.getBuilding(placeId);
+//           buildingEntity building = database.getBuildingById(placeId);
             buildingEntity building = database.getBuildings().get(placeId);
             String buildingName = building.getName();
             String buildingDescription = building.getDescription();
@@ -311,6 +312,7 @@ public class MapFragment extends Fragment {
             showListButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.i("finalPlaceId", String.valueOf(finalPlaceId));
                     placeDialog.hide();
                     placeDialog.dismiss();
                     listener.startPOIFragment(finalPlaceId);

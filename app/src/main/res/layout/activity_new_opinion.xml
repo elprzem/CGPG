@@ -66,10 +66,12 @@
         android:background="@color/light_gray"
         />
     <EditText
+        android:id="@+id/newOpinionText"
+        android:imeOptions="actionDone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:minLines="4"
+        android:inputType="textImeMultiLine"
+        android:minLines="3"
         android:layout_margin="20dp"
         android:background="@color/white"
         android:enabled="true"
@@ -80,6 +82,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bottom_button"
         android:text="Dodaj"
+        android:enabled="false"
         android:layout_alignParentBottom="true"
         android:id="@+id/addOpinion"
         android:textColor="@color/white"/>

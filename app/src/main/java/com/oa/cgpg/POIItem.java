@@ -6,6 +6,7 @@ package com.oa.cgpg;
 import java.util.ArrayList;
 public class POIItem {
     private String title;
+    private int id;
     private boolean checked;
     private ArrayList<POIDetails> details;
 
@@ -21,6 +22,8 @@ public class POIItem {
     public void setChecked(boolean checked){
         this.checked = checked;
     }
+    public void setId(int id){this.id = id;}
+    public int getId(){ return id;}
     public ArrayList<POIDetails> getDetails(){return details;}
     public void setDetails(ArrayList<POIDetails> details){
         this.details = details;

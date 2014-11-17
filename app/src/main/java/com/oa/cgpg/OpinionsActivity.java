@@ -39,6 +39,7 @@ public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implem
     private int ChildClickStatus=-1;
     private ArrayList<OpinionTypes> opinionTypes;
     private Button newOpinion;
+    private int poiId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +53,14 @@ public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implem
 
         Intent intent = getIntent();
         String title = intent.getStringExtra("poi");
+        poiId = intent.getIntExtra("poiNr", 0);
         setTitle(title);
         newOpinion = (Button) findViewById(R.id.newOpinion);
         newOpinion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), NewOpinionActivity.class);
+                intent.putExtra("poiNr",poiId);
                 startActivity(intent);
             }
         });
