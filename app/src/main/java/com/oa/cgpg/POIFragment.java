@@ -168,6 +168,7 @@ public class POIFragment extends Fragment {
             if(poi.getType().getIdType() == typePOI) {
                 // Set values in parent class object
                 poiItem.setTitle(poi.getName());
+                poiItem.setId(poi.getIdPoi());
                 poiItem.setDetails(new ArrayList<POIDetails>());
                 // Create Child class object
                 final POIDetails details = new POIDetails();
@@ -281,6 +282,7 @@ public class POIFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), OpinionsActivity.class);
                     intent.putExtra("poi", poiItems.get(groupPosition).getTitle());
+                    intent.putExtra("poiNr", poiItems.get(groupPosition).getId());
                     startActivity(intent);
                 }
             });
