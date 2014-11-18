@@ -149,6 +149,10 @@ public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implem
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.action_update:
+                // TODO aktualizacja bazy
+
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
