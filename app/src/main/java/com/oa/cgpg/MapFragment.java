@@ -57,6 +57,7 @@ public class MapFragment extends Fragment {
     private int mode;
     private final Float ZOOM_FACTOR = 1.2f;
     private dbOps database;
+    private Dialog placeDialog;
 
     public void setDatabaseRef(dbOps database){
         this.database = database;
@@ -136,6 +137,7 @@ public class MapFragment extends Fragment {
                 checkAndRedrawVisibleBitmap(newOffset);
             }
         });
+        placeDialog = new Dialog(getActivity());
         return view;
     }
 
@@ -285,7 +287,7 @@ public class MapFragment extends Fragment {
     }
 
     private void onClick(int x, int y) {
-        if(database != null){
+        if(database != null && !placeDialog.isShowing()){
             Log.i("onClick", "x: " + x + " ,y: " + y);
             Integer placeId = whatIsHere(x, y);
 
@@ -297,12 +299,11 @@ public class MapFragment extends Fragment {
 
             Log.d(TEST_TAG, placeId.toString());
             //TODO later it will be:
-//           buildingEntity building = database.getBuildingById(placeId);
+         //  buildingEntity building = database.getBuildingById(placeId);
             buildingEntity building = database.getBuildings().get(placeId);
             String buildingName = building.getName();
             String buildingDescription = building.getDescription();
     //        final PlaceDialog placeDialog = new PlaceDialog(getActivity(), buildingName, buildingDescription);
-            final Dialog placeDialog = new Dialog(getActivity());
             placeDialog.setTitle(buildingName);
             placeDialog.setContentView(R.layout.place_dialog);
             ((TextView) placeDialog.findViewById(R.id.txt_title)).setVisibility(View.INVISIBLE);
@@ -313,7 +314,7 @@ public class MapFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Log.i("finalPlaceId", String.valueOf(finalPlaceId));
-                    placeDialog.hide();
+                   // placeDialog.hide();
                     placeDialog.dismiss();
                     listener.startPOIFragment(finalPlaceId);
                 }

@@ -44,10 +44,9 @@ import java.util.List;
 public class POIFragment extends Fragment {
 
     private OnPOIFragmentListener listener;
-
-    public static String ARG_POI_NUMBER;
     public ExpandableListView listView;
     private int typePOI;
+    private int buildingId;
     private int ParentClickStatus=-1;
     private int ChildClickStatus=-1;
     private ArrayList<POIItem> poiItems;
@@ -76,25 +75,6 @@ public class POIFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_poi, container, false);
-        typePOI = getArguments().getInt(ARG_POI_NUMBER);
-        String title = getResources().getStringArray(R.array.menu_array)[typePOI];
-
-        getActivity().setTitle(title);
-
-        seeOnMap = (Button) rootView.findViewById(R.id.seeOnMapButton);
-        seeOnMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.startMapFragment(typePOI);
-                //TODO to remove, now it is moved to MainActivity
-/*                Fragment fragment = new MapFragment();
-                Bundle args = new Bundle();
-                args.putInt("type", typePOI);
-                fragment.setDatabaseRef(args);
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();*/
-            }
-        });
         listView = (ExpandableListView) rootView.findViewById(R.id.expandableListView);
         // Set ExpandableListView values
 
@@ -102,24 +82,43 @@ public class POIFragment extends Fragment {
         listView.setDividerHeight(1);
         registerForContextMenu(listView);
 
+        if(getArguments().containsKey("poiTypeId")) {
+            typePOI = getArguments().getInt("poiTypeId");
+            Log.i("type", String.valueOf(typePOI));
+            String title = getResources().getStringArray(R.array.menu_array)[typePOI];
+            getActivity().setTitle(title);
+
+        }else if(getArguments().containsKey("buildingId") ){
+            buildingId = getArguments().getInt("buildingId");
+            Log.i("building", String.valueOf(buildingId));
+            String title = dbOps.getBuildingById(buildingId).getName();
+            getActivity().setTitle(title);
+        }
+
+        seeOnMap = (Button) rootView.findViewById(R.id.seeOnMapButton);
+        seeOnMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: przekazać do MApFragment id budynków do wyświetlenia
+                listener.startMapFragment(typePOI);
+            }
+        });
         //collapse other expanded items
         listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             int previousGroup = -1;
 
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                if (groupPosition != previousGroup)
-                    listView.collapseGroup(previousGroup);
-                previousGroup = groupPosition;
-            }
-        });
-
+                @Override
+                public void onGroupExpand(int groupPosition) {
+                    if (groupPosition != previousGroup)
+                        listView.collapseGroup(previousGroup);
+                    previousGroup = groupPosition;
+                }
+            });
         //Creating static data in arraylist
-        final ArrayList<POIItem> dataFromDB = getDataFromDB();
+        final ArrayList<POIItem> dataFromDB = getDataFromDB(getArguments().containsKey("poiTypeId")? true : false);
 
         // Adding ArrayList data to ExpandableListView values
         loadDataIntoAdapter(dataFromDB);
-
         return rootView;
     }
     @Override
@@ -156,7 +155,7 @@ public class POIFragment extends Fragment {
         }
         return result;
     }
-    private ArrayList<POIItem> getDataFromDB()
+    private ArrayList<POIItem> getDataFromDB(boolean poiType)
     {
         // Creating ArrayList of type parent class to store parent class objects
         final ArrayList<POIItem> list = new ArrayList<POIItem>();
@@ -165,7 +164,7 @@ public class POIFragment extends Fragment {
         {
             //Create parent class object
             final POIItem poiItem = new POIItem();
-            if(poi.getType().getIdType() == typePOI) {
+            if(poi.getType().getIdType() == typePOI && poiType) {//wczytanie poi należących do danego typu
                 // Set values in parent class object
                 poiItem.setTitle(poi.getName());
                 poiItem.setId(poi.getIdPoi());
@@ -181,7 +180,23 @@ public class POIFragment extends Fragment {
                 poiItem.getDetails().add(details);
                 //Adding Parent class object to ArrayList
                 list.add(poiItem);
-            }
+            }else if(poi.getBuilding().getIdBuilding() == buildingId && !poiType) {//wczytanie poi znajdujacych sie w danym budynku
+            // Set values in parent class object
+            poiItem.setTitle(poi.getName());
+            poiItem.setId(poi.getIdPoi());
+            poiItem.setDetails(new ArrayList<POIDetails>());
+            // Create Child class object
+            final POIDetails details = new POIDetails();
+            details.setDescription(poi.getDescription());
+            details.setImagePath(poi.getLinkToImage());
+            details.setPlusesCount(poi.getRatingPlus());
+            details.setMinusesCount(poi.getRatingMinus());
+
+            //Add Child class object to parent class object
+            poiItem.getDetails().add(details);
+            //Adding Parent class object to ArrayList
+            list.add(poiItem);
+        }
         }
         return list;
     }

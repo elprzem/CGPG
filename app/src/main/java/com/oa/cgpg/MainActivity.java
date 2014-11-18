@@ -151,7 +151,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
 
         //TODO Gdzie przekazać buildingId?
         //TODO Jak wołać ten fragemnt? Bez, czy z setDatabaseRef?
-        args.putInt(POIFragment.ARG_POI_NUMBER, 0);
+        args.putInt("buildingId", 1);
         fragment.setArguments(args);
 
         FragmentManager fragmentManager = getFragmentManager();
@@ -200,7 +200,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             Fragment fragment = new POIFragment();
             ((POIFragment)fragment).setDbOps(dbOps);
             Bundle args = new Bundle();
-            args.putInt(POIFragment.ARG_POI_NUMBER, position);
+            args.putInt("poiTypeId", position);
             fragment.setArguments(args);
 
             FragmentManager fragmentManager = getFragmentManager();
