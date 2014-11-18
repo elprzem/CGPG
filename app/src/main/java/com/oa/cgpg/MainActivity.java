@@ -8,19 +8,19 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
-import com.oa.cgpg.dataOperations.XMLParsing;
-import com.oa.cgpg.dataOperations.createTestEntities;
-import com.oa.cgpg.dataOperations.dataBaseHelper;
-import com.oa.cgpg.dataOperations.dbOps;
+import com.oa.cgpg.dataOperations.*;
+import com.oa.cgpg.models.opinionNetEntity;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     implements MapFragment.OnMapFragmentListener,
@@ -50,6 +50,17 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         testEntities = new createTestEntities(dbOps);
         testEntities.generateTemplateEntities();
 
+        List<opinionNetEntity> list = new ArrayList<opinionNetEntity>();
+        list.add(new opinionNetEntity(1,"dsa","dsadsa",1,1,3,4,5,new Date(312312)));
+        list.add(new opinionNetEntity(23,"dsa","dsadsa",1,1,3,4,5,new Date(312312)));
+
+        XMLOpinionSendParsing XOS = new XMLOpinionSendParsing(this,list);
+        try {
+            XOS.listToXmlString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(XOS.getXML());
         
        /* String x = null;
         XMLParsing xmlPars = new XMLParsing(this, x);

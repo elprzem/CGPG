@@ -18,7 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.oa.cgpg.dataOperations.AsyncResponse;
-import com.oa.cgpg.dataOperations.XMLOpinionParsing;
+import com.oa.cgpg.dataOperations.XMLOpinionGetParsing;
 import com.oa.cgpg.dataOperations.dataBaseHelper;
 import com.oa.cgpg.models.opinionNetEntity;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
@@ -47,7 +47,7 @@ public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implem
         setContentView(R.layout.activity_opinions);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        XMLOpinionParsing opinionParser = new XMLOpinionParsing(this,1,5);
+        XMLOpinionGetParsing opinionParser = new XMLOpinionGetParsing(this,1,5);
         opinionParser.delegate=this;
         opinionParser.execute();
 

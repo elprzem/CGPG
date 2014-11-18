@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Created by Tomasz on 2014-11-07.
  */
-public class XMLOpinionParsing extends AsyncTask<Void, Void, Void> {
+public class XMLOpinionGetParsing extends AsyncTask<Void, Void, Void> {
     private static final String HTTP_URL = "http://cgpg.zz.mu/webservice1.php?";
     private static final String ns = null;
     private String xml;
@@ -38,7 +38,7 @@ public class XMLOpinionParsing extends AsyncTask<Void, Void, Void> {
     private int poiId;
     public AsyncResponse delegate = null;
 
-    public XMLOpinionParsing (Context c, int userid, int poiid) {
+    public XMLOpinionGetParsing (Context c, int userid, int poiid) {
         this.context = c;
         this.userId = userid;
         this.poiId = poiid;
