@@ -25,7 +25,7 @@ import java.util.List;
 
 public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     implements MapFragment.OnMapFragmentListener,
-                POIFragment.OnPOIFragmentListener{
+                POIFragment.OnPOIFragmentListener, OpinionsFragment.OnOpinionsFragmentListener{
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -166,6 +166,16 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         args.putInt("type", typePOI);
         fragment.setArguments(args);
         ((MapFragment)fragment).setDatabaseRef(dbOps);
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
+    }
+    @Override
+    public void startOpinionsFragment(Integer idPOI, String titlePOI){
+        Fragment fragment = new OpinionsFragment();
+        Bundle args = new Bundle();
+        args.putInt("poiNr", idPOI);
+        args.putString("poi", titlePOI);
+        fragment.setArguments(args);
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
     }
