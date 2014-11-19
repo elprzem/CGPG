@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,13 +56,9 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         list.add(new opinionNetEntity(23,"dsa","dsadsa",1,1,3,4,5,new Date(312312)));
 
         XMLOpinionSendParsing XOS = new XMLOpinionSendParsing(this,list);
-        try {
-            XOS.listToXmlString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(XOS.getXML());
-        
+        Log.i("dsasd", "sending xml");
+        XOS.execute();
+
        /* String x = null;
         XMLParsing xmlPars = new XMLParsing(this, x);
         xmlPars.delegate = this;

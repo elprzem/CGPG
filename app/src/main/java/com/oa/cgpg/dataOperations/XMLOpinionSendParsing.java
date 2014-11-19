@@ -3,9 +3,13 @@ package com.oa.cgpg.dataOperations;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.Xml;
 import com.oa.cgpg.LoggedUserInfo;
 import com.oa.cgpg.models.opinionNetEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.StringWriter;
@@ -41,10 +45,29 @@ public class XMLOpinionSendParsing extends AsyncTask<Void,Void,Void> {
 
     @Override
     protected Void doInBackground (Void... voids) {
+        try {
+        listToXmlString();
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+        HttpPost httpPost = new HttpPost("http://cgpg.zz.mu/webservice2.php");
+        httpPost.addHeader("Content-Type", "application/xml");
+        Log.i(getClass().getName(), "create connection");
+        StringEntity entity = null;
+        entity = new StringEntity(xml, "UTF-8");
+        Log.i(getClass().getName(), "xml length "+xml.length());
+        entity.setContentType("application/xml");
+        Log.i(getClass().getName(), "setEntityContent");
+        httpPost.setEntity(entity);
+        httpclient.execute(httpPost);
+
+        Log.i("SEND ENTITY", httpPost.getMethod());
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Error");
+            e.printStackTrace();
+        }
         return null;
     }
 
-    public void listToXmlString() throws Exception {
+    private void listToXmlString() throws Exception {
         XmlSerializer xmlSerializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
         LoggedUserInfo LUI = LoggedUserInfo.getInstance();
