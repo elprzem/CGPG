@@ -13,6 +13,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -71,6 +73,7 @@ public class XMLOpinionSendParsing extends AsyncTask<Void,Void,Void> {
         XmlSerializer xmlSerializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
         LoggedUserInfo LUI = LoggedUserInfo.getInstance();
+        LUI.setUserId(1);
         xmlSerializer.setOutput(writer);
         xmlSerializer.startDocument("UTF-8", true);
         xmlSerializer.startTag("","Opinions");
@@ -92,11 +95,11 @@ public class XMLOpinionSendParsing extends AsyncTask<Void,Void,Void> {
             xmlSerializer.startTag("","opinionType");
             xmlSerializer.text(op.getOpinionType()+"");
             xmlSerializer.endTag("","opinionType");
-
+/*
             xmlSerializer.startTag("","date");
-            xmlSerializer.text(op.getAddDate()+"");
+            xmlSerializer.text(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(op.getAddDate()));
             xmlSerializer.endTag("","date");
-
+*/
             xmlSerializer.endTag("","Opinion");
         }
         xmlSerializer.endTag("","Opinions");

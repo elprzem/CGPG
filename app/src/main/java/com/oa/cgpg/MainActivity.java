@@ -52,8 +52,8 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         testEntities.generateTemplateEntities();
 
         List<opinionNetEntity> list = new ArrayList<opinionNetEntity>();
-        list.add(new opinionNetEntity(1,"dsa","dsadsa",1,1,3,4,5,new Date(312312)));
-        list.add(new opinionNetEntity(23,"dsa","dsadsa",1,1,3,4,5,new Date(312312)));
+        list.add(new opinionNetEntity(1,"dsa","dsadsa",5,5,3,4,5,new Date(312312)));
+        list.add(new opinionNetEntity(23,"dsa","dsadsa",5,5,3,4,5,new Date(312312)));
 
         XMLOpinionSendParsing XOS = new XMLOpinionSendParsing(this,list);
         Log.i("dsasd", "sending xml");
