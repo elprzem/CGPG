@@ -1,15 +1,16 @@
 package com.oa.cgpg;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.BaseAdapter;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.LayoutInflater;
+import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
@@ -19,15 +20,13 @@ import android.widget.TextView;
 
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLOpinionGetParsing;
-import com.oa.cgpg.dataOperations.dataBaseHelper;
+import com.oa.cgpg.dataOperations.dbOps;
 import com.oa.cgpg.models.opinionNetEntity;
-import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implements AsyncResponse {
-
+public class OpinionsFragment extends Fragment implements AsyncResponse {
     private ArrayList<opinionNetEntity> opinions;
     private ArrayList<opinionNetEntity> opinionsPresented;
     private final int POSITIVE = 0;
@@ -41,25 +40,40 @@ public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implem
     private Button newOpinion;
     private int poiId;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_opinions);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        XMLOpinionGetParsing opinionParser = new XMLOpinionGetParsing(this,1,5);
+    private OnOpinionsFragmentListener mListener;
+
+    public OpinionsFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_opinions, container, false);
+     //   setContentView(R.layout.activity_opinions);
+     //   getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        XMLOpinionGetParsing opinionParser = new XMLOpinionGetParsing(getActivity(),1,5);
         opinionParser.delegate=this;
         opinionParser.execute();
 
-        Intent intent = getIntent();
-        String title = intent.getStringExtra("poi");
-        poiId = intent.getIntExtra("poiNr", 0);
-        setTitle(title);
-        newOpinion = (Button) findViewById(R.id.newOpinion);
+        Bundle args = getArguments();
+        String title = args.getString("poi");
+        poiId = args.getInt("poiNr", 0);
+        getActivity().setTitle(title);
+        newOpinion = (Button) rootView.findViewById(R.id.newOpinion);
         newOpinion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), NewOpinionActivity.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), NewOpinionActivity.class);
                 intent.putExtra("poiNr",poiId);
                 startActivity(intent);
             }
@@ -68,10 +82,10 @@ public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implem
         opinions = new ArrayList<opinionNetEntity>();
         opinionsPresented = new ArrayList<opinionNetEntity>();
 
-        listViewOpinions = (ListView) findViewById(R.id.commList);
+        listViewOpinions = (ListView) rootView.findViewById(R.id.commList);
         loadOpinionsIntoAdapter();
 
-        listViewOpinionTypes = (ExpandableListView) findViewById(R.id.typeListView);
+        listViewOpinionTypes = (ExpandableListView) rootView.findViewById(R.id.typeListView);
         // Set ExpandableListView values
         listViewOpinionTypes.setGroupIndicator(null);
         listViewOpinionTypes.setDividerHeight(1);
@@ -125,36 +139,28 @@ public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implem
             }
         });
         //Creating static data in arraylist
-       final ArrayList<OpinionTypes> types = getOpinionTypes();
+        final ArrayList<OpinionTypes> types = getOpinionTypes();
 
         // Adding ArrayList data to ExpandableListView values
         loadOpinionTypesIntoAdapter(types);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.opinions, menu);
-        return true;
+        return rootView;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            case R.id.action_update:
-                // TODO aktualizacja bazy
-
-                return true;
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnOpinionsFragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnOpinionsFragmentListener");
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
     @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
@@ -175,7 +181,7 @@ public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implem
 
         public OpinionsAdapter() {
             // Create Layout Inflater
-            inflater = LayoutInflater.from(getApplicationContext());
+            inflater = LayoutInflater.from(getActivity().getApplicationContext());
         }
 
         @Override
@@ -232,7 +238,6 @@ public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implem
             return rowView;
         }
     }
-
     private ArrayList<OpinionTypes> getOpinionTypes()
     {
         // Creating ArrayList of type parent class to store parent class objects
@@ -315,7 +320,7 @@ public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implem
         public MyExpandableListAdapter()
         {
             // Create Layout Inflater
-            inflater = LayoutInflater.from(getApplicationContext());
+            inflater = LayoutInflater.from(getActivity().getApplicationContext());
         }
 
 
@@ -448,4 +453,18 @@ public class OpinionsActivity extends OrmLiteBaseActivity<dataBaseHelper> implem
             return true;
         }
     }
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnOpinionsFragmentListener{
+       // void startOpinionsFragment(Integer idPOI);
+    }
+
 }

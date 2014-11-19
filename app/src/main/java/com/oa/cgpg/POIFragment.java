@@ -295,10 +295,11 @@ public class POIFragment extends Fragment {
             ((Button) convertView.findViewById(R.id.button_opinions)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getActivity(), OpinionsActivity.class);
+                    listener.startOpinionsFragment(poiItems.get(groupPosition).getId(), poiItems.get(groupPosition).getTitle());
+                   /* Intent intent = new Intent(getActivity(), OpinionsActivity.class);
                     intent.putExtra("poi", poiItems.get(groupPosition).getTitle());
                     intent.putExtra("poiNr", poiItems.get(groupPosition).getId());
-                    startActivity(intent);
+                    startActivity(intent);*/
                 }
             });
             return convertView;
@@ -404,6 +405,7 @@ public class POIFragment extends Fragment {
 
     public interface OnPOIFragmentListener{
         void startMapFragment(Integer typePOI);
+        void startOpinionsFragment(Integer idPOI, String titlePOI);
     }
 
 }

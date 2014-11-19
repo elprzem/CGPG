@@ -18,24 +18,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".OpinionsActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_opinions"
-            android:parentActivityName=".MainActivity" >
-
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.oa.cgpg.MainActivity" />
-        </activity>
-        <activity
             android:name=".NewOpinionActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_new_opinion"
-            android:parentActivityName=".OpinionsActivity" >
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.oa.cgpg.OpinionsActivity" />
+                android:value="com.oa.cgpg.MainActivity" />
         </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
