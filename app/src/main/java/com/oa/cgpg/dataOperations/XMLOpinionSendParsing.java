@@ -36,11 +36,12 @@ public class XMLOpinionSendParsing extends AsyncTask<Void,Void,Void> {
 
     @Override
     protected void onPreExecute () {
-        progressDialog = ProgressDialog.show(context, "Pobierane danych", "Proszę czekać...", true, false);
+        progressDialog = ProgressDialog.show(context, "Dodawanie opinii", "Proszę czekać...", true, false);
     }
 
     @Override
     protected void onPostExecute (Void D) {
+        delegate.processFinish("");
         progressDialog.dismiss();
 
     }

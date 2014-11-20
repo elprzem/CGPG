@@ -60,22 +60,21 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         View rootView = inflater.inflate(R.layout.fragment_opinions, container, false);
      //   setContentView(R.layout.activity_opinions);
      //   getActionBar().setDisplayHomeAsUpEnabled(true);
+        Bundle args = getArguments();
+        String title = args.getString("poi");
+        poiId = args.getInt("poiNr", 0);
+        getActivity().setTitle(title);
 
         XMLOpinionGetParsing opinionParser = new XMLOpinionGetParsing(getActivity(),1,5);
         opinionParser.delegate=this;
         opinionParser.execute();
 
-        Bundle args = getArguments();
-        String title = args.getString("poi");
-        poiId = args.getInt("poiNr", 0);
-        getActivity().setTitle(title);
+
         newOpinion = (Button) rootView.findViewById(R.id.newOpinion);
         newOpinion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), NewOpinionActivity.class);
-                intent.putExtra("poiNr",poiId);
-                startActivity(intent);
+                mListener.startNewOpinionsFragment(poiId);
             }
         });
 
@@ -172,7 +171,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         ((OpinionsAdapter) listViewOpinions.getAdapter()).notifyDataSetChanged();
     }
     @Override
-    public void processFinish(String output) {
+    public void processFinish(String o) {
 
     }
     class OpinionsAdapter extends BaseAdapter {
@@ -464,7 +463,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnOpinionsFragmentListener{
-       // void startOpinionsFragment(Integer idPOI);
+        void startNewOpinionsFragment(Integer idPOI);
     }
 
 }

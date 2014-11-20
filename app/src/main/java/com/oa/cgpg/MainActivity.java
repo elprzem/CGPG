@@ -51,13 +51,14 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         testEntities = new createTestEntities(dbOps);
         testEntities.generateTemplateEntities();
 
-        List<opinionNetEntity> list = new ArrayList<opinionNetEntity>();
+        //to już jest w NewOpinionsFragment
+        /*List<opinionNetEntity> list = new ArrayList<opinionNetEntity>();
         list.add(new opinionNetEntity(1,"dsa","dsadsa",5,5,3,4,5,new Date(312312)));
         list.add(new opinionNetEntity(23,"dsa","dsadsa",5,5,3,4,5,new Date(312312)));
 
         XMLOpinionSendParsing XOS = new XMLOpinionSendParsing(this,list);
         Log.i("dsasd", "sending xml");
-        XOS.execute();
+        XOS.execute();*/
 
        /* String x = null;
         XMLParsing xmlPars = new XMLParsing(this, x);
@@ -110,7 +111,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.map, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -178,6 +179,15 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         fragment.setArguments(args);
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
+    }
+    @Override
+    public void startNewOpinionsFragment(Integer idPOI){
+        Fragment fragment = new NewOpinionsFragment();
+        Bundle args = new Bundle();
+        args.putInt("poiNr", idPOI);
+        fragment.setArguments(args);
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_opinions").commit();
     }
    /* @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
