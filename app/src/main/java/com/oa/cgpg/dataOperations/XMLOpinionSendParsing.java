@@ -74,7 +74,6 @@ public class XMLOpinionSendParsing extends AsyncTask<Void,Void,Void> {
         XmlSerializer xmlSerializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
         LoggedUserInfo LUI = LoggedUserInfo.getInstance();
-        LUI.setUserId(1);
         xmlSerializer.setOutput(writer);
         xmlSerializer.startDocument("UTF-8", true);
         xmlSerializer.startTag("","Opinions");
