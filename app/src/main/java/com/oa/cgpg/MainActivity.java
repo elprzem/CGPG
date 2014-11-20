@@ -48,8 +48,8 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         dbHelper = getHelper();
         dbOps = new dbOps(dbHelper);
      //   dbOps.clearData();
-        testEntities = new createTestEntities(dbOps);
-        testEntities.generateTemplateEntities();
+       // testEntities = new createTestEntities(dbOps);
+       // testEntities.generateTemplateEntities();
 
         //to już jest w NewOpinionsFragment
         /*List<opinionNetEntity> list = new ArrayList<opinionNetEntity>();

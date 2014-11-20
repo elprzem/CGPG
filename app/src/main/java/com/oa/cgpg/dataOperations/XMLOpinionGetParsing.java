@@ -5,6 +5,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Xml;
+
+import com.oa.cgpg.MainActivity;
+import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.models.opinionNetEntity;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -51,8 +54,14 @@ public class XMLOpinionGetParsing extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute (Void D) {
-        delegate.processFinishOpinion(getList());
         progressDialog.dismiss();
+        if(xml != null)
+            delegate.processFinishOpinion(getList());
+        else{
+            NoConnectionDialog dialog = new NoConnectionDialog();
+            dialog.show(((MainActivity)context).getFragmentManager(),"noConnection");
+        }
+
 
     }
 

@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -20,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.dataOperations.dbOps;
 import com.oa.cgpg.models.poiEntity;
 
@@ -295,7 +298,11 @@ public class POIFragment extends Fragment {
             ((Button) convertView.findViewById(R.id.button_opinions)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.startOpinionsFragment(poiItems.get(groupPosition).getId(), poiItems.get(groupPosition).getTitle());
+                   if (isNetworkAvailable(getActivity()))
+                        listener.startOpinionsFragment(poiItems.get(groupPosition).getId(), poiItems.get(groupPosition).getTitle());
+                   else
+                       (new NoConnectionDialog()).show(getFragmentManager(), "noConnection");
+
                    /* Intent intent = new Intent(getActivity(), OpinionsActivity.class);
                     intent.putExtra("poi", poiItems.get(groupPosition).getTitle());
                     intent.putExtra("poiNr", poiItems.get(groupPosition).getId());
@@ -407,5 +414,21 @@ public class POIFragment extends Fragment {
         void startMapFragment(Integer typePOI);
         void startOpinionsFragment(Integer idPOI, String titlePOI);
     }
-
+    //sprawdzenie polaczenia z Internetem
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity == null) {
+            return false;
+        } else {
+            NetworkInfo[] info = connectivity.getAllNetworkInfo();
+            if (info != null) {
+                for (int i = 0; i < info.length; i++) {
+                    if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
