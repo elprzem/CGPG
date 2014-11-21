@@ -14,14 +14,18 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -148,12 +152,11 @@ public class MapFragment extends Fragment {
             public void onClick(View v) {
                 scale /= ZOOM_FACTOR;
                 Point newOffset = new Point(
-                        (int) (offset.y - ((fragmentSize.y * (ZOOM_FACTOR - 1)) / (2 * ZOOM_FACTOR * scale))),
+                        (int) (offset.x - ((fragmentSize.x * (ZOOM_FACTOR - 1)) / (2 * ZOOM_FACTOR * scale))),
                         (int) (offset.y - ((fragmentSize.y * (ZOOM_FACTOR - 1)) / (2 * ZOOM_FACTOR * scale))));
                 checkAndRedrawVisibleBitmap(newOffset);
             }
         });
-        placeDialog = new Dialog(getActivity());
         return view;
     }
 
@@ -378,7 +381,7 @@ public class MapFragment extends Fragment {
     }
 
     private void onClick(int x, int y) {
-        if(database != null && !placeDialog.isShowing()){
+        if(database != null){// && !placeDialog.isShowing()){
             Log.i("onClick", "x: " + x + " ,y: " + y);
             buildingEntity building = whatIsHere(x, y);
 
@@ -394,10 +397,22 @@ public class MapFragment extends Fragment {
             String buildingName = building.getName();
             String buildingDescription = building.getDescription();
     //        final PlaceDialog placeDialog = new PlaceDialog(getActivity(), buildingName, buildingDescription);
-            placeDialog.setTitle(buildingName);
+
+            placeDialog = new Dialog(getActivity());
+            WindowManager.LayoutParams wmlp = placeDialog.getWindow().getAttributes();
+            wmlp.gravity = Gravity.TOP | Gravity.START;
+            wmlp.x = x;   //x position
+            wmlp.y = y;   //y position
+            placeDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            placeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            ColorDrawable colorDrawable = new ColorDrawable(Color.WHITE);
+            colorDrawable.setAlpha(130);
+            placeDialog.getWindow().setBackgroundDrawable(colorDrawable);
+
             placeDialog.setContentView(R.layout.place_dialog);
-            ((TextView) placeDialog.findViewById(R.id.txt_title)).setVisibility(View.INVISIBLE);
+            ((TextView) placeDialog.findViewById(R.id.txt_title)).setText(buildingName);
             ((TextView) placeDialog.findViewById(R.id.txtDescription)).setText(buildingDescription);
+
             final Integer finalPlaceId = building.getIdBuilding();
             final Button showListButton = (Button) placeDialog.findViewById(R.id.btn_show_list);
             showListButton.setOnClickListener(new View.OnClickListener() {
