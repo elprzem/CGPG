@@ -1,10 +1,13 @@
 package com.oa.cgpg.dataOperations;
 
 import android.util.Log;
+
 import com.j256.ormlite.android.apptools.OrmLiteBaseListActivity;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.oa.cgpg.models.buildingEntity;
 import com.oa.cgpg.models.poiEntity;
 import com.oa.cgpg.models.typeEntity;
@@ -98,18 +101,46 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
         return new ArrayList<poiEntity>();
     }
 
-    public buildingEntity getBuildingById(int id){
+    public buildingEntity getBuildingById(int id) {
         buildingEntity build = null;
-            try { QueryBuilder<buildingEntity,Integer> getById = buildingDAO.queryBuilder();
-
-            getById.where().eq("idBuilding",id);
+        try {
+            QueryBuilder<buildingEntity, Integer> getById = buildingDAO.queryBuilder();
+            getById.where().eq("idBuilding", id);
             List<buildingEntity> list = getById.query();
             build = list.get(0);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return build;
+    }
+
+    //przepisuje Przemka warunki
+    //metoda zwraca ID lub -1 w przypadku braku budynku
+    public int getIdOfBuildingByCords(int x, int y) throws Exception {
+        QueryBuilder<buildingEntity, Integer> getByCords = buildingDAO.queryBuilder();
+        Where where = getByCords.where();
+        where.lt("x1", x);
+        where.and();
+        where.lt("x4", x);
+        where.and();
+        where.gt("x2", x);
+        where.and();
+        where.gt("x3", x);
+        where.and();
+        where.gt("y1", y);
+        where.and();
+        where.gt("y2", y);
+        where.and();
+        where.lt("y3", y);
+        where.and();
+        where.lt("y4", y);
+        PreparedQuery<buildingEntity> request = getByCords.prepare();
+        List<buildingEntity> list = buildingDAO.query(request);
+        if (list.size() != 0) {
+            return list.get(0).getIdBuilding();
+        } else {
+            return -1;
+        }
     }
 
     public void clearData() {
