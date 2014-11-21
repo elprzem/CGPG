@@ -18,17 +18,20 @@ import android.widget.ListView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.oa.cgpg.dataOperations.AsyncResponse;
+import com.oa.cgpg.dataOperations.XMLOpinionRateSend;
 import com.oa.cgpg.dataOperations.XMLParsing;
 import com.oa.cgpg.dataOperations.createTestEntities;
 import com.oa.cgpg.dataOperations.dataBaseHelper;
 import com.oa.cgpg.dataOperations.dbOps;
 import com.oa.cgpg.models.opinionNetEntity;
+import com.oa.cgpg.models.opinionRateNet;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
-    implements MapFragment.OnMapFragmentListener,
-                POIFragment.OnPOIFragmentListener, OpinionsFragment.OnOpinionsFragmentListener, AsyncResponse{
+        implements MapFragment.OnMapFragmentListener,
+        POIFragment.OnPOIFragmentListener, OpinionsFragment.OnOpinionsFragmentListener, AsyncResponse {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -53,9 +56,9 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         System.out.println(dbOps.getBuildings().size());
         System.out.println(dbOps.getPois().size());
         System.out.println(dbOps.getTypes().size());
-     //   dbOps.clearData();
-       // testEntities = new createTestEntities(dbOps);
-       // testEntities.generateTemplateEntities();
+        //   dbOps.clearData();
+        // testEntities = new createTestEntities(dbOps);
+        // testEntities.generateTemplateEntities();
 
         //to już jest w NewOpinionsFragment
         /*List<opinionNetEntity> list = new ArrayList<opinionNetEntity>();
@@ -77,6 +80,11 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         } catch (Exception e) {
             e.printStackTrace();
         }
+*/
+        /*List<opinionRateNet> list = new ArrayList<opinionRateNet>();
+        list.add(new opinionRateNet(1,1,1));
+        XMLOpinionRateSend ORS = new XMLOpinionRateSend(list, this);
+        ORS.execute();
 */
         mTitle = mDrawerTitle = getTitle();
         mMenuTitles = getResources().getStringArray(R.array.menu_array);
@@ -153,10 +161,11 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
                 return super.onOptionsItemSelected(item);
         }
     }
-    public void processFinish(String output){
+
+    public void processFinish(String output) {
         //this you will received result fired from async class of onPostExecute(result) method.
         Log.i("async response: ", output);
-       // System.out.print(output);
+        // System.out.print(output);
     }
 
     @Override
@@ -167,7 +176,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     @Override
     public void startPOIFragment(Integer buildingId) {
         Fragment fragment = new POIFragment();
-        ((POIFragment)fragment).setDbOps(dbOps);
+        ((POIFragment) fragment).setDbOps(dbOps);
         Bundle args = new Bundle();
 
         //TODO Gdzie przekazać buildingId?
@@ -183,20 +192,20 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     public void startMapFragment(Integer value, String mode) {
         Fragment fragment = new MapFragment();
         Bundle args = new Bundle();
-        if(mode.equals(Keys.TYPE_POI)){
+        if (mode.equals(Keys.TYPE_POI)) {
             args.putInt(Keys.TYPE_POI, value);
             fragment.setArguments(args);
-        }
-        else if(mode.equals(Keys.BUILDING_ID)){
+        } else if (mode.equals(Keys.BUILDING_ID)) {
             args.putInt(Keys.BUILDING_ID, value);
             fragment.setArguments(args);
         }
-        ((MapFragment)fragment).setDatabaseRef(dbOps);
+        ((MapFragment) fragment).setDatabaseRef(dbOps);
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
     }
+
     @Override
-    public void startOpinionsFragment(Integer idPOI, String titlePOI){
+    public void startOpinionsFragment(Integer idPOI, String titlePOI) {
         Fragment fragment = new OpinionsFragment();
         Bundle args = new Bundle();
         args.putInt("poiNr", idPOI);
@@ -205,8 +214,9 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
     }
+
     @Override
-    public void startNewOpinionsFragment(Integer idPOI){
+    public void startNewOpinionsFragment(Integer idPOI) {
         Fragment fragment = new NewOpinionsFragment();
         Bundle args = new Bundle();
         args.putInt("poiNr", idPOI);
@@ -228,23 +238,24 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             selectItem(position);
         }
     }
+
     private void selectItem(int position) {
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
         setTitle(mMenuTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
 
-        if (position == MenuItems.MAP){
+        if (position == MenuItems.MAP) {
             Fragment fragment = new MapFragment();
-            ((MapFragment)fragment).setDatabaseRef(dbOps);
+            ((MapFragment) fragment).setDatabaseRef(dbOps);
 
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
         }
         // nowy fragment - widok typu punktu usługowego (lista wszystkich punktów danego typu)
-        else if(position >= MenuItems.XERO && position <= MenuItems.BIKES){
+        else if (position >= MenuItems.XERO && position <= MenuItems.BIKES) {
             Fragment fragment = new POIFragment();
-            ((POIFragment)fragment).setDbOps(dbOps);
+            ((POIFragment) fragment).setDbOps(dbOps);
             Bundle args = new Bundle();
             args.putInt("poiTypeId", position);
             fragment.setArguments(args);
@@ -252,7 +263,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
-        }else if(position == MenuItems.LOGIN){//aktywność logowania lub rejestracji - info można przechować w klasie singleton
+        } else if (position == MenuItems.LOGIN) {//aktywność logowania lub rejestracji - info można przechować w klasie singleton
             Fragment fragment = new LoginFragment();
 
             FragmentManager fragmentManager = getFragmentManager();
