@@ -2,8 +2,6 @@ package com.oa.cgpg;
 
 
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.Editable;
@@ -18,7 +16,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 import com.oa.cgpg.dataOperations.AsyncResponse;
-import com.oa.cgpg.dataOperations.XMLOpinionSendParsing;
+import com.oa.cgpg.dataOperations.XMLOpinionSend;
 import com.oa.cgpg.models.opinionNetEntity;
 
 import java.util.ArrayList;
@@ -97,7 +95,7 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
         opinionNetEntity opinionEntity = new opinionNetEntity(1,text,LoggedUserInfo.getInstance().getUserName(),5,1,3,4,type, new Date());
         //TODO - wysłanie opinii
         list.add(opinionEntity);
-        XMLOpinionSendParsing XOS = new XMLOpinionSendParsing(getActivity(),list);
+        XMLOpinionSend XOS = new XMLOpinionSend(getActivity(),list);
         XOS.delegate = this;
         Log.i("dsasd", "sending xml");
         XOS.execute();

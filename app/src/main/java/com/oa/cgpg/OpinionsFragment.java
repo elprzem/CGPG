@@ -1,8 +1,6 @@
 package com.oa.cgpg;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.format.DateFormat;
@@ -19,8 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.oa.cgpg.dataOperations.AsyncResponse;
-import com.oa.cgpg.dataOperations.XMLOpinionGetParsing;
-import com.oa.cgpg.dataOperations.dbOps;
+import com.oa.cgpg.dataOperations.XMLOpinionGet;
 import com.oa.cgpg.models.opinionNetEntity;
 
 import java.util.ArrayList;
@@ -65,7 +62,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         poiId = args.getInt("poiNr", 0);
         getActivity().setTitle(title);
 
-        XMLOpinionGetParsing opinionParser = new XMLOpinionGetParsing(getActivity(),1,5);
+        XMLOpinionGet opinionParser = new XMLOpinionGet(getActivity(),1,5);
         opinionParser.delegate=this;
         opinionParser.execute();
 

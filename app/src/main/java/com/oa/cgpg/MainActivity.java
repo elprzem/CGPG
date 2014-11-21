@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,14 +17,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLParsing;
 import com.oa.cgpg.dataOperations.createTestEntities;
 import com.oa.cgpg.dataOperations.dataBaseHelper;
 import com.oa.cgpg.dataOperations.dbOps;
+import com.oa.cgpg.models.opinionNetEntity;
+
+import java.util.List;
 
 public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     implements MapFragment.OnMapFragmentListener,
-                POIFragment.OnPOIFragmentListener, OpinionsFragment.OnOpinionsFragmentListener{
+                POIFragment.OnPOIFragmentListener, OpinionsFragment.OnOpinionsFragmentListener, AsyncResponse{
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -45,6 +50,9 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         setContentView(R.layout.activity_main);
         dbHelper = getHelper();
         dbOps = new dbOps(dbHelper);
+        System.out.println(dbOps.getBuildings().size());
+        System.out.println(dbOps.getPois().size());
+        System.out.println(dbOps.getTypes().size());
      //   dbOps.clearData();
        // testEntities = new createTestEntities(dbOps);
        // testEntities.generateTemplateEntities();
@@ -62,7 +70,14 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         XMLParsing xmlPars = new XMLParsing(this, x);
         xmlPars.delegate = this;
         xmlPars.execute();*/
-
+/*
+        try {
+            userNetEntity uE = new userNetEntity("la2233213la","12345","tom@gm213al.com",this,this);
+            uE.login();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+*/
         mTitle = mDrawerTitle = getTitle();
         mMenuTitles = getResources().getStringArray(R.array.menu_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -140,7 +155,13 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     }
     public void processFinish(String output){
         //this you will received result fired from async class of onPostExecute(result) method.
-//        Log.i("async response: ","xml has come! length="+output.length());
+        Log.i("async response: ", output);
+       // System.out.print(output);
+    }
+
+    @Override
+    public void processFinishOpinion(List<opinionNetEntity> list) {
+
     }
 
     @Override

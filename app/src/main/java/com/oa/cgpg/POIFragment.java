@@ -40,6 +40,7 @@ import java.util.List;
  * create an instance of this fragment.
  *
  */
+
 /**
  * Fragment that appears in the "content_frame", shows a planet
  */
@@ -49,11 +50,12 @@ public class POIFragment extends Fragment {
     public ExpandableListView listView;
     private Integer typePOI;
     private Integer buildingId;
-    private int ParentClickStatus=-1;
-    private int ChildClickStatus=-1;
+    private int ParentClickStatus = -1;
+    private int ChildClickStatus = -1;
     private ArrayList<POIItem> poiItems;
     private dbOps dbOps;
     private Button seeOnMap;
+
     public POIFragment() {
         // Empty constructor required for fragment subclasses
     }
@@ -84,13 +86,13 @@ public class POIFragment extends Fragment {
         listView.setDividerHeight(1);
         registerForContextMenu(listView);
 
-        if(getArguments().containsKey("poiTypeId")) {
+        if (getArguments().containsKey("poiTypeId")) {
             typePOI = getArguments().getInt("poiTypeId");
             Log.i("type", String.valueOf(typePOI));
             String title = getResources().getStringArray(R.array.menu_array)[typePOI];
             getActivity().setTitle(title);
 
-        }else if(getArguments().containsKey("buildingId") ){
+        } else if (getArguments().containsKey("buildingId")) {
             buildingId = getArguments().getInt("buildingId");
             Log.i("building", String.valueOf(buildingId));
             String title = dbOps.getBuildingById(buildingId).getName();
@@ -102,9 +104,9 @@ public class POIFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //TODO: przekazać do MApFragment id budynków do wyświetlenia
-                if(typePOI != null)
+                if (typePOI != null)
                     listener.startMapFragment(typePOI, Keys.TYPE_POI);
-                else if(buildingId != null)
+                else if (buildingId != null)
                     listener.startMapFragment(buildingId, Keys.BUILDING_ID);
             }
         });
@@ -112,20 +114,21 @@ public class POIFragment extends Fragment {
         listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             int previousGroup = -1;
 
-                @Override
-                public void onGroupExpand(int groupPosition) {
-                    if (groupPosition != previousGroup)
-                        listView.collapseGroup(previousGroup);
-                    previousGroup = groupPosition;
-                }
-            });
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (groupPosition != previousGroup)
+                    listView.collapseGroup(previousGroup);
+                previousGroup = groupPosition;
+            }
+        });
         //Creating static data in arraylist
-        final ArrayList<POIItem> dataFromDB = getDataFromDB(getArguments().containsKey("poiTypeId")? true : false);
+        final ArrayList<POIItem> dataFromDB = getDataFromDB(getArguments().containsKey("poiTypeId") ? true : false);
 
         // Adding ArrayList data to ExpandableListView values
         loadDataIntoAdapter(dataFromDB);
         return rootView;
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -138,10 +141,11 @@ public class POIFragment extends Fragment {
         int navBarHeight = getNavigationBarHeight(getActivity(), getActivity().getResources().getConfiguration().orientation);
         Log.i("navBarHeight:", String.valueOf(navBarHeight));
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) listView.getLayoutParams();
-        params.height = height - 2*navBarHeight - getStatusBarHeight();
+        params.height = height - 2 * navBarHeight - getStatusBarHeight();
         listView.setLayoutParams(params);
         Log.i("wysokosc:", String.valueOf(listView.getLayoutParams().height));
     }
+
     private int getNavigationBarHeight(Context context, int orientation) {
         Resources resources = context.getResources();
         int id = resources.getIdentifier(
@@ -152,6 +156,7 @@ public class POIFragment extends Fragment {
         }
         return 0;
     }
+
     public int getStatusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -160,16 +165,15 @@ public class POIFragment extends Fragment {
         }
         return result;
     }
-    private ArrayList<POIItem> getDataFromDB(boolean poiType)
-    {
+
+    private ArrayList<POIItem> getDataFromDB(boolean poiType) {
         // Creating ArrayList of type parent class to store parent class objects
         final ArrayList<POIItem> list = new ArrayList<POIItem>();
         List<poiEntity> pois = dbOps.getPois();
-        for(poiEntity poi : pois)
-        {
+        for (poiEntity poi : pois) {
             //Create parent class object
             final POIItem poiItem = new POIItem();
-            if(poi.getType().getIdType() == typePOI && poiType) {//wczytanie poi należących do danego typu
+            if (poi.getType().getIdType() == typePOI && poiType) {//wczytanie poi należących do danego typu
                 // Set values in parent class object
                 poiItem.setTitle(poi.getName());
                 poiItem.setId(poi.getIdPoi());
@@ -185,50 +189,47 @@ public class POIFragment extends Fragment {
                 poiItem.getDetails().add(details);
                 //Adding Parent class object to ArrayList
                 list.add(poiItem);
-            }else if(poi.getBuilding().getIdBuilding() == buildingId && !poiType) {//wczytanie poi znajdujacych sie w danym budynku
-            // Set values in parent class object
-            poiItem.setTitle(poi.getName());
-            poiItem.setId(poi.getIdPoi());
-            poiItem.setDetails(new ArrayList<POIDetails>());
-            // Create Child class object
-            final POIDetails details = new POIDetails();
-            details.setDescription(poi.getDescription());
-            details.setImagePath(poi.getLinkToImage());
-            details.setPlusesCount(poi.getRatingPlus());
-            details.setMinusesCount(poi.getRatingMinus());
+            } else if (poi.getBuilding().getIdBuilding() == buildingId && !poiType) {//wczytanie poi znajdujacych sie w danym budynku
+                // Set values in parent class object
+                poiItem.setTitle(poi.getName());
+                poiItem.setId(poi.getIdPoi());
+                poiItem.setDetails(new ArrayList<POIDetails>());
+                // Create Child clłass object
+                final POIDetails details = new POIDetails();
+                details.setDescription(poi.getDescription());
+                details.setImagePath(poi.getLinkToImage());
+                details.setPlusesCount(poi.getRatingPlus());
+                details.setMinusesCount(poi.getRatingMinus());
 
-            //Add Child class object to parent class object
-            poiItem.getDetails().add(details);
-            //Adding Parent class object to ArrayList
-            list.add(poiItem);
-        }
+                //Add Child class object to parent class object
+                poiItem.getDetails().add(details);
+                //Adding Parent class object to ArrayList
+                list.add(poiItem);
+            }
         }
         return list;
     }
 
 
-    private void loadDataIntoAdapter(final ArrayList<POIItem> newPoiItems)
-    {
+    private void loadDataIntoAdapter(final ArrayList<POIItem> newPoiItems) {
         if (newPoiItems == null)
             return;
 
         poiItems = newPoiItems;
 
         // Check for ExpandableListAdapter object
-        if (listView.getExpandableListAdapter() == null)
-        {
+        if (listView.getExpandableListAdapter() == null) {
             //Create ExpandableListAdapter Object
             final MyExpandableListAdapter mAdapter = new MyExpandableListAdapter();
 
             // Set Adapter to ExpandableList Adapter
             listView.setAdapter(mAdapter);
-        }
-        else
-        {
+        } else {
             // Refresh ExpandableListView data
-            ((MyExpandableListAdapter)listView.getExpandableListAdapter()).notifyDataSetChanged();
+            ((MyExpandableListAdapter) listView.getExpandableListAdapter()).notifyDataSetChanged();
         }
     }
+
     public Drawable getImageFromAsstes(String path) {
         try {
             // get input stream
@@ -236,24 +237,22 @@ public class POIFragment extends Fragment {
             // load image as Drawable
             Drawable d = Drawable.createFromStream(ims, null);
             // set image to ImageView
-           return d;
-        }
-        catch(IOException ex) {
+            return d;
+        } catch (IOException ex) {
             return null;
         }
 
     }
+
     /**
      * A Custom adapter to create Parent view (Used poi_grouprowprow.xml) and Child View((Used poi_childrow.xml.xml).
      */
-    private class MyExpandableListAdapter extends BaseExpandableListAdapter
-    {
+    private class MyExpandableListAdapter extends BaseExpandableListAdapter {
 
 
         private LayoutInflater inflater;
 
-        public MyExpandableListAdapter()
-        {
+        public MyExpandableListAdapter() {
             // Create Layout Inflater
             inflater = LayoutInflater.from(getActivity());
         }
@@ -263,8 +262,7 @@ public class POIFragment extends Fragment {
 
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded,
-                                 View convertView, ViewGroup parentView)
-        {
+                                 View convertView, ViewGroup parentView) {
             final POIItem parent = poiItems.get(groupPosition);
 
             // Inflate poi_grouprow.xml.xml file for parent rows
@@ -282,8 +280,7 @@ public class POIFragment extends Fragment {
         // This Function used to inflate child rows view
         @Override
         public View getChildView(final int groupPosition, int childPosition, boolean isLastChild,
-                                 View convertView, ViewGroup parentView)
-        {
+                                 View convertView, ViewGroup parentView) {
             final POIItem poiItem = poiItems.get(groupPosition);
             final POIDetails details = poiItem.getDetails().get(childPosition);
 
@@ -295,15 +292,15 @@ public class POIFragment extends Fragment {
             getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
             int width = displaymetrics.widthPixels;
             ((TextView) convertView.findViewById(R.id.text1)).setText(details.getDescription());
-            ((TextView) convertView.findViewById(R.id.text1)).setWidth(2*width/3);
-            ((ImageView)convertView.findViewById(R.id.image)).setImageDrawable(getImageFromAsstes(details.getImagePath()));
+            ((TextView) convertView.findViewById(R.id.text1)).setWidth(2 * width / 3);
+            ((ImageView) convertView.findViewById(R.id.image)).setImageDrawable(getImageFromAsstes(details.getImagePath()));
             ((Button) convertView.findViewById(R.id.button_opinions)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                   if (isNetworkAvailable(getActivity()))
+                    if (isNetworkAvailable(getActivity()))
                         listener.startOpinionsFragment(poiItems.get(groupPosition).getId(), poiItems.get(groupPosition).getTitle());
-                   else
-                       (new NoConnectionDialog()).show(getFragmentManager(), "noConnection");
+                    else
+                        (new NoConnectionDialog()).show(getFragmentManager(), "noConnection");
 
                    /* Intent intent = new Intent(getActivity(), OpinionsActivity.class);
                     intent.putExtra("poi", poiItems.get(groupPosition).getTitle());
@@ -316,21 +313,18 @@ public class POIFragment extends Fragment {
 
 
         @Override
-        public Object getChild(int groupPosition, int childPosition)
-        {
+        public Object getChild(int groupPosition, int childPosition) {
             //Log.i("Childs", groupPosition+"=  getChild =="+childPosition);
             return poiItems.get(groupPosition).getDetails().get(childPosition);
         }
 
         //Call when child row clicked
         @Override
-        public long getChildId(int groupPosition, int childPosition)
-        {
+        public long getChildId(int groupPosition, int childPosition) {
             /****** When Child row clicked then this function call *******/
 
             //Log.i("Noise", "parent == "+groupPosition+"=  child : =="+childPosition);
-            if( ChildClickStatus!=childPosition)
-            {
+            if (ChildClickStatus != childPosition) {
                 ChildClickStatus = childPosition;
             }
 
@@ -338,70 +332,61 @@ public class POIFragment extends Fragment {
         }
 
         @Override
-        public int getChildrenCount(int groupPosition)
-        {
-            int size=0;
-            if(poiItems.get(groupPosition).getDetails()!=null)
+        public int getChildrenCount(int groupPosition) {
+            int size = 0;
+            if (poiItems.get(groupPosition).getDetails() != null)
                 size = poiItems.get(groupPosition).getDetails().size();
             return size;
         }
 
 
         @Override
-        public Object getGroup(int groupPosition)
-        {
+        public Object getGroup(int groupPosition) {
             //Log.i("Parent", groupPosition+"=  getGroup ");
 
             return poiItems.get(groupPosition);
         }
 
         @Override
-        public int getGroupCount()
-        {
+        public int getGroupCount() {
             return poiItems.size();
         }
 
         //Call when parent row clicked
         @Override
-        public long getGroupId(int groupPosition)
-        {
-           // Log.i("Parent", groupPosition+"=  getGroupId "+ParentClickStatus);
+        public long getGroupId(int groupPosition) {
+            // Log.i("Parent", groupPosition+"=  getGroupId "+ParentClickStatus);
 
-            ParentClickStatus=groupPosition;
-            if(ParentClickStatus==0)
-                ParentClickStatus=-1;
+            ParentClickStatus = groupPosition;
+            if (ParentClickStatus == 0)
+                ParentClickStatus = -1;
 
             return groupPosition;
         }
 
         @Override
-        public void notifyDataSetChanged()
-        {
+        public void notifyDataSetChanged() {
             // Refresh List rows
             super.notifyDataSetChanged();
         }
 
         @Override
-        public boolean isEmpty()
-        {
+        public boolean isEmpty() {
             return ((poiItems == null) || poiItems.isEmpty());
         }
 
         @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition)
-        {
+        public boolean isChildSelectable(int groupPosition, int childPosition) {
             return true;
         }
 
         @Override
-        public boolean hasStableIds()
-        {
+        public boolean hasStableIds() {
             return true;
         }
 
         @Override
-        public boolean areAllItemsEnabled()
-        {
+        public boolean areAllItemsEnabled() {
             return true;
         }
     }
@@ -412,10 +397,12 @@ public class POIFragment extends Fragment {
         listener = null;
     }
 
-    public interface OnPOIFragmentListener{
+    public interface OnPOIFragmentListener {
         void startMapFragment(Integer value, String mode);
+
         void startOpinionsFragment(Integer idPOI, String titlePOI);
     }
+
     //sprawdzenie polaczenia z Internetem
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

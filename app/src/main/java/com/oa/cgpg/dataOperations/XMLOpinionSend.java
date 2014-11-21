@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by Tomasz on 2014-11-18.
  */
-public class XMLOpinionSendParsing extends AsyncTask<Void,Void,Void> {
+public class XMLOpinionSend extends AsyncTask<Void,Void,Void> {
     private ProgressDialog progressDialog;
     private Context context;
     private String xml;
@@ -29,7 +29,7 @@ public class XMLOpinionSendParsing extends AsyncTask<Void,Void,Void> {
 
 
 
-    public XMLOpinionSendParsing (Context context,List<opinionNetEntity> list) {
+    public XMLOpinionSend(Context context, List<opinionNetEntity> list) {
         this.context = context;
         this.list = list;
     }
