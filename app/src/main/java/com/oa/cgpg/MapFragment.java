@@ -10,18 +10,22 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
-import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,6 +34,7 @@ import android.widget.ZoomControls;
 import com.oa.cgpg.dataOperations.dbOps;
 import com.oa.cgpg.models.buildingEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Fragment containing map
@@ -58,12 +63,19 @@ public class MapFragment extends Fragment {
     private final Float ZOOM_FACTOR = 1.2f;
     private dbOps database;
     private Dialog placeDialog;
+    private Integer typePOI;
+    private ArrayList<buildingEntity> buildingsList;
+
+    private final int SIZE_OF_SQAURE = 60;
+    private final int HEIGHT_OF_TRIANGLE = 40;
+
 
     public void setDatabaseRef(dbOps database){
         this.database = database;
         List<buildingEntity> list = database.getBuildings();
         Log.d("test", String.valueOf(list.size()));
-        Log.d("test", list.get(0).getDescription());
+        if(list.size() > 0)
+            Log.d("test", list.get(0).getDescription());
     }
 
     public MapFragment() {
@@ -106,8 +118,23 @@ public class MapFragment extends Fragment {
 
         initializeFragmentSize();
 
-        if(getArguments() != null)//gdy fragment został otwarty w celu wyświetlenia pozycji na mapie wybranego rodzaju POI
-        Log.i("type",String.valueOf(getArguments().getInt("type")));
+        typePOI = null;
+
+        if(getArguments() != null){
+            //gdy fragment został otwarty w celu wyświetlenia pozycji na mapie wybranego rodzaju POI
+            Log.i("type",String.valueOf(getArguments().getInt("type")));
+            if(getArguments().containsKey(Keys.TYPE_POI)) {
+                typePOI = getArguments().getInt(Keys.TYPE_POI);
+                //TODO uncomment when method and data in database are prepared
+                //buildingsList = database.getBuildingsCoordinatesByTypePOI(typePOI);
+            }
+            else if(getArguments().containsKey(Keys.BUILDING_ID)){
+                buildingsList = new ArrayList<buildingEntity>();
+                buildingsList.add(database.getBuildingById(
+                        getArguments().getInt(Keys.BUILDING_ID)
+                ));
+            }
+        }
 
         initializeVisibleBitmap();
         mapImageView = (ImageView) (view.findViewById(R.id.mapImageView));
@@ -132,12 +159,11 @@ public class MapFragment extends Fragment {
             public void onClick(View v) {
                 scale /= ZOOM_FACTOR;
                 Point newOffset = new Point(
-                        (int) (offset.y - ((fragmentSize.y * (ZOOM_FACTOR - 1)) / (2 * ZOOM_FACTOR * scale))),
+                        (int) (offset.x - ((fragmentSize.x * (ZOOM_FACTOR - 1)) / (2 * ZOOM_FACTOR * scale))),
                         (int) (offset.y - ((fragmentSize.y * (ZOOM_FACTOR - 1)) / (2 * ZOOM_FACTOR * scale))));
                 checkAndRedrawVisibleBitmap(newOffset);
             }
         });
-        placeDialog = new Dialog(getActivity());
         return view;
     }
 
@@ -189,7 +215,15 @@ public class MapFragment extends Fragment {
         workingBitmapCanvas.drawColor(Color.GREEN);
         workingBitmapCanvas.drawBitmap(sourceMapBitmap, new Matrix(), new Paint());
 
+        //TODO I wait for data in database
+        buildingsList = new ArrayList<buildingEntity>();
+        buildingsList.add(new buildingEntity(0,"name", "description",
+                50, 100,     150, 110,
+                130, 250,
+                30, 220,
+                ""));
         //TODO whole stuff to draw on workingBitmap
+        drawMarks();
 
         visibleBitmap = Bitmap.createBitmap(
                 fragmentSize.x, fragmentSize.y,
@@ -208,11 +242,74 @@ public class MapFragment extends Fragment {
 //        visibleBitmapCanvas.drawBitmap(workingBitmap,new Matrix(), new Paint());
     }
 
+    private void drawMarks() {
+        if(typePOI != null){
+            Point middlePointOfBuilding = new Point();
+
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+            paint.setStrokeWidth(2);
+            paint.setARGB(255, 255, 177, 6);
+            paint.setStyle(Paint.Style.FILL_AND_STROKE);
+            paint.setAntiAlias(true);
+
+            for(buildingEntity building : buildingsList){
+                middlePointOfBuilding.set(
+                        arithmeticAverage(building.getX1(), building.getX2(),
+                                building.getX3(), building.getX4()),
+                        arithmeticAverage(building.getY1(), building.getY2(),
+                                building.getY3(), building.getY4())
+                );
+                workingBitmapCanvas.drawRect(
+                        middlePointOfBuilding.x - SIZE_OF_SQAURE/2,
+                        middlePointOfBuilding.y - SIZE_OF_SQAURE - HEIGHT_OF_TRIANGLE,
+                        middlePointOfBuilding.x + SIZE_OF_SQAURE/2,
+                        middlePointOfBuilding.y - HEIGHT_OF_TRIANGLE,
+                        paint
+                );
+
+                Point point1_draw = new Point(
+                        middlePointOfBuilding.x - SIZE_OF_SQAURE/2,
+                        middlePointOfBuilding.y - HEIGHT_OF_TRIANGLE);
+                Point point2_draw = new Point(
+                        middlePointOfBuilding.x + SIZE_OF_SQAURE/2,
+                        middlePointOfBuilding.y - HEIGHT_OF_TRIANGLE
+                );
+                Point point3_draw = new Point(
+                        middlePointOfBuilding.x,
+                        middlePointOfBuilding.y
+                );
+
+                Path path = new Path();
+                path.setFillType(Path.FillType.EVEN_ODD);
+                path.moveTo(point1_draw.x,point1_draw.y);
+                path.lineTo(point2_draw.x,point2_draw.y);
+                path.lineTo(point3_draw.x,point3_draw.y);
+                path.lineTo(point1_draw.x,point1_draw.y);
+                path.close();
+
+                workingBitmapCanvas.drawPath(path, paint);
+/*
+                Paint pointPaint = new Paint();
+                pointPaint.setColor(Color.YELLOW);
+                pointPaint.setStrokeWidth(10);
+                workingBitmapCanvas.drawPoint(
+                        middlePointOfBuilding.x, middlePointOfBuilding.y, pointPaint);
+                        */
+            }
+        }
+    }
+
+    private int arithmeticAverage(int a, int b, int c, int d) {
+        return (a+b+c+d)/4;
+    }
+
     private class OnTouchMapListener implements View.OnTouchListener{
 
         private PointF offsetDelta;
         private float oldDist;
         private View view;
+        private PointF offsetDeltaForOnClick;
 
         /**
          * Called when a touch event is dispatched to a view. This allows listeners to
@@ -230,23 +327,27 @@ public class MapFragment extends Fragment {
                 case MotionEvent.ACTION_DOWN:
                     offsetDelta = null;
                     offsetDelta = new PointF(event.getX(), event.getY());
+                    offsetDeltaForOnClick = null;
+                    offsetDeltaForOnClick = new PointF(event.getX(), event.getY());
+
                     Log.i("ACTION_DOWN", "offsetDelta: " + offsetDelta.toString());
                     return true;
-                case MotionEvent.ACTION_MOVE:
                 case MotionEvent.ACTION_UP:
-                    if(Math.abs(offsetDelta.x - event.getX()) < 5  && Math.abs(offsetDelta.y - event.getY()) < 5){
+                    if(Math.abs(offsetDeltaForOnClick.x - event.getX()) < 7
+                            && Math.abs(offsetDeltaForOnClick.y - event.getY()) < 7){
+                        Log.i("ACTION_UP", String.valueOf(offsetDeltaForOnClick.x - event.getX()));
                         onClick((int) event.getX(), (int) event.getY());
                     }
-                    else {
-                        Point newOffset = new Point(
-                                (int)(offset.x + (offsetDelta.x - event.getX()) / scale),
-                                (int)(offset.y + (offsetDelta.y - event.getY()) / scale)
-                        );
-                        Log.i("ACTION_UP", "newoffset: " + newOffset.toString());
-                        checkAndRedrawVisibleBitmap(newOffset);
-                        Log.i("ACTION_UP", "offset: " + offset.toString());
-                        offsetDelta = new PointF(event.getX(), event.getY());
-                    }
+                    return true;
+                case MotionEvent.ACTION_MOVE:
+                    Point newOffset = new Point(
+                            (int)(offset.x + (offsetDelta.x - event.getX()) / scale),
+                            (int)(offset.y + (offsetDelta.y - event.getY()) / scale)
+                    );
+                    Log.i("ACTION_MOVE", "newoffset: " + newOffset.toString());
+                    checkAndRedrawVisibleBitmap(newOffset);
+                    Log.i("ACTION_MOVE", "offset: " + offset.toString());
+                    offsetDelta = new PointF(event.getX(), event.getY());
                     return true;
 
                 ///
@@ -287,28 +388,39 @@ public class MapFragment extends Fragment {
     }
 
     private void onClick(int x, int y) {
-        if(database != null && !placeDialog.isShowing()){
+        if(database != null){// && !placeDialog.isShowing()){
             Log.i("onClick", "x: " + x + " ,y: " + y);
-            Integer placeId = whatIsHere(x, y);
+            buildingEntity building = whatIsHere(x, y);
 
             //TODO only temporary line below
-            placeId = 0;
+            building = buildingsList.get(0);
 
-            if(placeId == null)
+            if(building == null)
                 return;
 
-            Log.d(TEST_TAG, placeId.toString());
-            //TODO later it will be:
-         //  buildingEntity building = database.getBuildingById(placeId);
-            buildingEntity building = database.getBuildings().get(placeId);
+            Log.d(TEST_TAG, building.toString());
+
+            //TODO By lack of data in database it doesn't work so i stop method in the moment.
             String buildingName = building.getName();
             String buildingDescription = building.getDescription();
     //        final PlaceDialog placeDialog = new PlaceDialog(getActivity(), buildingName, buildingDescription);
-            placeDialog.setTitle(buildingName);
+
+            placeDialog = new Dialog(getActivity());
+            WindowManager.LayoutParams wmlp = placeDialog.getWindow().getAttributes();
+            wmlp.gravity = Gravity.TOP | Gravity.START;
+            wmlp.x = x;   //x position
+            wmlp.y = y;   //y position
+            placeDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            placeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            ColorDrawable colorDrawable = new ColorDrawable(Color.WHITE);
+            colorDrawable.setAlpha(130);
+            placeDialog.getWindow().setBackgroundDrawable(colorDrawable);
+
             placeDialog.setContentView(R.layout.place_dialog);
-            ((TextView) placeDialog.findViewById(R.id.txt_title)).setVisibility(View.INVISIBLE);
+            ((TextView) placeDialog.findViewById(R.id.txt_title)).setText(buildingName);
             ((TextView) placeDialog.findViewById(R.id.txtDescription)).setText(buildingDescription);
-            final Integer finalPlaceId = placeId;
+
+            final Integer finalPlaceId = building.getIdBuilding();
             final Button showListButton = (Button) placeDialog.findViewById(R.id.btn_show_list);
             showListButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -330,7 +442,7 @@ public class MapFragment extends Fragment {
     //  |         |
     //  |4       3|
     /// ----------
-    private Integer whatIsHere(int x, int y) {
+    private buildingEntity whatIsHere(int x, int y) {
         if(database != null){
             for(buildingEntity building : database.getBuildings()){
                 Log.d(TEST_TAG, building.toString());
@@ -342,7 +454,7 @@ public class MapFragment extends Fragment {
                         y > building.getY3() &&
                         x > building.getX4() &&
                         y > building.getY4()){
-                    return building.getIdBuilding();
+                    return building;
                 }
             }
         }

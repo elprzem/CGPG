@@ -2,18 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#3E80B4"
     android:orientation="vertical"
-    android:gravity="center_horizontal">
+    android:background="#82FFFFFF"
+    android:gravity="start">
 
     <TextView
         android:id="@+id/txt_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_margin="10dp"
         android:text="no title"
-        android:textColor="@android:color/white"
         android:textSize="25sp"
         android:textStyle="bold" >
     </TextView>
@@ -23,25 +21,29 @@
         android:layout_height="wrap_content"
         android:text="no description"
         android:id="@+id/txtDescription"
-        android:textColor="@color/white"
+        android:layout_margin="10dp"
         android:textSize="15sp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="#3E80B4"
-        android:orientation="horizontal" >
+        android:background="#FF3FA9F7"
+        android:orientation="horizontal"
+        android:layout_margin="10dp"
+        android:weightSum="1">
 
         <Button
             android:id="@+id/btn_show_list"
+            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
             android:clickable="true"
             android:text="Wyświetl listę"
-            android:textColor="#5DBCD2"
-            android:textStyle="bold" />
+            android:textColor="#ffffffff"
+            android:textStyle="bold"
+            android:layout_margin="6dp"
+            android:background="#FF3FA9F7"
+            android:layout_weight="7.58" />
 
     </LinearLayout>
 

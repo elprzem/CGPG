@@ -8,20 +8,18 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
-import com.oa.cgpg.dataOperations.*;
-import com.oa.cgpg.models.opinionNetEntity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.oa.cgpg.dataOperations.XMLParsing;
+import com.oa.cgpg.dataOperations.createTestEntities;
+import com.oa.cgpg.dataOperations.dataBaseHelper;
+import com.oa.cgpg.dataOperations.dbOps;
 
 public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     implements MapFragment.OnMapFragmentListener,
@@ -161,11 +159,17 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     }
 
     @Override
-    public void startMapFragment(Integer typePOI) {
+    public void startMapFragment(Integer value, String mode) {
         Fragment fragment = new MapFragment();
         Bundle args = new Bundle();
-        args.putInt("type", typePOI);
-        fragment.setArguments(args);
+        if(mode.equals(Keys.TYPE_POI)){
+            args.putInt(Keys.TYPE_POI, value);
+            fragment.setArguments(args);
+        }
+        else if(mode.equals(Keys.BUILDING_ID)){
+            args.putInt(Keys.BUILDING_ID, value);
+            fragment.setArguments(args);
+        }
         ((MapFragment)fragment).setDatabaseRef(dbOps);
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
