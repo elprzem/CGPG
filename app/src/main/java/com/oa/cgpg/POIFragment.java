@@ -3,7 +3,6 @@ package com.oa.cgpg;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -48,8 +47,8 @@ public class POIFragment extends Fragment {
 
     private OnPOIFragmentListener listener;
     public ExpandableListView listView;
-    private int typePOI;
-    private int buildingId;
+    private Integer typePOI;
+    private Integer buildingId;
     private int ParentClickStatus=-1;
     private int ChildClickStatus=-1;
     private ArrayList<POIItem> poiItems;
@@ -103,7 +102,10 @@ public class POIFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //TODO: przekazać do MApFragment id budynków do wyświetlenia
-                listener.startMapFragment(typePOI);
+                if(typePOI != null)
+                    listener.startMapFragment(typePOI, Keys.TYPE_POI);
+                else if(buildingId != null)
+                    listener.startMapFragment(buildingId, Keys.BUILDING_ID);
             }
         });
         //collapse other expanded items
@@ -411,7 +413,7 @@ public class POIFragment extends Fragment {
     }
 
     public interface OnPOIFragmentListener{
-        void startMapFragment(Integer typePOI);
+        void startMapFragment(Integer value, String mode);
         void startOpinionsFragment(Integer idPOI, String titlePOI);
     }
     //sprawdzenie polaczenia z Internetem

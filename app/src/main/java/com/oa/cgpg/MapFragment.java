@@ -123,10 +123,17 @@ public class MapFragment extends Fragment {
         if(getArguments() != null){
             //gdy fragment został otwarty w celu wyświetlenia pozycji na mapie wybranego rodzaju POI
             Log.i("type",String.valueOf(getArguments().getInt("type")));
-            if(getArguments().containsKey("type"))
-                typePOI = getArguments().getInt("type");
-
-            //buildingsList = getBuildingsCoordinatesByTypePOI(typePOI);
+            if(getArguments().containsKey(Keys.TYPE_POI)) {
+                typePOI = getArguments().getInt(Keys.TYPE_POI);
+                //TODO uncomment when method and data in database are prepared
+                //buildingsList = database.getBuildingsCoordinatesByTypePOI(typePOI);
+            }
+            else if(getArguments().containsKey(Keys.BUILDING_ID)){
+                buildingsList = new ArrayList<buildingEntity>();
+                buildingsList.add(database.getBuildingById(
+                        getArguments().getInt(Keys.BUILDING_ID)
+                ));
+            }
         }
 
         initializeVisibleBitmap();
