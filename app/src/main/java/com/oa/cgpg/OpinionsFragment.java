@@ -62,7 +62,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         poiId = args.getInt(Keys.POI_NUMBER, 0);
         getActivity().setTitle(title);
 
-        XMLOpinionGet opinionParser = new XMLOpinionGet(getActivity(),1,5);
+        XMLOpinionGet opinionParser = new XMLOpinionGet(getActivity(),1,1);
         opinionParser.delegate=this;
         opinionParser.execute();
 
@@ -107,6 +107,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
                     case POSITIVE:
                         for (int i = 0; i < opinions.size(); i++) {
                             if (opinions.get(i).getOpinionType() == POSITIVE ) {
+                                Log.i("type pos", String.valueOf(i));
                                 selectedComments.add(opinions.get(i));
                             }
                         }
@@ -114,6 +115,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
                     case NEGATIVE:
                         for (int i = 0; i < opinions.size(); i++) {
                             if (opinions.get(i).getOpinionType() == NEGATIVE) {
+                                Log.i("type neg", String.valueOf(i));
                                 selectedComments.add(opinions.get(i));
                             }
                         }
