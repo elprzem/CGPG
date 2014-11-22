@@ -19,7 +19,7 @@ import android.widget.ListView;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLOpinionRateSend;
-import com.oa.cgpg.dataOperations.XMLParsing;
+
 import com.oa.cgpg.dataOperations.createTestEntities;
 import com.oa.cgpg.dataOperations.dataBaseHelper;
 import com.oa.cgpg.dataOperations.dbOps;
@@ -44,7 +44,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     private createTestEntities testEntities;
     private dataBaseHelper dbHelper;
 
-    private XMLParsing parser;
+
 
 
     @Override
