@@ -26,6 +26,7 @@ import com.oa.cgpg.dataOperations.dbOps;
 import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.opinionRateNet;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -174,15 +175,20 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     }
 
     @Override
-    public void startPOIFragment(Integer buildingId, String key) {
+    public void startPOIFragment(Integer id, String key) {
         Fragment fragment = new POIFragment();
         ((POIFragment) fragment).setDbOps(dbOps);
         Bundle args = new Bundle();
 
         //TODO Gdzie przekazać buildingId?
         //TODO Jak wołać ten fragemnt? Bez, czy z setDatabaseRef?
-        args.putInt(key, 1);
-        fragment.setArguments(args);
+        if(key.equals(Keys.BUILDING_ID)) {
+            args.putInt(key, 1);
+            fragment.setArguments(args);
+        }else if(key.equals(Keys.TYPE_POI)){
+            args.putInt(key, id);
+            fragment.setArguments(args);
+        }
 
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();

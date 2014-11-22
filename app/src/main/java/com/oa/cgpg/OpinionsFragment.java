@@ -1,6 +1,7 @@
 package com.oa.cgpg;
 
 import android.app.Activity;
+import android.media.Image;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.format.DateFormat;
@@ -12,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,6 +30,9 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
     private ArrayList<opinionNetEntity> opinionsPresented;
     private final int POSITIVE = 0;
     private final int NEGATIVE = 1;
+    private final int NOTHING_ADDED = -1;
+    private final int PLUS_ADDED = 1;
+    private final int MINUS_ADDED = 0;
     private final int ALL = 2;
     public ExpandableListView listViewOpinionTypes;
     public ListView listViewOpinions;
@@ -36,6 +41,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
     private ArrayList<OpinionTypes> opinionTypes;
     private Button newOpinion;
     private int poiId;
+    private ViewHolder holder;
 
 
     private OnOpinionsFragmentListener mListener;
@@ -201,38 +207,70 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {//setting opinion values in row
+        public View getView(final int position, View convertView, ViewGroup parent) {//setting opinion values in row
             // TODO Auto-generated method stub
             View rowView = convertView;
-            if (rowView == null)
+            holder = new ViewHolder();
+            if (rowView == null){
                 rowView = inflater.inflate(R.layout.opinion_row, null);
-            TextView opinion = (TextView) rowView.findViewById(R.id.opinionText);
-            opinion.setText(opinionsPresented.get(position).getOpinionText());
-            TextView username = (TextView) rowView.findViewById(R.id.usernameText);
-            username.setText(opinionsPresented.get(position).getUsername());
-            TextView date = (TextView) rowView.findViewById(R.id.dateText);
+                holder.opinion = (TextView) rowView.findViewById(R.id.opinionText);
+                holder.username = (TextView) rowView.findViewById(R.id.usernameText);
+                holder.date = (TextView) rowView.findViewById(R.id.dateText);
+                holder.pluses = (TextView) rowView.findViewById(R.id.plusText);
+                holder.minuses = (TextView) rowView.findViewById(R.id.minusText);
+                holder.opinionLayout = (LinearLayout) rowView.findViewById(R.id.opinionLayout);
+                holder.plusBtn = (ImageButton) rowView.findViewById(R.id.plusButton);
+                holder.plusBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.i("click plus at", String.valueOf(opinionsPresented.get(position).getOpinionText())+ " " + String.valueOf(position));
+                        holder.plusBtn.setImageDrawable(getResources().getDrawable(R.drawable.plus_disabled));
+                        holder.plusBtn.setEnabled(false);
+                    }
+                });
+                holder.minusBtn = (ImageButton) rowView.findViewById(R.id.minusButton);
+                holder.minusBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.i("click minus at", String.valueOf(opinionsPresented.get(position).getOpinionText()) + " " + String.valueOf(position));
+                        holder.minusBtn.setImageDrawable(getResources().getDrawable(R.drawable.minus_disabled));
+                        holder.minusBtn.setEnabled(false);
+                    }
+                });
+                rowView.setTag(holder);
+            } else {
+                holder = (ViewHolder) rowView.getTag();
+            }
+            Log.i("opinia nr", String.valueOf(position)+","+String.valueOf(opinionsPresented.get(position).getVal()));
+            holder.opinion.setText(opinionsPresented.get(position).getOpinionText());
+            holder.username.setText(opinionsPresented.get(position).getUsername());
             DateFormat df = new android.text.format.DateFormat();
-            date.setText( df.format("dd/MM/yy", opinionsPresented.get(position).getAddDate()));
-            TextView pluses = (TextView) rowView.findViewById(R.id.plusText);
-            pluses.setText(String.valueOf(opinionsPresented.get(position).getRatingPlus()));
-            TextView minuses = (TextView) rowView.findViewById(R.id.minusText);
-            minuses.setText(String.valueOf(opinionsPresented.get(position).getRatingMinus()));
-            LinearLayout opinionLayout = (LinearLayout) rowView.findViewById(R.id.opinionLayout);
-
+            holder.date.setText( df.format("dd/MM/yy", opinionsPresented.get(position).getAddDate()));
+            holder.pluses.setText(String.valueOf(opinionsPresented.get(position).getRatingPlus()));
+            holder.minuses.setText(String.valueOf(opinionsPresented.get(position).getRatingMinus()));
             int sdk = android.os.Build.VERSION.SDK_INT;
             if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
                 if(opinionsPresented.get(position).getOpinionType() == POSITIVE){
-                    opinionLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.rounded_layout_green));
+                    holder.opinionLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.rounded_layout_green));
                 }else{
-                    opinionLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.rounded_layout_red));
+                    holder.opinionLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.rounded_layout_red));
                 }
             } else {
                 if(opinionsPresented.get(position).getOpinionType() == POSITIVE){
-                    opinionLayout.setBackground(getResources().getDrawable(R.drawable.rounded_layout_green));
+                    holder.opinionLayout.setBackground(getResources().getDrawable(R.drawable.rounded_layout_green));
                 }else{
-                    opinionLayout.setBackground(getResources().getDrawable(R.drawable.rounded_layout_red));
+                    holder.opinionLayout.setBackground(getResources().getDrawable(R.drawable.rounded_layout_red));
                 }
             }
+            if(opinionsPresented.get(position).getVal() == PLUS_ADDED){
+                holder.plusBtn.setImageDrawable(getResources().getDrawable(R.drawable.plus_disabled));
+                holder.plusBtn.setEnabled(false);
+            }
+            if(opinionsPresented.get(position).getVal() == MINUS_ADDED){
+                holder.minusBtn.setImageDrawable(getResources().getDrawable(R.drawable.minus_disabled));
+                holder.minusBtn.setEnabled(false);
+            }
+
             return rowView;
         }
     }
@@ -461,6 +499,16 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
+    private class ViewHolder{
+        private TextView opinion;
+        private TextView username;
+        private TextView date;
+        private TextView pluses;
+        private TextView minuses;
+        private LinearLayout opinionLayout;
+        private ImageButton plusBtn;
+        private ImageButton minusBtn;
+    }
     public interface OnOpinionsFragmentListener{
         void startNewOpinionsFragment(Integer idPOI);
     }
