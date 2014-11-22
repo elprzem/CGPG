@@ -114,6 +114,13 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
         return build;
     }
 
+    public List<buildingEntity> getBuildingsCoordinatesByTypePOI(){
+        List<buildingEntity> list = null;
+        QueryBuilder<buildingEntity, Integer> getById = buildingDAO.queryBuilder();
+
+        return list;
+    }
+
     //przepisuje Przemka warunki
     //metoda zwraca ID lub -1 w przypadku braku budynku
     public int getIdOfBuildingByCords(int x, int y) throws Exception {

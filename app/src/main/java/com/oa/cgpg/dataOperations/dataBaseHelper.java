@@ -18,7 +18,7 @@ import java.sql.SQLException;
  * Created by Tomasz on 2014-11-05.
  */
 public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
-    private XMLParsing parser;
+    private XMLDatabaseInsert parser;
     private static final String DATABASE_NAME = "cgpg.db";
     // any time you make changes to your database objects, you may have to increase the database version
     private static final int DATABASE_VERSION = 3;

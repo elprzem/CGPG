@@ -29,14 +29,14 @@ import javax.xml.parsers.ParserConfigurationException;
 /**
  * Created by Tomasz on 2014-11-07.
  */
-public class XMLParsing extends AsyncTask<Void, Void, Void> {
+public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
     private static final String HTTP_URL = "http://cgpg.zz.mu/output.xml";
     private String xml;
     private ProgressDialog progressDialog;
     private Context context;
     public AsyncResponse delegate=null;
 
-    public XMLParsing(Context c, String s) {
+    public XMLDatabaseInsert(Context c, String s) {
         this.context = c;
         this.xml = s;
     }
