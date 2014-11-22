@@ -6,7 +6,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Xml;
 
+import com.oa.cgpg.models.buildingEntity;
 import com.oa.cgpg.models.opinionNetEntity;
+import com.oa.cgpg.models.poiEntity;
+import com.oa.cgpg.models.typeEntity;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -36,12 +39,18 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
     private ProgressDialog progressDialog;
     private Context context;
     public AsyncResponse delegate = null;
-    private dbOps dpOps;
+    private dbOps dbOps;
     private static final String ns = null;
+    private List<buildingEntity> listBuildings = null;
+    private List<typeEntity> listTypes = null;
+    private List<poiEntity> listPois = null;
 
     public XMLDatabaseInsert(Context c, dbOps d) {
         this.context = c;
-        this.dpOps = d;
+        this.dbOps = d;
+        listBuildings = new ArrayList<buildingEntity>();
+        listTypes = new ArrayList<typeEntity>();
+        listPois = new ArrayList<poiEntity>();
     }
 
     @Override
@@ -52,7 +61,7 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void D) {
         progressDialog.dismiss();
-      //  delegate.processFinish(xml);
+        //  delegate.processFinish(xml);
     }
 
     @Override
@@ -91,10 +100,15 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
     private void checkVersion() {
         try {
             InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-
-
             int version = parseVersion(is);
-            Log.i("VERSION:",version+"");
+            if (version != dbOps.getVersion().getVersionNumber()){
+                is.reset();
+                dbOps.update();
+                dbOps.changeVersion(version);
+                getList(is);
+            }
+
+            Log.i("VERSION:", version + "");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (XmlPullParserException e) {
@@ -107,11 +121,9 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
     }
 
 
-    public List getListBuildings() {
-        List opinions = null;
+    public void getList(InputStream is) {
         try {
-            InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-            opinions = parse(is);
+            parse(is);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (XmlPullParserException e) {
@@ -122,7 +134,7 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
             e.printStackTrace();
         }
 
-        return opinions;
+
     }
 
     public int parseVersion(InputStream in) throws XmlPullParserException, IOException, ParseException {
@@ -135,13 +147,13 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
 
     }
 
-    public List parse(InputStream in) throws XmlPullParserException, IOException, ParseException {
+    public void parse(InputStream in) throws XmlPullParserException, IOException, ParseException {
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in, null);
             parser.nextTag();
-            return readOpinions(parser);
+            readXML(parser);
         } finally {
             in.close();
         }
@@ -176,68 +188,186 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
     }
 
 
-    private List readOpinions(XmlPullParser parser) throws XmlPullParserException, IOException, ParseException {
-        List opinions = new ArrayList();
-
-        parser.require(XmlPullParser.START_TAG, ns, "opinions");
+    private void readXML(XmlPullParser parser) throws XmlPullParserException, IOException, ParseException {
+        parser.require(XmlPullParser.START_TAG, ns, "cgpg");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
             String name = parser.getName();
             // Starts by looking for the entry tag
-            if (name.equals("opinion")) {
-                opinions.add(readOpinion(parser));
+            if (name.equals("buildings")) {
+                readBuildings(parser);
+            } else if (name.equals("types")) {
+                readTypes(parser);
+            } else if (name.equals("pois")) {
+                readPois(parser);
             } else {
                 skip(parser);
             }
         }
-        return opinions;
     }
 
-    private opinionNetEntity readOpinion(XmlPullParser parser) throws XmlPullParserException, IOException,
+    private void readBuildings(XmlPullParser parser) throws XmlPullParserException, IOException,
             ParseException {
-        parser.require(XmlPullParser.START_TAG, ns, "opinion");
+        parser.require(XmlPullParser.START_TAG, ns, "buildings");
 
         int id = 0;
-        String opinionText = "";
-        String username = "";
-        int poiId = 0;
-        int ratingPlus = 0;
-        int ratingMinus = 0;
-        int val = 0;
-        int opinionType = 0;
-        Date addDate = null;
+        String name = null;
+        String description = null;
+        int x1 = 0;
+        int y1 = 0;
+        int x2 = 0;
+        int y2 = 0;
+        int x3 = 0;
+        int y3 = 0;
+        int x4 = 0;
+        int y4 = 0;
+        String link = null;
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String nName = parser.getName();
+            // Starts by looking for the entry tag
+            if (nName.equals("building")) {
+                while (parser.next() != XmlPullParser.END_TAG) {
+                    if (parser.getEventType() != XmlPullParser.START_TAG) {
+                        continue;
+                    }
+                    String nodeName = parser.getName();
+                    if (nodeName.equals("id")) {
+                        id = readInt(parser, "id");
+                    } else if (nodeName.equals("x1")) {
+                        x1 = readInt(parser, "x1");
+                    } else if (nodeName.equals("x2")) {
+                        x2 = readInt(parser, "x2");
+                    } else if (nodeName.equals("x3")) {
+                        x3 = readInt(parser, "x3");
+                    } else if (nodeName.equals("x3")) {
+                        x4 = readInt(parser, "x3");
+                    } else if (nodeName.equals("y1")) {
+                        y1 = readInt(parser, "y1");
+                    } else if (nodeName.equals("y2")) {
+                        y2 = readInt(parser, "y2");
+                    } else if (nodeName.equals("y3")) {
+                        y3 = readInt(parser, "y3");
+                    } else if (nodeName.equals("y4")) {
+                        y4 = readInt(parser, "y4");
+                    } else if (nodeName.equals("name")) {
+                        name = readString(parser, "name");
+                    } else if (nodeName.equals("description")) {
+                        description = readString(parser, "description");
+                    } else if (nodeName.equals("link")) {
+                        link = readString(parser, "link");
+                    } else {
+                        skip(parser);
+                    }
+                }
+                listBuildings.add(new buildingEntity(id, name, description, x1, y1, x2, y2, x3, y3, x4, y4, link));
+            } else {
+                skip(parser);
+            }
+        }
+
+        for (buildingEntity b : listBuildings) {
+            dbOps.commitBuilding(b);
+        }
+    }
+
+    private void readTypes(XmlPullParser parser) throws XmlPullParserException, IOException,
+            ParseException {
+        parser.require(XmlPullParser.START_TAG, ns, "types");
+
+        int id = 0;
+        String name = null;
 
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
-            String name = parser.getName();
-            if (name.equals("id")) {
-                id = readId(parser);
-            } else if (name.equals("opinionText")) {
-                opinionText = readOpinionText(parser);
-            } else if (name.equals("username")) {
-                username = readUsername(parser);
-            } else if (name.equals("poiID")) {
-                poiId = readPoiId(parser);
-            } else if (name.equals("ratingPlus")) {
-                ratingPlus = readRatingPlus(parser);
-            } else if (name.equals("ratingMinus")) {
-                ratingMinus = readRatingMinus(parser);
-            } else if (name.equals("setVal")) {
-                val = readSetVal(parser);
-            } else if (name.equals("opinionType")) {
-                opinionType = readOpinionType(parser);
-            } else if (name.equals("addDate")) {
-                addDate = readAddDate(parser);
+            String nName = parser.getName();
+            // Starts by looking for the entry tag
+            if (nName.equals("type")) {
+                while (parser.next() != XmlPullParser.END_TAG) {
+                    if (parser.getEventType() != XmlPullParser.START_TAG) {
+                        continue;
+                    }
+                    String nodeName = parser.getName();
+                    if (nodeName.equals("id")) {
+                        id = readInt(parser, "id");
+                    } else if (nodeName.equals("name")) {
+                        name = readString(parser, "name");
+                    } else {
+                        skip(parser);
+                    }
+                }
+                listTypes.add(new typeEntity(id, name));
             } else {
                 skip(parser);
             }
         }
-        return new opinionNetEntity(id, opinionText, username, poiId, ratingPlus, ratingMinus, val, opinionType,
-                addDate);
+        for (typeEntity t : listTypes) {
+            dbOps.commitType(t);
+        }
+    }
+
+
+    private void readPois(XmlPullParser parser) throws XmlPullParserException, IOException,
+            ParseException {
+        parser.require(XmlPullParser.START_TAG, ns, "pois");
+
+        int id = 0;
+        String name = null;
+        String description = null;
+        int buildingKey = 0;
+        int typeKey = 0;
+        int ratingPlus = 0;
+        int ratingMinus = 0;
+        String link = null;
+
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String nName = parser.getName();
+            // Starts by looking for the entry tag
+            if (nName.equals("poi")) {
+                while (parser.next() != XmlPullParser.END_TAG) {
+                    if (parser.getEventType() != XmlPullParser.START_TAG) {
+                        continue;
+                    }
+                    String nodeName = parser.getName();
+                    if (nodeName.equals("id")) {
+                        id = readInt(parser, "id");
+                    } else if (nodeName.equals("name")) {
+                        name = readString(parser, "name");
+                    } else if (nodeName.equals("description")) {
+                        description = readString(parser, "description");
+                    } else if (nodeName.equals("buildingKey")) {
+                        buildingKey = readInt(parser, "buildingKey");
+                    } else if (nodeName.equals("typeKey")) {
+                        typeKey = readInt(parser, "typeKey");
+                    } else if (nodeName.equals("ratingPlus")) {
+                        ratingPlus = readInt(parser, "ratingPlus");
+                    } else if (nodeName.equals("ratingMinus")) {
+                        ratingMinus = readInt(parser, "ratingMinus");
+                    } else if (nodeName.equals("link")) {
+                        link = readString(parser, "link");
+                    } else {
+                        skip(parser);
+                    }
+                }
+                buildingEntity b = dbOps.getBuildingById(buildingKey);
+                typeEntity t = dbOps.getTypeById(typeKey);
+                listPois.add(new poiEntity(id, name,  b, description, t,  ratingPlus,  ratingMinus,  link));
+            } else {
+                skip(parser);
+            }
+        }
+        for (poiEntity p : listPois) {
+            dbOps.commitPOI(p);
+        }
     }
 
     private int readInt(XmlPullParser parser, String nodeName) throws IOException, XmlPullParserException {
@@ -247,80 +377,11 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
         return tmp;
     }
 
-    private int readId(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, ns, "id");
-        int id = Integer.parseInt(readText(parser));
-        parser.require(XmlPullParser.END_TAG, ns, "id");
-        return id;
-    }
-
-    private String readOpinionText(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, ns, "opinionText");
+    private String readString(XmlPullParser parser, String nodeName) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, nodeName);
         String text = readText(parser);
-        parser.require(XmlPullParser.END_TAG, ns, "opinionText");
+        parser.require(XmlPullParser.END_TAG, ns, nodeName);
         return text;
-    }
-
-    private String readUsername(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, ns, "username");
-        String username = readText(parser);
-        parser.require(XmlPullParser.END_TAG, ns, "username");
-        return username;
-    }
-
-    private int readPoiId(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, ns, "poiID");
-        int poiId = Integer.parseInt(readText(parser));
-        parser.require(XmlPullParser.END_TAG, ns, "poiID");
-        return poiId;
-    }
-
-    private int readRatingPlus(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, ns, "ratingPlus");
-        int ratePlus = Integer.parseInt(readText(parser));
-        parser.require(XmlPullParser.END_TAG, ns, "ratingPlus");
-        return ratePlus;
-    }
-
-    private int readRatingMinus(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, ns, "ratingMinus");
-        int rateMinus = Integer.parseInt(readText(parser));
-        parser.require(XmlPullParser.END_TAG, ns, "ratingMinus");
-        return rateMinus;
-    }
-
-    private Date readAddDate(XmlPullParser parser) throws IOException, XmlPullParserException, ParseException {
-        Date data;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        parser.require(XmlPullParser.START_TAG, ns, "addDate");
-        String date = readText(parser);
-        data = format.parse(date);
-        parser.require(XmlPullParser.END_TAG, ns, "addDate");
-        return data;
-    }
-
-    private int readSetVal(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, ns, "setVal");
-        String tmp = readText(parser);
-        int val = -1;
-        Log.i(getClass().getName(), "TMP VALUE = " + tmp);
-        if (tmp.equals("")) {
-            val = -1;
-        } else if (tmp.equals("0")) {
-            val = 0;
-        } else if (tmp.equals("1")) {
-            val = 1;
-        }
-
-        parser.require(XmlPullParser.END_TAG, ns, "setVal");
-        return val;
-    }
-
-    private int readOpinionType(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, ns, "opinionType");
-        int opType = Integer.parseInt(readText(parser));
-        parser.require(XmlPullParser.END_TAG, ns, "opinionType");
-        return opType;
     }
 
 
