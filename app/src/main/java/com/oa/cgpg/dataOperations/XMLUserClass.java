@@ -6,9 +6,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Xml;
 
-import com.oa.cgpg.LoggedUserInfo;
-import com.oa.cgpg.models.opinionNetEntity;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;

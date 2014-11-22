@@ -18,6 +18,7 @@ import android.widget.ListView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.oa.cgpg.dataOperations.AsyncResponse;
+import com.oa.cgpg.dataOperations.XMLDatabaseInsert;
 import com.oa.cgpg.dataOperations.XMLOpinionRateSend;
 
 import com.oa.cgpg.dataOperations.createTestEntities;
@@ -156,7 +157,8 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         switch (item.getItemId()) {
             case R.id.action_update:
                 // TODO aktualizacja bazy
-
+                XMLDatabaseInsert DI = new XMLDatabaseInsert(this,dbOps);
+                DI.execute();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

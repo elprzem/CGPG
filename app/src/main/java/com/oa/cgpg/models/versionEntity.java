@@ -8,10 +8,18 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "versionDB")
 public class versionEntity {
-    @DatabaseField(generatedId = false, canBeNull = false)
+    @DatabaseField(canBeNull = false,id=true)
+    private int id;
+
+    @DatabaseField(canBeNull = false)
     private int versionNumber;
 
     public versionEntity() {
+    }
+
+    public versionEntity(int id,int i) {
+        this.id = id;
+        this.versionNumber = i;
     }
 
     public int getVersionNumber() {
@@ -23,9 +31,10 @@ public class versionEntity {
     }
 
     @Override
-    public String toString () {
+    public String toString() {
         return "versionEntity{" +
-                       "versionNumber=" + versionNumber +
-                       '}';
+                "id=" + id +
+                ", versionNumber=" + versionNumber +
+                '}';
     }
 }
