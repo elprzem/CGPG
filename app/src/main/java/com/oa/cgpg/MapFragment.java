@@ -44,7 +44,7 @@ public class MapFragment extends Fragment {
 
     private OnMapFragmentListener listener;
 
-    private static final int ZOOM = 1;
+    private static final int ZOOM = 4;
     private static final int DRAG = 2;
     private static final String TEST_TAG = "testTag";
     private ImageView mapImageView;
@@ -88,13 +88,13 @@ public class MapFragment extends Fragment {
 
         initializeSourceMapBitmap();
         offset = new Point(0,0);
-        scale =1.0f;
+        scale =.5f;
     }
 
     private void initializeSourceMapBitmap() {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inMutable = true;
-        sourceMapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.temp_pg_map, options);
+        sourceMapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.kampus, options);
     }
 
 
@@ -147,21 +147,25 @@ public class MapFragment extends Fragment {
         zoomControls.setOnZoomInClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scale *= ZOOM_FACTOR;
-                Point newOffset = new Point(
-                        (int) (offset.x + (fragmentSize.x * (ZOOM_FACTOR - 1)) / (2 * scale)),
-                        (int) (offset.y + (fragmentSize.y * (ZOOM_FACTOR - 1)) / (2 * scale)));
-                checkAndRedrawVisibleBitmap(newOffset);
+                if(scale < 2){
+                    scale *= ZOOM_FACTOR;
+                    Point newOffset = new Point(
+                            (int) (offset.x + (fragmentSize.x * (ZOOM_FACTOR - 1)) / (2 * scale)),
+                            (int) (offset.y + (fragmentSize.y * (ZOOM_FACTOR - 1)) / (2 * scale)));
+                    checkAndRedrawVisibleBitmap(newOffset);
+                }
             }
         });
         zoomControls.setOnZoomOutClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scale /= ZOOM_FACTOR;
-                Point newOffset = new Point(
-                        (int) (offset.x - ((fragmentSize.x * (ZOOM_FACTOR - 1)) / (2 * ZOOM_FACTOR * scale))),
-                        (int) (offset.y - ((fragmentSize.y * (ZOOM_FACTOR - 1)) / (2 * ZOOM_FACTOR * scale))));
-                checkAndRedrawVisibleBitmap(newOffset);
+                if(scale > 0.3){
+                    scale /= ZOOM_FACTOR;
+                    Point newOffset = new Point(
+                            (int) (offset.x - ((fragmentSize.x * (ZOOM_FACTOR - 1)) / (2 * ZOOM_FACTOR * scale))),
+                            (int) (offset.y - ((fragmentSize.y * (ZOOM_FACTOR - 1)) / (2 * ZOOM_FACTOR * scale))));
+                    checkAndRedrawVisibleBitmap(newOffset);
+                }
             }
         });
         return view;
@@ -230,7 +234,7 @@ public class MapFragment extends Fragment {
                 Bitmap.Config.ARGB_8888
         );
         visibleBitmapCanvas = new Canvas(visibleBitmap);
-        visibleBitmapCanvas.drawColor(Color.BLUE);
+        visibleBitmapCanvas.drawColor(Color.WHITE);
         visibleBitmapCanvas.drawBitmap(
                 workingBitmap,
                 new Rect(offset.x, offset.y,
@@ -513,7 +517,7 @@ public class MapFragment extends Fragment {
     }
 
     private void redrawVisibleBitmap() {
-        visibleBitmapCanvas.drawColor(Color.BLUE);
+        visibleBitmapCanvas.drawColor(Color.WHITE);
         visibleBitmapCanvas.drawBitmap(
                 workingBitmap,
                 new Rect(offset.x, offset.y,
@@ -530,6 +534,23 @@ public class MapFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         listener = null;
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        listener = null;
+        sourceMapBitmap.recycle();
+        sourceMapBitmap = null;
+        visibleBitmap.recycle();
+        visibleBitmap = null;
+        visibleBitmapCanvas = null;
+        workingBitmap.recycle();
+        workingBitmap = null;
+        workingBitmapCanvas = null;
+        database = null;
+
+        Log.i(TEST_TAG, "onStop");
     }
 
     public interface OnMapFragmentListener{
