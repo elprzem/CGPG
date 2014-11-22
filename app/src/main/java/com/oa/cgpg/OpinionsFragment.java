@@ -58,8 +58,8 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
      //   setContentView(R.layout.activity_opinions);
      //   getActionBar().setDisplayHomeAsUpEnabled(true);
         Bundle args = getArguments();
-        String title = args.getString("poi");
-        poiId = args.getInt("poiNr", 0);
+        String title = args.getString(Keys.POI_TITLE);
+        poiId = args.getInt(Keys.POI_NUMBER, 0);
         getActivity().setTitle(title);
 
         XMLOpinionGet opinionParser = new XMLOpinionGet(getActivity(),1,5);

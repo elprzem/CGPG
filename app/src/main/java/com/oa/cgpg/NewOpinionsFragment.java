@@ -44,7 +44,7 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_new_opinions, container, false);
         Bundle args = getArguments();
-        poiId = args.getInt("poiNr", 0);
+        poiId = args.getInt(Keys.POI_NUMBER, 0);
         final Button addOpinion = (Button) rootView.findViewById(R.id.addOpinion);
         positive = (RadioButton) rootView.findViewById(R.id.radioPlus);
         negative = (RadioButton) rootView.findViewById(R.id.radioMinus);
