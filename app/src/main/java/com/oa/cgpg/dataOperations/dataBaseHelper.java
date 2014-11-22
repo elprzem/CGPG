@@ -11,6 +11,7 @@ import com.j256.ormlite.table.TableUtils;
 import com.oa.cgpg.models.buildingEntity;
 import com.oa.cgpg.models.poiEntity;
 import com.oa.cgpg.models.typeEntity;
+import com.oa.cgpg.models.versionEntity;
 
 import java.sql.SQLException;
 
@@ -21,7 +22,7 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
     private XMLDatabaseInsert parser;
     private static final String DATABASE_NAME = "cgpg.db";
     // any time you make changes to your database objects, you may have to increase the database version
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
 
     public dataBaseHelper(final Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -30,6 +31,7 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
     private Dao<buildingEntity, Integer> buildingDAO = null;
     private Dao<typeEntity, Integer> typeDAO = null;
     private Dao<poiEntity, Integer> poiDAO = null;
+    private Dao<versionEntity,Integer> versionDAO = null;
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase, final ConnectionSource connectionSource) {
@@ -38,6 +40,8 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, buildingEntity.class);
             TableUtils.createTable(connectionSource, typeEntity.class);
             TableUtils.createTable(connectionSource, poiEntity.class);
+            TableUtils.createTable(connectionSource, versionEntity.class);
+            getVersionDAO().createOrUpdate(new versionEntity(1,DATABASE_VERSION));
         } catch (SQLException e) {
             Log.e(dataBaseHelper.class.getName(), "Can't create database", e);
         }
@@ -50,8 +54,10 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, poiEntity.class, true);
             TableUtils.dropTable(connectionSource, typeEntity.class, true);
             TableUtils.dropTable(connectionSource, buildingEntity.class, true);
+            TableUtils.dropTable(connectionSource, versionEntity.class,true);
             Log.i(dataBaseHelper.class.getName(), "DB dropped");
             onCreate(sqLiteDatabase,connectionSource);
+
         } catch (SQLException e) {
             Log.e(dataBaseHelper.class.getName(), "Can't drop database", e);
         }
@@ -78,12 +84,18 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
         }
         return this.poiDAO;
     }
-
+    public Dao<versionEntity, Integer> getVersionDAO() throws SQLException{
+        if (this.versionDAO == null) {
+            this.versionDAO = getDao(versionEntity.class);
+        }
+        return this.versionDAO;
+    }
     @Override
     public void close() {
         super.close();
         this.poiDAO = null;
         this.typeDAO = null;
         this.buildingDAO = null;
+        this.versionDAO = null;
     }
 }

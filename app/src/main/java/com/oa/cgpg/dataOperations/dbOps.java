@@ -8,9 +8,11 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
+import com.j256.ormlite.table.TableUtils;
 import com.oa.cgpg.models.buildingEntity;
 import com.oa.cgpg.models.poiEntity;
 import com.oa.cgpg.models.typeEntity;
+import com.oa.cgpg.models.versionEntity;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,12 +25,15 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
     private Dao<buildingEntity, Integer> buildingDAO;
     private Dao<typeEntity, Integer> typeDAO;
     private Dao<poiEntity, Integer> poiDAO;
-    //dataBaseHelper databaseHelper = null;
+    private Dao<versionEntity, Integer> versionDAO;
+    private dataBaseHelper dbHelper = null;
 
     public dbOps(final dataBaseHelper databaseHelper) {
         this.buildingDAO = getBuildingDAO(databaseHelper);
         this.typeDAO = getTypeDAO(databaseHelper);
         this.poiDAO = getPoiDAO(databaseHelper);
+        this.versionDAO = getVersionDAO(databaseHelper);
+        this.dbHelper = databaseHelper;
     }
    /* public dbOps() {
         databaseHelper = getHelper();
@@ -47,6 +52,18 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
             }
         }
         return this.poiDAO;
+    }
+
+    private Dao<versionEntity, Integer> getVersionDAO(final dataBaseHelper databaseHelper) {
+        if (null == this.versionDAO) {
+            try {
+                this.versionDAO = databaseHelper.getVersionDAO();
+            } catch (final SQLException e) {
+                Log.e("DbOPS", "Unable to load DAO: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        return this.versionDAO;
     }
 
     private Dao<typeEntity, Integer> getTypeDAO(final dataBaseHelper databaseHelper) {
@@ -114,7 +131,22 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
         return build;
     }
 
-    public List<buildingEntity> getBuildingsCoordinatesByTypePOI(){
+    public versionEntity getVersion() {
+        versionEntity version = null;
+
+        try {
+            QueryBuilder<versionEntity, Integer> getVer = versionDAO.queryBuilder();
+            List<versionEntity> list = getVer.query();
+            version = list.get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return version;
+    }
+
+    // TODO
+    public List<buildingEntity> getBuildingsCoordinatesByTypePOI() {
         List<buildingEntity> list = null;
         QueryBuilder<buildingEntity, Integer> getById = buildingDAO.queryBuilder();
 
@@ -217,6 +249,32 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
             this.buildingDAO.createOrUpdate(build);
         } catch (SQLException e) {
             Log.e("DbOPS", "Unable to commit Building: " + e.getMessage());
+        }
+    }
+
+    public void changeVersion(int vNumber) {
+        versionEntity ver = getVersion();
+        ver.setVersionNumber(vNumber);
+        try {
+            this.versionDAO.createOrUpdate(ver);
+        } catch (SQLException e) {
+            Log.e("DbOPS", "Unable to commit Version: " + e.getMessage());
+        }
+    }
+
+    public void update() {
+        try {
+            TableUtils.dropTable(dbHelper.getConnectionSource(), poiEntity.class, true);
+            TableUtils.dropTable(dbHelper.getConnectionSource(), typeEntity.class, true);
+            TableUtils.dropTable(dbHelper.getConnectionSource(), buildingEntity.class, true);
+
+            TableUtils.createTable(dbHelper.getConnectionSource(), buildingEntity.class);
+            TableUtils.createTable(dbHelper.getConnectionSource(), typeEntity.class);
+            TableUtils.createTable(dbHelper.getConnectionSource(), poiEntity.class);
+
+            changeVersion(213);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -9,6 +9,7 @@ import android.util.Xml;
 import com.oa.cgpg.MainActivity;
 import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.models.opinionNetEntity;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;

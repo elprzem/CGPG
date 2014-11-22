@@ -7,7 +7,6 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.oa.cgpg.LoggedUserInfo;
-import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.opinionRateNet;
 
 import org.apache.http.client.methods.HttpPost;
