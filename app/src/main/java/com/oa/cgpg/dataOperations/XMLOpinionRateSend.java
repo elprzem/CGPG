@@ -26,6 +26,7 @@ public class XMLOpinionRateSend extends AsyncTask<Void, Void, Void> {
     private String xml;
     private ProgressDialog progressDialog;
     private Context context;
+    public AsyncResponse delegate = null;
 
     public XMLOpinionRateSend(List<opinionRateNet> list, Context context) {
         this.list = list;
@@ -34,12 +35,12 @@ public class XMLOpinionRateSend extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPreExecute() {
-        progressDialog = ProgressDialog.show(context, "Dodawanie opinii", "Proszę czekać...", true, false);
+        progressDialog = ProgressDialog.show(context, "Dodawanie oceny", "Proszę czekać...", true, false);
     }
 
     @Override
     protected void onPostExecute(Void D) {
-        //delegate.processFinish("");
+        delegate.processFinish("");
         progressDialog.dismiss();
 
     }

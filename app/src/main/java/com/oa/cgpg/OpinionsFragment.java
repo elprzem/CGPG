@@ -20,9 +20,13 @@ import android.widget.TextView;
 
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLOpinionGet;
+import com.oa.cgpg.dataOperations.XMLOpinionRateSend;
+import com.oa.cgpg.dataOperations.XMLOpinionSend;
 import com.oa.cgpg.models.opinionNetEntity;
+import com.oa.cgpg.models.opinionRateNet;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class OpinionsFragment extends Fragment implements AsyncResponse {
@@ -41,7 +45,6 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
     private ArrayList<OpinionTypes> opinionTypes;
     private Button newOpinion;
     private int poiId;
-    private ViewHolder holder;
 
 
     private OnOpinionsFragmentListener mListener;
@@ -177,7 +180,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
     }
     @Override
     public void processFinish(String o) {
-
+        ((OpinionsAdapter)listViewOpinions.getAdapter()).notifyDataSetChanged();
     }
     class OpinionsAdapter extends BaseAdapter {
 
@@ -209,10 +212,12 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {//setting opinion values in row
             // TODO Auto-generated method stub
+            Log.i("pozycja", String.valueOf(position));
             View rowView = convertView;
-            holder = new ViewHolder();
+            ViewHolder holder = new ViewHolder();
             if (rowView == null){
                 rowView = inflater.inflate(R.layout.opinion_row, null);
+                holder = new ViewHolder();
                 holder.opinion = (TextView) rowView.findViewById(R.id.opinionText);
                 holder.username = (TextView) rowView.findViewById(R.id.usernameText);
                 holder.date = (TextView) rowView.findViewById(R.id.dateText);
@@ -220,28 +225,12 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
                 holder.minuses = (TextView) rowView.findViewById(R.id.minusText);
                 holder.opinionLayout = (LinearLayout) rowView.findViewById(R.id.opinionLayout);
                 holder.plusBtn = (ImageButton) rowView.findViewById(R.id.plusButton);
-                holder.plusBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.i("click plus at", String.valueOf(opinionsPresented.get(position).getOpinionText())+ " " + String.valueOf(position));
-                        holder.plusBtn.setImageDrawable(getResources().getDrawable(R.drawable.plus_disabled));
-                        holder.plusBtn.setEnabled(false);
-                    }
-                });
                 holder.minusBtn = (ImageButton) rowView.findViewById(R.id.minusButton);
-                holder.minusBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.i("click minus at", String.valueOf(opinionsPresented.get(position).getOpinionText()) + " " + String.valueOf(position));
-                        holder.minusBtn.setImageDrawable(getResources().getDrawable(R.drawable.minus_disabled));
-                        holder.minusBtn.setEnabled(false);
-                    }
-                });
                 rowView.setTag(holder);
             } else {
                 holder = (ViewHolder) rowView.getTag();
             }
-            Log.i("opinia nr", String.valueOf(position)+","+String.valueOf(opinionsPresented.get(position).getVal()));
+            Log.i("opinia nr", String.valueOf(position));
             holder.opinion.setText(opinionsPresented.get(position).getOpinionText());
             holder.username.setText(opinionsPresented.get(position).getUsername());
             DateFormat df = new android.text.format.DateFormat();
@@ -262,15 +251,46 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
                     holder.opinionLayout.setBackground(getResources().getDrawable(R.drawable.rounded_layout_red));
                 }
             }
+            holder.plusBtn.setTag(position);
+            holder.plusBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.i("click plus at", String.valueOf(view.getTag()));
+                    sendOpinionRate(opinionsPresented.get(position).getId(), PLUS_ADDED);
+                    opinionsPresented.get(position).setVal(PLUS_ADDED);
+                   // notifyDataSetChanged();
+                    // ((ImageButton)view).setImageDrawable(getResources().getDrawable(R.drawable.plus_disabled));
+                    // view.setEnabled(false);
+                }
+            });
             if(opinionsPresented.get(position).getVal() == PLUS_ADDED){
                 holder.plusBtn.setImageDrawable(getResources().getDrawable(R.drawable.plus_disabled));
                 holder.plusBtn.setEnabled(false);
+            }else{
+                holder.plusBtn.setImageDrawable(getResources().getDrawable(R.drawable.plus));
+                holder.plusBtn.setEnabled(true);
             }
+            holder.minusBtn.setTag(position);
+            holder.minusBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.i("click minus at tag", String.valueOf(view.getTag())+",position:"+String.valueOf(position));
+                    sendOpinionRate(opinionsPresented.get(position).getId(), MINUS_ADDED);
+                    opinionsPresented.get(position).setVal(MINUS_ADDED);
+                   // notifyDataSetChanged();
+                   // ((ImageButton)view).setImageDrawable(getResources().getDrawable(R.drawable.minus_disabled));
+                   // view.setEnabled(false);
+                }
+            });
             if(opinionsPresented.get(position).getVal() == MINUS_ADDED){
+                Log.i("minus added at position", String.valueOf(position));
                 holder.minusBtn.setImageDrawable(getResources().getDrawable(R.drawable.minus_disabled));
                 holder.minusBtn.setEnabled(false);
+            }else{
+                holder.minusBtn.setImageDrawable(getResources().getDrawable(R.drawable.minus));
+                holder.minusBtn.setEnabled(true);
             }
-
+            rowView.setTag(holder);
             return rowView;
         }
     }
@@ -343,6 +363,13 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
             // Refresh ExpandableListView data
             ((OpinionsAdapter) listViewOpinions.getAdapter()).notifyDataSetChanged();
         }
+    }
+    private void sendOpinionRate(int opinionId, int value){
+        List<opinionRateNet> list = new ArrayList<opinionRateNet>();
+        list.add(new opinionRateNet(1,opinionId,value));
+        XMLOpinionRateSend ORS = new XMLOpinionRateSend(list, getActivity());
+        ORS.delegate = this;
+        ORS.execute();
     }
     /**
      * A Custom adapter to create Parent view (Used poi_grouprowprow.xml) and Child View((Used poi_childrow.xml.xml).
