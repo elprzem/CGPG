@@ -6,5 +6,8 @@ package com.oa.cgpg;
 public class Keys {
     public final static String TYPE_POI = "typePoi";
     public final static String BUILDING_ID = "buildingId";
+    public final static String CLEAR = "clearMap";
+    public final static String POI_NUMBER = "poiNr";
+    public final static String POI_TITLE = "poiTitle";
 
 }

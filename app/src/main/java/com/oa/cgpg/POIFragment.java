@@ -86,14 +86,14 @@ public class POIFragment extends Fragment {
         listView.setDividerHeight(1);
         registerForContextMenu(listView);
 
-        if (getArguments().containsKey("poiTypeId")) {
-            typePOI = getArguments().getInt("poiTypeId");
+        if (getArguments().containsKey(Keys.TYPE_POI)) {
+            typePOI = getArguments().getInt(Keys.TYPE_POI);
             Log.i("type", String.valueOf(typePOI));
             String title = getResources().getStringArray(R.array.menu_array)[typePOI];
             getActivity().setTitle(title);
 
-        } else if (getArguments().containsKey("buildingId")) {
-            buildingId = getArguments().getInt("buildingId");
+        } else if (getArguments().containsKey(Keys.BUILDING_ID)) {
+            buildingId = getArguments().getInt(Keys.BUILDING_ID);
             Log.i("building", String.valueOf(buildingId));
             String title = dbOps.getBuildingById(buildingId).getName();
             getActivity().setTitle(title);
@@ -122,7 +122,7 @@ public class POIFragment extends Fragment {
             }
         });
         //Creating static data in arraylist
-        final ArrayList<POIItem> dataFromDB = getDataFromDB(getArguments().containsKey("poiTypeId") ? true : false);
+        final ArrayList<POIItem> dataFromDB = getDataFromDB(getArguments().containsKey(Keys.TYPE_POI));
 
         // Adding ArrayList data to ExpandableListView values
         loadDataIntoAdapter(dataFromDB);
@@ -173,7 +173,7 @@ public class POIFragment extends Fragment {
         for (poiEntity poi : pois) {
             //Create parent class object
             final POIItem poiItem = new POIItem();
-            if (poi.getType().getIdType() == typePOI && poiType) {//wczytanie poi należących do danego typu
+            if (poiType && poi.getType().getIdType() == typePOI) {//wczytanie poi należących do danego typu
                 // Set values in parent class object
                 poiItem.setTitle(poi.getName());
                 poiItem.setId(poi.getIdPoi());
@@ -189,7 +189,7 @@ public class POIFragment extends Fragment {
                 poiItem.getDetails().add(details);
                 //Adding Parent class object to ArrayList
                 list.add(poiItem);
-            } else if (poi.getBuilding().getIdBuilding() == buildingId && !poiType) {//wczytanie poi znajdujacych sie w danym budynku
+            } else if (!poiType && poi.getBuilding().getIdBuilding() == buildingId) {//wczytanie poi znajdujacych sie w danym budynku
                 // Set values in parent class object
                 poiItem.setTitle(poi.getName());
                 poiItem.setId(poi.getIdPoi());
@@ -399,7 +399,6 @@ public class POIFragment extends Fragment {
 
     public interface OnPOIFragmentListener {
         void startMapFragment(Integer value, String mode);
-
         void startOpinionsFragment(Integer idPOI, String titlePOI);
     }
 

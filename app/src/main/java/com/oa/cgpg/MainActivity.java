@@ -174,14 +174,14 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     }
 
     @Override
-    public void startPOIFragment(Integer buildingId) {
+    public void startPOIFragment(Integer buildingId, String key) {
         Fragment fragment = new POIFragment();
         ((POIFragment) fragment).setDbOps(dbOps);
         Bundle args = new Bundle();
 
         //TODO Gdzie przekazać buildingId?
         //TODO Jak wołać ten fragemnt? Bez, czy z setDatabaseRef?
-        args.putInt("buildingId", 1);
+        args.putInt(key, 1);
         fragment.setArguments(args);
 
         FragmentManager fragmentManager = getFragmentManager();
@@ -208,8 +208,8 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     public void startOpinionsFragment(Integer idPOI, String titlePOI) {
         Fragment fragment = new OpinionsFragment();
         Bundle args = new Bundle();
-        args.putInt("poiNr", idPOI);
-        args.putString("poi", titlePOI);
+        args.putInt(Keys.POI_NUMBER, idPOI);
+        args.putString(Keys.POI_TITLE, titlePOI);
         fragment.setArguments(args);
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
@@ -219,7 +219,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     public void startNewOpinionsFragment(Integer idPOI) {
         Fragment fragment = new NewOpinionsFragment();
         Bundle args = new Bundle();
-        args.putInt("poiNr", idPOI);
+        args.putInt(Keys.POI_NUMBER, idPOI);
         fragment.setArguments(args);
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_opinions").commit();
@@ -246,26 +246,13 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         mDrawerLayout.closeDrawer(mDrawerList);
 
         if (position == MenuItems.MAP) {
-            Fragment fragment = new MapFragment();
-            ((MapFragment) fragment).setDatabaseRef(dbOps);
-
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+            startMapFragment(0, Keys.CLEAR);
         }
         // nowy fragment - widok typu punktu usługowego (lista wszystkich punktów danego typu)
         else if (position >= MenuItems.XERO && position <= MenuItems.BIKES) {
-            Fragment fragment = new POIFragment();
-            ((POIFragment) fragment).setDbOps(dbOps);
-            Bundle args = new Bundle();
-            args.putInt("poiTypeId", position);
-            fragment.setArguments(args);
-
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-
+            startPOIFragment(position, Keys.TYPE_POI);
         } else if (position == MenuItems.LOGIN) {//aktywność logowania lub rejestracji - info można przechować w klasie singleton
             Fragment fragment = new LoginFragment();
-
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
         }

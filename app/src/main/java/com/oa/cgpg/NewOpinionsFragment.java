@@ -44,7 +44,7 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_new_opinions, container, false);
         Bundle args = getArguments();
-        poiId = args.getInt("poiNr", 0);
+        poiId = args.getInt(Keys.POI_NUMBER, 0);
         final Button addOpinion = (Button) rootView.findViewById(R.id.addOpinion);
         positive = (RadioButton) rootView.findViewById(R.id.radioPlus);
         negative = (RadioButton) rootView.findViewById(R.id.radioMinus);
@@ -92,7 +92,7 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
         int type = positive.isChecked()? POSITIVE : NEGATIVE;
         List<opinionNetEntity> list = new ArrayList<opinionNetEntity>();
 
-        opinionNetEntity opinionEntity = new opinionNetEntity(1,text,LoggedUserInfo.getInstance().getUserName(),5,1,3,4,type, new Date());
+        opinionNetEntity opinionEntity = new opinionNetEntity(1,text,LoggedUserInfo.getInstance().getUserName(),1,1,3,4,type, new Date());
         //TODO - wysłanie opinii
         list.add(opinionEntity);
         XMLOpinionSend XOS = new XMLOpinionSend(getActivity(),list);
