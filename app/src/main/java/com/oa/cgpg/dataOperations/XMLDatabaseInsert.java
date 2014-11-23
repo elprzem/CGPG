@@ -16,6 +16,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -77,7 +78,7 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
             Log.i(getClass().getName(), "Get response");
             HttpEntity httpEntity = httpResponse.getEntity();
             Log.i(getClass().getName(), "Parse xml");
-            xml = EntityUtils.toString(httpEntity);
+            xml = EntityUtils.toString(httpEntity, HTTP.UTF_8 );
             Log.i(getClass().getName(), "xml length " + xml.length());
             checkVersion();
         } catch (UnsupportedEncodingException e) {
@@ -101,12 +102,12 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
         try {
             InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
             int version = parseVersion(is);
-            if (version != dbOps.getVersion().getVersionNumber()){
+           // if (version != dbOps.getVersion().getVersionNumber()){
                 is.reset();
                 dbOps.update();
                 dbOps.changeVersion(version);
                 getList(is);
-            }
+           // }
 
             Log.i("VERSION:", version + "");
         } catch (UnsupportedEncodingException e) {
