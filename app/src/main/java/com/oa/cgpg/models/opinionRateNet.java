@@ -7,11 +7,13 @@ public class opinionRateNet {
     private int userId;
     private int opinionId;
     private int value;
+    private boolean isUpdated;
 
-    public opinionRateNet(int userId, int opinionId, int value) {
+    public opinionRateNet(int userId, int opinionId, int value, boolean isUpdated) {
         this.userId = userId;
         this.opinionId = opinionId;
         this.value = value;
+        this.isUpdated = isUpdated;
     }
 
     public int getUserId() {
