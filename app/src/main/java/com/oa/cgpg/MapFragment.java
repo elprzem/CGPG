@@ -432,7 +432,7 @@ public class MapFragment extends Fragment {
                     Log.i("finalPlaceId", String.valueOf(finalPlaceId));
                    // placeDialog.hide();
                     placeDialog.dismiss();
-                    listener.startPOIFragment(finalPlaceId, Keys.BUILDING_ID);
+                    listener.startPOIFragment(0,finalPlaceId, Keys.BUILDING_ID);
                 }
             });
             placeDialog.show();
@@ -554,7 +554,7 @@ public class MapFragment extends Fragment {
     }
 
     public interface OnMapFragmentListener{
-        void startPOIFragment(Integer buildingId, String key);
+        void startPOIFragment(Integer nrOnList, Integer buildingId, String key);
     }
 
 }

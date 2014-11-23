@@ -41,7 +41,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mMenuTitles;
-
+    private String[] mPOItypes;
     private dbOps dbOps;
     private createTestEntities testEntities;
     private dataBaseHelper dbHelper;
@@ -90,6 +90,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
 */
         mTitle = mDrawerTitle = getTitle();
         mMenuTitles = getResources().getStringArray(R.array.menu_array);
+        mPOItypes = getResources().getStringArray(R.array.poi_types);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -177,7 +178,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     }
 
     @Override
-    public void startPOIFragment(Integer id, String key) {
+    public void startPOIFragment(Integer nrOnList, Integer id, String key) {
         Fragment fragment = new POIFragment();
         ((POIFragment) fragment).setDbOps(dbOps);
         Bundle args = new Bundle();
@@ -189,6 +190,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             fragment.setArguments(args);
         }else if(key.equals(Keys.TYPE_POI)){
             args.putInt(key, id);
+            args.putInt(Keys.NR_ON_LIST, nrOnList);
             fragment.setArguments(args);
         }
 
@@ -258,7 +260,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         }
         // nowy fragment - widok typu punktu usługowego (lista wszystkich punktów danego typu)
         else if (position >= MenuItems.XERO && position <= MenuItems.BIKES) {
-            startPOIFragment(position, Keys.TYPE_POI);
+            startPOIFragment(position, dbOps.getTypeIdByName(mPOItypes[position-1]), Keys.TYPE_POI);
         } else if (position == MenuItems.LOGIN) {//aktywność logowania lub rejestracji - info można przechować w klasie singleton
             Fragment fragment = new LoginFragment();
             FragmentManager fragmentManager = getFragmentManager();
@@ -283,7 +285,15 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
     }
+    @Override
+    public void onBackPressed() {
+        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawers();
+        }else{
+            super.onBackPressed();
+        }
 
+    }
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);

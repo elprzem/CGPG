@@ -71,7 +71,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         poiId = args.getInt(Keys.POI_NUMBER, 0);
         getActivity().setTitle(title);
 
-        XMLOpinionGet opinionParser = new XMLOpinionGet(getActivity(),1,1);
+        XMLOpinionGet opinionParser = new XMLOpinionGet(getActivity(),1,poiId);
         opinionParser.delegate=this;
         opinionParser.execute();
 

@@ -89,7 +89,7 @@ public class POIFragment extends Fragment {
         if (getArguments().containsKey(Keys.TYPE_POI)) {
             typePOI = getArguments().getInt(Keys.TYPE_POI);
             Log.i("type", String.valueOf(typePOI));
-            String title = getResources().getStringArray(R.array.menu_array)[typePOI];
+            String title = getResources().getStringArray(R.array.menu_array)[getArguments().getInt(Keys.NR_ON_LIST)];
             getActivity().setTitle(title);
 
         } else if (getArguments().containsKey(Keys.BUILDING_ID)) {
@@ -180,6 +180,7 @@ public class POIFragment extends Fragment {
                 poiItem.setDetails(new ArrayList<POIDetails>());
                 // Create Child class object
                 final POIDetails details = new POIDetails();
+                Log.i("desc", poi.getDescription());
                 details.setDescription(poi.getDescription());
                 details.setImagePath(poi.getLinkToImage());
                 details.setPlusesCount(poi.getRatingPlus());

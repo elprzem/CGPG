@@ -9,5 +9,5 @@ public class Keys {
     public final static String CLEAR = "clearMap";
     public final static String POI_NUMBER = "poiNr";
     public final static String POI_TITLE = "poiTitle";
-
+    public final static String NR_ON_LIST ="nrOnList";
 }

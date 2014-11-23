@@ -28,6 +28,16 @@ Licensed under the Apache License, Version 2.0 (the "License");
         <item>Logowanie</item>
     </string-array>
 
+    <string-array name="poi_types">
+        <item>XERO</item>
+        <item>BUFFET</item>
+        <item>AUTOMAT</item>
+        <item>READROOM</item>
+        <item>ATM</item>
+        <item>RELAX</item>
+        <item>BIKES</item>
+    </string-array>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_update">Aktualizacja</string>
