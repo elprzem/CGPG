@@ -264,7 +264,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         } else if (position == MenuItems.LOGIN) {//aktywność logowania lub rejestracji - info można przechować w klasie singleton
             Fragment fragment = new LoginFragment();
             FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("login_fragment").commit();
         }
     }
 
@@ -290,7 +290,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
             mDrawerLayout.closeDrawers();
         }else{
-            super.onBackPressed();
+           getFragmentManager().popBackStack();
         }
 
     }

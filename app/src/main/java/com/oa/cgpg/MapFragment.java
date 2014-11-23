@@ -540,12 +540,12 @@ public class MapFragment extends Fragment {
     public void onStop(){
         super.onStop();
         listener = null;
-        sourceMapBitmap.recycle();
+       // sourceMapBitmap.recycle();
         sourceMapBitmap = null;
-        visibleBitmap.recycle();
+       // visibleBitmap.recycle();
         visibleBitmap = null;
         visibleBitmapCanvas = null;
-        workingBitmap.recycle();
+     //   workingBitmap.recycle();
         workingBitmap = null;
         workingBitmapCanvas = null;
         database = null;
