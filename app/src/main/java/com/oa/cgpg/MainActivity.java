@@ -26,6 +26,7 @@ import com.oa.cgpg.dataOperations.dataBaseHelper;
 import com.oa.cgpg.dataOperations.dbOps;
 import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.opinionRateNet;
+import com.oa.cgpg.models.poiEntity;
 
 import java.security.Key;
 import java.util.ArrayList;
@@ -58,6 +59,10 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         System.out.println(dbOps.getBuildings().size());
         System.out.println(dbOps.getPois().size());
         System.out.println(dbOps.getTypes().size());
+/*
+        for(poiEntity e : dbOps.getPois()){
+            Log.i("POILSALSDAL",e.toString());
+        }*/
         //   dbOps.clearData();
        //  testEntities = new createTestEntities(dbOps);
        //  testEntities.generateTemplateEntities();
