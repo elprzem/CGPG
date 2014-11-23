@@ -142,6 +142,18 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
         }
         return type;
     }
+    public int getTypeIdByName(String name) {
+        typeEntity type = null;
+        try {
+            QueryBuilder<typeEntity, Integer> getByName = typeDAO.queryBuilder();
+            getByName.where().eq("name", name);
+            List<typeEntity> list = getByName.query();
+            type = list.get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return type.getIdType();
+    }
 
     public versionEntity getVersion() {
         versionEntity version = null;
