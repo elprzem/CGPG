@@ -185,7 +185,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         //TODO Gdzie przekazać buildingId?
         //TODO Jak wołać ten fragemnt? Bez, czy z setDatabaseRef?
         if(key.equals(Keys.BUILDING_ID)) {
-            args.putInt(key, 9);
+            args.putInt(key, 18);
             fragment.setArguments(args);
         }else if(key.equals(Keys.TYPE_POI)){
             args.putInt(key, id);

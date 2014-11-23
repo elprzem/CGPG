@@ -34,7 +34,7 @@ import java.util.List;
  * Created by Tomasz on 2014-11-07.
  */
 public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
-    private static final String HTTP_URL = "http://cgpg.zz.mu/output.xml";
+    private static final String HTTP_URL = "http://cgpg.zz.mu/webservice1.php?update=1";
     private String xml;
     private ProgressDialog progressDialog;
     private Context context;
