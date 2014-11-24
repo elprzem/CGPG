@@ -256,8 +256,13 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
                 @Override
                 public void onClick(View view) {
                     Log.i("click plus at", String.valueOf(view.getTag()));
-                    sendOpinionRate(opinionsPresented.get(position).getId(), PLUS_ADDED);
+                    boolean isUpdated = !(opinionsPresented.get(position).getVal() == -1);
+                    sendOpinionRate(opinionsPresented.get(position).getId(), PLUS_ADDED, isUpdated);
                     opinionsPresented.get(position).setVal(PLUS_ADDED);
+                    if (isUpdated)
+                        opinionsPresented.get(position).setRatingMinus(opinionsPresented.get(position).getRatingMinus()-1);
+                    opinionsPresented.get(position).setRatingPlus(opinionsPresented.get(position).getRatingPlus()+1);
+
                    // notifyDataSetChanged();
                     // ((ImageButton)view).setImageDrawable(getResources().getDrawable(R.drawable.plus_disabled));
                     // view.setEnabled(false);
@@ -275,8 +280,12 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
                 @Override
                 public void onClick(View view) {
                     Log.i("click minus at tag", String.valueOf(view.getTag())+",position:"+String.valueOf(position));
-                    sendOpinionRate(opinionsPresented.get(position).getId(), MINUS_ADDED);
+                    boolean isUpdated = !(opinionsPresented.get(position).getVal() == -1);
+                    sendOpinionRate(opinionsPresented.get(position).getId(), MINUS_ADDED, isUpdated);
                     opinionsPresented.get(position).setVal(MINUS_ADDED);
+                    if (isUpdated)
+                        opinionsPresented.get(position).setRatingPlus(opinionsPresented.get(position).getRatingPlus()-1);
+                    opinionsPresented.get(position).setRatingMinus(opinionsPresented.get(position).getRatingMinus()+1);
                    // notifyDataSetChanged();
                    // ((ImageButton)view).setImageDrawable(getResources().getDrawable(R.drawable.minus_disabled));
                    // view.setEnabled(false);
@@ -364,9 +373,10 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
             ((OpinionsAdapter) listViewOpinions.getAdapter()).notifyDataSetChanged();
         }
     }
-    private void sendOpinionRate(int opinionId, int value){
+    private void sendOpinionRate(int opinionId, int value, boolean isUpdated){
         List<opinionRateNet> list = new ArrayList<opinionRateNet>();
-        list.add(new opinionRateNet(1,opinionId,value));
+        Log.i("sendOpinionRate", String.valueOf(opinionId)+" "+String.valueOf(value)+" "+String.valueOf(isUpdated));
+        list.add(new opinionRateNet(1,opinionId,value, isUpdated));
         XMLOpinionRateSend ORS = new XMLOpinionRateSend(list, getActivity());
         ORS.delegate = this;
         ORS.execute();
