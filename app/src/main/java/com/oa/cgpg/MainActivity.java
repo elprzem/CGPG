@@ -25,6 +25,7 @@ import com.oa.cgpg.dataOperations.XMLOpinionRateSend;
 import com.oa.cgpg.dataOperations.createTestEntities;
 import com.oa.cgpg.dataOperations.dataBaseHelper;
 import com.oa.cgpg.dataOperations.dbOps;
+import com.oa.cgpg.models.buildingEntity;
 import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.opinionRateNet;
 import com.oa.cgpg.models.poiEntity;
@@ -57,9 +58,6 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         setContentView(R.layout.activity_main);
         dbHelper = getHelper();
         dbOps = new dbOps(dbHelper);
-        System.out.println(dbOps.getBuildings().size());
-        System.out.println(dbOps.getPois().size());
-        System.out.println(dbOps.getTypes().size());
 /*
         for(poiEntity e : dbOps.getPois()){
             Log.i("POILSALSDAL",e.toString());
@@ -93,6 +91,20 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         list.add(new opinionRateNet(1,1,1));
         XMLOpinionRateSend ORS = new XMLOpinionRateSend(list, this);
         ORS.execute();
+*/
+/*
+        for(int i:dbOps.getPoiIdByTypeId(dbOps.getTypeIdByName("XERO"))){
+            System.out.println("POI ID "+i);
+        }*/
+/*
+        for(int i:dbOps.getPoiIdByBuildingId(18)){
+            System.out.println("POI ID "+i);
+        }
+*/
+/*
+        for(buildingEntity b : dbOps.getBuildingsByTypePOI(dbOps.getTypeIdByName("XERO"))){
+            System.out.println(b.toString());
+        }
 */
         mTitle = mDrawerTitle = getTitle();
         mMenuTitles = getResources().getStringArray(R.array.menu_array);
