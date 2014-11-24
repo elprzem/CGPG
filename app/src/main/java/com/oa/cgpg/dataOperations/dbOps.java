@@ -118,6 +118,19 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
         return new ArrayList<poiEntity>();
     }
 
+    public poiEntity getPoiById(int id) {
+        poiEntity poi = null;
+        try {
+            QueryBuilder<poiEntity, Integer> getById = poiDAO.queryBuilder();
+            getById.where().eq("idPoi", id);
+            List<poiEntity> list = getById.query();
+            poi = list.get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return poi;
+    }
+
     public buildingEntity getBuildingById(int id) {
         buildingEntity build = null;
         try {
@@ -130,6 +143,7 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
         }
         return build;
     }
+
     public typeEntity getTypeById(int id) {
         typeEntity type = null;
         try {
@@ -142,6 +156,7 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
         }
         return type;
     }
+
     public int getTypeIdByName(String name) {
         typeEntity type = null;
         try {
@@ -169,8 +184,42 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
         return version;
     }
 
+    public List<Integer> getPoiIdByTypeId(int typeId) {
+        List<Integer> list = new ArrayList<Integer>();
+        try {
+            QueryBuilder<poiEntity, Integer> getPoi = poiDAO.queryBuilder();
+            QueryBuilder<typeEntity, Integer> getTypes = typeDAO.queryBuilder();
+            getTypes.where().eq("idType", typeId);
+            List<poiEntity> listPoi = getPoi.join(getTypes).query();
+            for(poiEntity p : listPoi){
+                list.add(p.getIdPoi());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<Integer> getPoiIdByBuildingId(int buildingId) {
+        List<Integer> list = new ArrayList<Integer>();
+        try {
+            QueryBuilder<poiEntity, Integer> getPoi = poiDAO.queryBuilder();
+            QueryBuilder<buildingEntity, Integer> getBuilding = buildingDAO.queryBuilder();
+            getBuilding.where().eq("idBuilding", buildingId);
+            List<poiEntity> listPoi = getPoi.join(getBuilding).query();
+            for(poiEntity p : listPoi){
+                list.add(p.getIdPoi());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
     // TODO
-    public List<buildingEntity> getBuildingsCoordinatesByTypePOI() {
+    public List<buildingEntity> getBuildingsByTypePOI() {
         List<buildingEntity> list = null;
         QueryBuilder<buildingEntity, Integer> getById = buildingDAO.queryBuilder();
 

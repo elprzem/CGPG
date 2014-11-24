@@ -93,6 +93,15 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         XMLOpinionRateSend ORS = new XMLOpinionRateSend(list, this);
         ORS.execute();
 */
+/*
+        for(int i:dbOps.getPoiIdByTypeId(dbOps.getTypeIdByName("XERO"))){
+            System.out.println("POI ID "+i);
+        }*/
+/*
+        for(int i:dbOps.getPoiIdByBuildingId(18)){
+            System.out.println("POI ID "+i);
+        }
+*/
         mTitle = mDrawerTitle = getTitle();
         mMenuTitles = getResources().getStringArray(R.array.menu_array);
         mPOItypes = getResources().getStringArray(R.array.poi_types);
