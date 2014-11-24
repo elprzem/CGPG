@@ -74,7 +74,7 @@ public class XMLOpinionRateSend extends AsyncTask<Void, Void, Void> {
         LoggedUserInfo LUI = LoggedUserInfo.getInstance();
         xmlSerializer.setOutput(writer);
         xmlSerializer.startDocument("UTF-8", true);
-        xmlSerializer.startTag("", "OpinionsRate");
+        xmlSerializer.startTag("", "OpinionsRates");
         for (opinionRateNet opRate : list) {
             xmlSerializer.startTag("", "OpinionRate");
 
@@ -90,9 +90,13 @@ public class XMLOpinionRateSend extends AsyncTask<Void, Void, Void> {
             xmlSerializer.text(opRate.getValue() + "");
             xmlSerializer.endTag("", "val");
 
+            xmlSerializer.startTag("", "isUpdate");
+            xmlSerializer.text(opRate.isUpdated() + "");
+            xmlSerializer.endTag("", "isUpdate");
+
             xmlSerializer.endTag("", "OpinionRate");
         }
-        xmlSerializer.endTag("", "OpinionsRate");
+        xmlSerializer.endTag("", "OpinionsRates");
         xmlSerializer.endDocument();
 
         xml = writer.toString();

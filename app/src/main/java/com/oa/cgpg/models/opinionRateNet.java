@@ -39,4 +39,12 @@ public class opinionRateNet {
     public void setValue(int value) {
         this.value = value;
     }
+
+    public String isUpdated() {
+        return isUpdated?"true":"false";
+    }
+
+    public void setUpdated(boolean isUpdated) {
+        this.isUpdated = isUpdated;
+    }
 }
