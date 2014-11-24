@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class createTestEntities {
     private dbOps op;
+
     public createTestEntities() {
     }
 
@@ -19,54 +20,54 @@ public class createTestEntities {
         this.op = op;
     }
 
-    public buildingEntity generateBuilding(int id, String name, String desc){
-        buildingEntity b = new buildingEntity(id,name,desc,1,2,3,4,5,6,7,8,"dsadsa");
+    public buildingEntity generateBuilding(int id, String name, String desc) {
+        buildingEntity b = new buildingEntity(id, name, desc, 1, 2, 3, 4, 5, 6, 7, 8, "dsadsa");
         return b;
     }
 
-    public typeEntity generateType(int id, String name){
-        typeEntity t = new typeEntity(id,name);
+    public typeEntity generateType(int id, String name) {
+        typeEntity t = new typeEntity(id, name);
         return t;
     }
 
-    public List<poiEntity> generatePOIs(buildingEntity building,typeEntity type, int id_first){
+    public List<poiEntity> generatePOIs(buildingEntity building, typeEntity type, int id_first) {
         List<poiEntity> listPoi = new ArrayList<poiEntity>();
-        listPoi.add(new poiEntity(id_first, "punkt 1 typu: "+type.getName(), building, "I am getting data from xml for line break in following format; line1 \\n line2.but on setting this string in textview its displaying line1 \\n line2 intead of; line1 line2. if i hardcode the the value in textview its giving correct result but getting data from xml is not showing properly...", type, 0,0, "obr3.png"));
-        listPoi.add(new poiEntity(id_first+1, "punkt 2 typu: "+type.getName(), building, "I am getting data from xml for line break in following format; line1 \\n line2.but on setting this string in textview its displaying line1 \\n line2 intead of; line1 line2. if i hardcode the the value in textview its giving correct result but getting data from xml is not showing properly...", type, 0,0, "obr3.png"));
-        listPoi.add(new poiEntity(id_first+2, "punkt 3 typu:"+type.getName(), building, "dsa", type, 0,0, "obr3.png"));
+        listPoi.add(new poiEntity(id_first, "punkt 1 typu: " + type.getName(), building, "I am getting data from xml for line break in following format; line1 \\n line2.but on setting this string in textview its displaying line1 \\n line2 intead of; line1 line2. if i hardcode the the value in textview its giving correct result but getting data from xml is not showing properly...", type, 0, 0, "obr3.png"));
+        listPoi.add(new poiEntity(id_first + 1, "punkt 2 typu: " + type.getName(), building, "I am getting data from xml for line break in following format; line1 \\n line2.but on setting this string in textview its displaying line1 \\n line2 intead of; line1 line2. if i hardcode the the value in textview its giving correct result but getting data from xml is not showing properly...", type, 0, 0, "obr3.png"));
+        listPoi.add(new poiEntity(id_first + 2, "punkt 3 typu:" + type.getName(), building, "dsa", type, 0, 0, "obr3.png"));
         return listPoi;
     }
 
-    public void generateTemplateEntities(){
-        buildingEntity b1 = generateBuilding(1,"główny", "la la la");
+    public void generateTemplateEntities() {
+        buildingEntity b1 = generateBuilding(1, "główny", "la la la");
         op.commitBuilding(b1);
-        typeEntity t1 = generateType(1,"XERO");
+        typeEntity t1 = generateType(1, "XERO");
         op.commitType(t1);
-        typeEntity t2 = generateType(2,"BUFFET");
+        typeEntity t2 = generateType(2, "BUFFET");
         op.commitType(t2);
-        typeEntity t3 = generateType(3,"AUTOMAT");
+        typeEntity t3 = generateType(3, "AUTOMAT");
         op.commitType(t3);
-        typeEntity t4 = generateType(4,"READROOM");
+        typeEntity t4 = generateType(4, "READROOM");
         op.commitType(t4);
-        typeEntity t5 = generateType(5,"ATM");
+        typeEntity t5 = generateType(5, "ATM");
         op.commitType(t5);
-        typeEntity t6 = generateType(6,"RELAX");
+        typeEntity t6 = generateType(6, "RELAX");
         op.commitType(t6);
-        typeEntity t7 = generateType(7,"BIKES");
+        typeEntity t7 = generateType(7, "BIKES");
         op.commitType(t7);
-        List<poiEntity> lista1 = generatePOIs(b1,t1,1);
-        for(poiEntity poi : lista1) op.commitPOI(poi);
-        List<poiEntity> lista2 = generatePOIs(b1,t2,4);
-        for(poiEntity poi : lista2) op.commitPOI(poi);
-        List<poiEntity> lista3 = generatePOIs(b1,t3,7);
-        for(poiEntity poi : lista3) op.commitPOI(poi);
-        List<poiEntity> lista4 = generatePOIs(b1,t4,10);
-        for(poiEntity poi : lista4) op.commitPOI(poi);
-        List<poiEntity> lista5 = generatePOIs(b1,t5,13);
-        for(poiEntity poi : lista5) op.commitPOI(poi);
-        List<poiEntity> lista6 = generatePOIs(b1,t6,16);
-        for(poiEntity poi : lista6) op.commitPOI(poi);
-        List<poiEntity> lista7 = generatePOIs(b1,t7,19);
-        for(poiEntity poi : lista7) op.commitPOI(poi);
+        List<poiEntity> lista1 = generatePOIs(b1, t1, 1);
+        for (poiEntity poi : lista1) op.commitPOI(poi);
+        List<poiEntity> lista2 = generatePOIs(b1, t2, 4);
+        for (poiEntity poi : lista2) op.commitPOI(poi);
+        List<poiEntity> lista3 = generatePOIs(b1, t3, 7);
+        for (poiEntity poi : lista3) op.commitPOI(poi);
+        List<poiEntity> lista4 = generatePOIs(b1, t4, 10);
+        for (poiEntity poi : lista4) op.commitPOI(poi);
+        List<poiEntity> lista5 = generatePOIs(b1, t5, 13);
+        for (poiEntity poi : lista5) op.commitPOI(poi);
+        List<poiEntity> lista6 = generatePOIs(b1, t6, 16);
+        for (poiEntity poi : lista6) op.commitPOI(poi);
+        List<poiEntity> lista7 = generatePOIs(b1, t7, 19);
+        for (poiEntity poi : lista7) op.commitPOI(poi);
     }
 }

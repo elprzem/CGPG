@@ -10,7 +10,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "typeDB")
 public class typeEntity {
-    @DatabaseField(canBeNull = false,id=true)
+    @DatabaseField(canBeNull = false, id = true)
     private int idType;
 
     @DatabaseField(canBeNull = false)
@@ -48,11 +48,11 @@ public class typeEntity {
     }
 
     @Override
-    public String toString () {
+    public String toString() {
         return "typeEntity{" +
-                       "idType=" + idType +
-                       ", name='" + name + '\'' +
-                       ", pois=" + pois +
-                       '}';
+                "idType=" + idType +
+                ", name='" + name + '\'' +
+                ", pois=" + pois +
+                '}';
     }
 }

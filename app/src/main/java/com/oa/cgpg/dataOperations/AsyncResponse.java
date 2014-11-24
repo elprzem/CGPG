@@ -9,5 +9,6 @@ import java.util.List;
  */
 public interface AsyncResponse {
     public void processFinish(String output);
+
     public void processFinishOpinion(List<opinionNetEntity> list);
 }

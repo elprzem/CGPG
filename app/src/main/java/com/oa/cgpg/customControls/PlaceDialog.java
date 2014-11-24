@@ -12,8 +12,8 @@ import com.oa.cgpg.R;
 /**
  * Created by NieJa on 11/7/2014.
  */
-public class PlaceDialog extends Dialog{//} implements
-       // android.view.View.OnClickListener {
+public class PlaceDialog extends Dialog {//} implements
+    // android.view.View.OnClickListener {
 
     public Activity c;
     public Dialog d;
@@ -34,8 +34,8 @@ public class PlaceDialog extends Dialog{//} implements
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.place_dialog);
         showListButton = (Button) findViewById(R.id.btn_show_list);
-        ((TextView)findViewById(R.id.txt_title)).setText(title);
-        ((TextView)findViewById(R.id.txtDescription)).setText(description);
+        ((TextView) findViewById(R.id.txt_title)).setText(title);
+        ((TextView) findViewById(R.id.txtDescription)).setText(description);
     }
 
 /*    @Override

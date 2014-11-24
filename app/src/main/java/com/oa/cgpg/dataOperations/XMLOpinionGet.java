@@ -49,25 +49,25 @@ public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onPreExecute () {
+    protected void onPreExecute() {
         progressDialog = ProgressDialog.show(context, "Pobierane danych", "Proszę czekać...", true, false);
     }
 
     @Override
-    protected void onPostExecute (Void D) {
+    protected void onPostExecute(Void D) {
         progressDialog.dismiss();
-        if(xml != null)
+        if (xml != null)
             delegate.processFinishOpinion(getList());
-        else{
+        else {
             NoConnectionDialog dialog = new NoConnectionDialog();
-            dialog.show(((MainActivity)context).getFragmentManager(),"noConnection");
+            dialog.show(((MainActivity) context).getFragmentManager(), "noConnection");
         }
 
 
     }
 
     @Override
-    protected Void doInBackground (Void... voids) {
+    protected Void doInBackground(Void... voids) {
         try {
             // defaultHttpClient
             Log.i(getClass().getName(), "Create client");
@@ -80,8 +80,8 @@ public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
             HttpEntity httpEntity = httpResponse.getEntity();
             Log.i(getClass().getName(), "Parse xml");
             xml = EntityUtils.toString(httpEntity);
-            Log.i(getClass().getName(),"XML Length " + xml.length());
-          //  Log.i(getClass().getName(), xml);
+            Log.i(getClass().getName(), "XML Length " + xml.length());
+            //  Log.i(getClass().getName(), xml);
         } catch (UnsupportedEncodingException e) {
             Log.e(getClass().getName(), "UnsupportedEncodingException");
             e.printStackTrace();
@@ -95,11 +95,11 @@ public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    public String getXmlFromUrl () {
+    public String getXmlFromUrl() {
         return xml;
     }
 
-    public List getList () {
+    public List getList() {
         List opinions = null;
         try {
             InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
@@ -117,7 +117,7 @@ public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
         return opinions;
     }
 
-    public List parse (InputStream in) throws XmlPullParserException, IOException, ParseException {
+    public List parse(InputStream in) throws XmlPullParserException, IOException, ParseException {
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -129,7 +129,7 @@ public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private List readOpinions (XmlPullParser parser) throws XmlPullParserException, IOException, ParseException {
+    private List readOpinions(XmlPullParser parser) throws XmlPullParserException, IOException, ParseException {
         List opinions = new ArrayList();
 
         parser.require(XmlPullParser.START_TAG, ns, "opinions");
@@ -148,8 +148,8 @@ public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
         return opinions;
     }
 
-    private opinionNetEntity readOpinion (XmlPullParser parser) throws XmlPullParserException, IOException,
-                                                                               ParseException {
+    private opinionNetEntity readOpinion(XmlPullParser parser) throws XmlPullParserException, IOException,
+            ParseException {
         parser.require(XmlPullParser.START_TAG, ns, "opinion");
 
         int id = 0;
@@ -190,52 +190,52 @@ public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
             }
         }
         return new opinionNetEntity(id, opinionText, username, poiId, ratingPlus, ratingMinus, val, opinionType,
-                                           addDate);
+                addDate);
     }
 
-    private int readId (XmlPullParser parser) throws IOException, XmlPullParserException {
+    private int readId(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "id");
         int id = Integer.parseInt(readText(parser));
         parser.require(XmlPullParser.END_TAG, ns, "id");
         return id;
     }
 
-    private String readOpinionText (XmlPullParser parser) throws IOException, XmlPullParserException {
+    private String readOpinionText(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "opinionText");
         String text = readText(parser);
         parser.require(XmlPullParser.END_TAG, ns, "opinionText");
         return text;
     }
 
-    private String readUsername (XmlPullParser parser) throws IOException, XmlPullParserException {
+    private String readUsername(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "username");
         String username = readText(parser);
         parser.require(XmlPullParser.END_TAG, ns, "username");
         return username;
     }
 
-    private int readPoiId (XmlPullParser parser) throws IOException, XmlPullParserException {
+    private int readPoiId(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "poiID");
         int poiId = Integer.parseInt(readText(parser));
         parser.require(XmlPullParser.END_TAG, ns, "poiID");
         return poiId;
     }
 
-    private int readRatingPlus (XmlPullParser parser) throws IOException, XmlPullParserException {
+    private int readRatingPlus(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "ratingPlus");
         int ratePlus = Integer.parseInt(readText(parser));
         parser.require(XmlPullParser.END_TAG, ns, "ratingPlus");
         return ratePlus;
     }
 
-    private int readRatingMinus (XmlPullParser parser) throws IOException, XmlPullParserException {
+    private int readRatingMinus(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "ratingMinus");
         int rateMinus = Integer.parseInt(readText(parser));
         parser.require(XmlPullParser.END_TAG, ns, "ratingMinus");
         return rateMinus;
     }
 
-    private Date readAddDate (XmlPullParser parser) throws IOException, XmlPullParserException, ParseException {
+    private Date readAddDate(XmlPullParser parser) throws IOException, XmlPullParserException, ParseException {
         Date data;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         parser.require(XmlPullParser.START_TAG, ns, "addDate");
@@ -245,7 +245,7 @@ public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
         return data;
     }
 
-    private int readSetVal (XmlPullParser parser) throws IOException, XmlPullParserException {
+    private int readSetVal(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "setVal");
         String tmp = readText(parser);
         int val = -1;
@@ -262,7 +262,7 @@ public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
         return val;
     }
 
-    private int readOpinionType (XmlPullParser parser) throws IOException, XmlPullParserException {
+    private int readOpinionType(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "opinionType");
         int opType = Integer.parseInt(readText(parser));
         parser.require(XmlPullParser.END_TAG, ns, "opinionType");
@@ -271,7 +271,7 @@ public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
 
 
     // For the tags title and summary, extracts their text values.
-    private String readText (XmlPullParser parser) throws IOException, XmlPullParserException {
+    private String readText(XmlPullParser parser) throws IOException, XmlPullParserException {
         String result = "";
         if (parser.next() == XmlPullParser.TEXT) {
             result = parser.getText();
@@ -280,7 +280,7 @@ public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
         return result;
     }
 
-    private void skip (XmlPullParser parser) throws XmlPullParserException, IOException {
+    private void skip(XmlPullParser parser) throws XmlPullParserException, IOException {
         if (parser.getEventType() != XmlPullParser.START_TAG) {
             throw new IllegalStateException();
         }

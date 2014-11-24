@@ -43,12 +43,13 @@ public class userNetEntity {
         }
         return buffer.toString();
     }
+
     /*
         Funkcja zwraca "OK" do AsyncResponse.processFinish() w momencie poprawnego dodania użytkownika
         lub jakiś syf w momencie błędu (login/mail wykorzystany)
      */
-    public void register(){
-        XMLUserClass UCR = new XMLUserClass(context,del,username,password,email);
+    public void register() {
+        XMLUserClass UCR = new XMLUserClass(context, del, username, password, email);
         UCR.execute();
     }
 
@@ -57,8 +58,8 @@ public class userNetEntity {
         lub '-1' w przypadku niezgodności danych (username i password nie są poprawne.
 
      */
-    public void login(){
-        XMLUserClass UCR = new XMLUserClass(context,del,username,password);
+    public void login() {
+        XMLUserClass UCR = new XMLUserClass(context, del, username, password);
         UCR.execute();
     }
 }

@@ -31,7 +31,7 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
     private Dao<buildingEntity, Integer> buildingDAO = null;
     private Dao<typeEntity, Integer> typeDAO = null;
     private Dao<poiEntity, Integer> poiDAO = null;
-    private Dao<versionEntity,Integer> versionDAO = null;
+    private Dao<versionEntity, Integer> versionDAO = null;
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase, final ConnectionSource connectionSource) {
@@ -41,7 +41,7 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, typeEntity.class);
             TableUtils.createTable(connectionSource, poiEntity.class);
             TableUtils.createTable(connectionSource, versionEntity.class);
-            getVersionDAO().createOrUpdate(new versionEntity(1,1));
+            getVersionDAO().createOrUpdate(new versionEntity(1, 1));
         } catch (SQLException e) {
             Log.e(dataBaseHelper.class.getName(), "Can't create database", e);
         }
@@ -54,9 +54,9 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, poiEntity.class, true);
             TableUtils.dropTable(connectionSource, typeEntity.class, true);
             TableUtils.dropTable(connectionSource, buildingEntity.class, true);
-            TableUtils.dropTable(connectionSource, versionEntity.class,true);
+            TableUtils.dropTable(connectionSource, versionEntity.class, true);
             Log.i(dataBaseHelper.class.getName(), "DB dropped");
-            onCreate(sqLiteDatabase,connectionSource);
+            onCreate(sqLiteDatabase, connectionSource);
 
         } catch (SQLException e) {
             Log.e(dataBaseHelper.class.getName(), "Can't drop database", e);
@@ -84,12 +84,14 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
         }
         return this.poiDAO;
     }
-    public Dao<versionEntity, Integer> getVersionDAO() throws SQLException{
+
+    public Dao<versionEntity, Integer> getVersionDAO() throws SQLException {
         if (this.versionDAO == null) {
             this.versionDAO = getDao(versionEntity.class);
         }
         return this.versionDAO;
     }
+
     @Override
     public void close() {
         super.close();

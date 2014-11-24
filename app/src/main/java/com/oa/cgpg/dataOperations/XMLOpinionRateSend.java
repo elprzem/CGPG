@@ -54,7 +54,7 @@ public class XMLOpinionRateSend extends AsyncTask<Void, Void, Void> {
             Log.i(getClass().getName(), "create connection");
             StringEntity entity = null;
             entity = new StringEntity(xml, "UTF-8");
-            Log.i(getClass().getName(), "xml length "+xml.length());
+            Log.i(getClass().getName(), "xml length " + xml.length());
             entity.setContentType("application/xml");
             Log.i(getClass().getName(), "setEntityContent");
             httpPost.setEntity(entity);

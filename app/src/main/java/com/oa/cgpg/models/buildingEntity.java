@@ -10,7 +10,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "buildingDB")
 public class buildingEntity {
-    @DatabaseField(canBeNull = false,id=true)
+    @DatabaseField(canBeNull = false, id = true)
     private int idBuilding;
 
     @DatabaseField(canBeNull = false)

@@ -14,7 +14,7 @@ public class poiEntity {
     @DatabaseField(canBeNull = false)
     private String name;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "building_idBuilding", canBeNull = false )
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "building_idBuilding", canBeNull = false)
     private buildingEntity building;
 
     @DatabaseField(canBeNull = false)
@@ -111,16 +111,16 @@ public class poiEntity {
     }
 
     @Override
-    public String toString () {
+    public String toString() {
         return "poiEntity{" +
-                       "idPoi=" + idPoi +
-                       ", name='" + name + '\'' +
-                       ", building=" + building +
-                       ", description='" + description + '\'' +
-                       ", type=" + type +
-                       ", ratingPlus=" + ratingPlus +
-                       ", ratingMinus=" + ratingMinus +
-                       ", linkToImage='" + linkToImage + '\'' +
-                       '}';
+                "idPoi=" + idPoi +
+                ", name='" + name + '\'' +
+                ", building=" + building +
+                ", description='" + description + '\'' +
+                ", type=" + type +
+                ", ratingPlus=" + ratingPlus +
+                ", ratingMinus=" + ratingMinus +
+                ", linkToImage='" + linkToImage + '\'' +
+                '}';
     }
 }

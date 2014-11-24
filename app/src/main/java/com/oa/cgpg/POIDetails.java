@@ -9,15 +9,35 @@ public class POIDetails {
     private int minusesCount;
     private String imagePath;
 
-    public void setPlusesCount(int plusesCount){ this.plusesCount = plusesCount;}
-    public int getPlusesCount(){return plusesCount;}
-    public void setMinusesCount(int minusesCount){this.minusesCount = minusesCount;}
-    public int getMinusesCount(){return minusesCount;}
-    public String getDescription(){return description;}
-    public void setDescription(String description)
-    {
+    public void setPlusesCount(int plusesCount) {
+        this.plusesCount = plusesCount;
+    }
+
+    public int getPlusesCount() {
+        return plusesCount;
+    }
+
+    public void setMinusesCount(int minusesCount) {
+        this.minusesCount = minusesCount;
+    }
+
+    public int getMinusesCount() {
+        return minusesCount;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
         this.description = description;
     }
-    public void setImagePath(String imagePath){this.imagePath = imagePath;}
-    public String getImagePath(){return imagePath;}
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
 }

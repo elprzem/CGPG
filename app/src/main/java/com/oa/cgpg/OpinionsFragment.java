@@ -40,8 +40,8 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
     private final int ALL = 2;
     public ExpandableListView listViewOpinionTypes;
     public ListView listViewOpinions;
-    private int ParentClickStatus=-1;
-    private int ChildClickStatus=-1;
+    private int ParentClickStatus = -1;
+    private int ChildClickStatus = -1;
     private ArrayList<OpinionTypes> opinionTypes;
     private Button newOpinion;
     private int poiId;
@@ -64,15 +64,15 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_opinions, container, false);
-     //   setContentView(R.layout.activity_opinions);
-     //   getActionBar().setDisplayHomeAsUpEnabled(true);
+        //   setContentView(R.layout.activity_opinions);
+        //   getActionBar().setDisplayHomeAsUpEnabled(true);
         Bundle args = getArguments();
         String title = args.getString(Keys.POI_TITLE);
         poiId = args.getInt(Keys.POI_NUMBER, 0);
         getActivity().setTitle(title);
 
-        XMLOpinionGet opinionParser = new XMLOpinionGet(getActivity(),1,poiId);
-        opinionParser.delegate=this;
+        XMLOpinionGet opinionParser = new XMLOpinionGet(getActivity(), 1, poiId);
+        opinionParser.delegate = this;
         opinionParser.execute();
 
 
@@ -115,7 +115,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
                 switch (childPosition) {//selekcjonowanie komentarzy
                     case POSITIVE:
                         for (int i = 0; i < opinions.size(); i++) {
-                            if (opinions.get(i).getOpinionType() == POSITIVE ) {
+                            if (opinions.get(i).getOpinionType() == POSITIVE) {
                                 Log.i("type pos", String.valueOf(i));
                                 selectedComments.add(opinions.get(i));
                             }
@@ -169,19 +169,22 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         super.onDetach();
         mListener = null;
     }
+
     @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
-        for(opinionNetEntity op : list){
+        for (opinionNetEntity op : list) {
             Log.i("opinia: ", op.toString());
             opinions.add(op);
             opinionsPresented.add(op);
         }
         ((OpinionsAdapter) listViewOpinions.getAdapter()).notifyDataSetChanged();
     }
+
     @Override
     public void processFinish(String o) {
-        ((OpinionsAdapter)listViewOpinions.getAdapter()).notifyDataSetChanged();
+        ((OpinionsAdapter) listViewOpinions.getAdapter()).notifyDataSetChanged();
     }
+
     class OpinionsAdapter extends BaseAdapter {
 
         private LayoutInflater inflater = null;
@@ -215,7 +218,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
             Log.i("pozycja", String.valueOf(position));
             View rowView = convertView;
             ViewHolder holder = new ViewHolder();
-            if (rowView == null){
+            if (rowView == null) {
                 rowView = inflater.inflate(R.layout.opinion_row, null);
                 holder = new ViewHolder();
                 holder.opinion = (TextView) rowView.findViewById(R.id.opinionText);
@@ -234,20 +237,20 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
             holder.opinion.setText(opinionsPresented.get(position).getOpinionText());
             holder.username.setText(opinionsPresented.get(position).getUsername());
             DateFormat df = new android.text.format.DateFormat();
-            holder.date.setText( df.format("dd/MM/yy", opinionsPresented.get(position).getAddDate()));
+            holder.date.setText(df.format("dd/MM/yy", opinionsPresented.get(position).getAddDate()));
             holder.pluses.setText(String.valueOf(opinionsPresented.get(position).getRatingPlus()));
             holder.minuses.setText(String.valueOf(opinionsPresented.get(position).getRatingMinus()));
             int sdk = android.os.Build.VERSION.SDK_INT;
-            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                if(opinionsPresented.get(position).getOpinionType() == POSITIVE){
+            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                if (opinionsPresented.get(position).getOpinionType() == POSITIVE) {
                     holder.opinionLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.rounded_layout_green));
-                }else{
+                } else {
                     holder.opinionLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.rounded_layout_red));
                 }
             } else {
-                if(opinionsPresented.get(position).getOpinionType() == POSITIVE){
+                if (opinionsPresented.get(position).getOpinionType() == POSITIVE) {
                     holder.opinionLayout.setBackground(getResources().getDrawable(R.drawable.rounded_layout_green));
-                }else{
+                } else {
                     holder.opinionLayout.setBackground(getResources().getDrawable(R.drawable.rounded_layout_red));
                 }
             }
@@ -260,18 +263,18 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
                     sendOpinionRate(opinionsPresented.get(position).getId(), PLUS_ADDED, isUpdated);
                     opinionsPresented.get(position).setVal(PLUS_ADDED);
                     if (isUpdated)
-                        opinionsPresented.get(position).setRatingMinus(opinionsPresented.get(position).getRatingMinus()-1);
-                    opinionsPresented.get(position).setRatingPlus(opinionsPresented.get(position).getRatingPlus()+1);
+                        opinionsPresented.get(position).setRatingMinus(opinionsPresented.get(position).getRatingMinus() - 1);
+                    opinionsPresented.get(position).setRatingPlus(opinionsPresented.get(position).getRatingPlus() + 1);
 
-                   // notifyDataSetChanged();
+                    // notifyDataSetChanged();
                     // ((ImageButton)view).setImageDrawable(getResources().getDrawable(R.drawable.plus_disabled));
                     // view.setEnabled(false);
                 }
             });
-            if(opinionsPresented.get(position).getVal() == PLUS_ADDED){
+            if (opinionsPresented.get(position).getVal() == PLUS_ADDED) {
                 holder.plusBtn.setImageDrawable(getResources().getDrawable(R.drawable.plus_disabled));
                 holder.plusBtn.setEnabled(false);
-            }else{
+            } else {
                 holder.plusBtn.setImageDrawable(getResources().getDrawable(R.drawable.plus));
                 holder.plusBtn.setEnabled(true);
             }
@@ -279,23 +282,23 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
             holder.minusBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.i("click minus at tag", String.valueOf(view.getTag())+",position:"+String.valueOf(position));
+                    Log.i("click minus at tag", String.valueOf(view.getTag()) + ",position:" + String.valueOf(position));
                     boolean isUpdated = !(opinionsPresented.get(position).getVal() == -1);
                     sendOpinionRate(opinionsPresented.get(position).getId(), MINUS_ADDED, isUpdated);
                     opinionsPresented.get(position).setVal(MINUS_ADDED);
                     if (isUpdated)
-                        opinionsPresented.get(position).setRatingPlus(opinionsPresented.get(position).getRatingPlus()-1);
-                    opinionsPresented.get(position).setRatingMinus(opinionsPresented.get(position).getRatingMinus()+1);
-                   // notifyDataSetChanged();
-                   // ((ImageButton)view).setImageDrawable(getResources().getDrawable(R.drawable.minus_disabled));
-                   // view.setEnabled(false);
+                        opinionsPresented.get(position).setRatingPlus(opinionsPresented.get(position).getRatingPlus() - 1);
+                    opinionsPresented.get(position).setRatingMinus(opinionsPresented.get(position).getRatingMinus() + 1);
+                    // notifyDataSetChanged();
+                    // ((ImageButton)view).setImageDrawable(getResources().getDrawable(R.drawable.minus_disabled));
+                    // view.setEnabled(false);
                 }
             });
-            if(opinionsPresented.get(position).getVal() == MINUS_ADDED){
+            if (opinionsPresented.get(position).getVal() == MINUS_ADDED) {
                 Log.i("minus added at position", String.valueOf(position));
                 holder.minusBtn.setImageDrawable(getResources().getDrawable(R.drawable.minus_disabled));
                 holder.minusBtn.setEnabled(false);
-            }else{
+            } else {
                 holder.minusBtn.setImageDrawable(getResources().getDrawable(R.drawable.minus));
                 holder.minusBtn.setEnabled(true);
             }
@@ -303,8 +306,8 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
             return rowView;
         }
     }
-    private ArrayList<OpinionTypes> getOpinionTypes()
-    {
+
+    private ArrayList<OpinionTypes> getOpinionTypes() {
         // Creating ArrayList of type parent class to store parent class objects
         final ArrayList<OpinionTypes> list = new ArrayList<OpinionTypes>();
         OpinionTypes typesList = new OpinionTypes();
@@ -336,62 +339,56 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
     }
 
 
-    private void loadOpinionTypesIntoAdapter(final ArrayList<OpinionTypes> newTypesList)
-    {
+    private void loadOpinionTypesIntoAdapter(final ArrayList<OpinionTypes> newTypesList) {
         if (newTypesList == null)
             return;
 
         opinionTypes = newTypesList;
 
         // Check for ExpandableListAdapter object
-        if (listViewOpinionTypes.getExpandableListAdapter() == null)
-        {
+        if (listViewOpinionTypes.getExpandableListAdapter() == null) {
             //Create ExpandableListAdapter Object
             final MyExpandableListAdapter mAdapter = new MyExpandableListAdapter();
 
             // Set Adapter to ExpandableList Adapter
             listViewOpinionTypes.setAdapter(mAdapter);
-        }
-        else
-        {
+        } else {
             // Refresh ExpandableListView data
             ((MyExpandableListAdapter) listViewOpinionTypes.getExpandableListAdapter()).notifyDataSetChanged();
         }
     }
-    private void loadOpinionsIntoAdapter(){
-        if (listViewOpinions.getAdapter() == null)
-        {
+
+    private void loadOpinionsIntoAdapter() {
+        if (listViewOpinions.getAdapter() == null) {
             //Create ExpandableListAdapter Object
             final OpinionsAdapter mAdapter = new OpinionsAdapter();
 
             // Set Adapter to ExpandableList Adapter
             listViewOpinions.setAdapter(mAdapter);
-        }
-        else
-        {
+        } else {
             // Refresh ExpandableListView data
             ((OpinionsAdapter) listViewOpinions.getAdapter()).notifyDataSetChanged();
         }
     }
-    private void sendOpinionRate(int opinionId, int value, boolean isUpdated){
+
+    private void sendOpinionRate(int opinionId, int value, boolean isUpdated) {
         List<opinionRateNet> list = new ArrayList<opinionRateNet>();
-        Log.i("sendOpinionRate", String.valueOf(opinionId)+" "+String.valueOf(value)+" "+String.valueOf(isUpdated));
-        list.add(new opinionRateNet(1,opinionId,value, isUpdated));
+        Log.i("sendOpinionRate", String.valueOf(opinionId) + " " + String.valueOf(value) + " " + String.valueOf(isUpdated));
+        list.add(new opinionRateNet(1, opinionId, value, isUpdated));
         XMLOpinionRateSend ORS = new XMLOpinionRateSend(list, getActivity());
         ORS.delegate = this;
         ORS.execute();
     }
+
     /**
      * A Custom adapter to create Parent view (Used poi_grouprowprow.xml) and Child View((Used poi_childrow.xml.xml).
      */
-    private class MyExpandableListAdapter extends BaseExpandableListAdapter
-    {
+    private class MyExpandableListAdapter extends BaseExpandableListAdapter {
 
 
         private LayoutInflater inflater;
 
-        public MyExpandableListAdapter()
-        {
+        public MyExpandableListAdapter() {
             // Create Layout Inflater
             inflater = LayoutInflater.from(getActivity().getApplicationContext());
         }
@@ -401,8 +398,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
 
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded,
-                                 View convertView, ViewGroup parentView)
-        {
+                                 View convertView, ViewGroup parentView) {
             final OpinionTypes typesList = opinionTypes.get(groupPosition);
 
             // Inflate poi_grouprow.xml.xml file for parent rows
@@ -420,8 +416,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         // This Function used to inflate child rows view
         @Override
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
-                                 View convertView, ViewGroup parentView)
-        {
+                                 View convertView, ViewGroup parentView) {
             final OpinionTypes typesList = opinionTypes.get(groupPosition);
             final OpinionType type = typesList.getTypes().get(childPosition);
 
@@ -436,21 +431,18 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
 
 
         @Override
-        public Object getChild(int groupPosition, int childPosition)
-        {
+        public Object getChild(int groupPosition, int childPosition) {
             //Log.i("Childs", groupPosition+"=  getChild =="+childPosition);
             return opinionTypes.get(groupPosition).getTypes().get(childPosition);
         }
 
         //Call when child row clicked
         @Override
-        public long getChildId(int groupPosition, int childPosition)
-        {
+        public long getChildId(int groupPosition, int childPosition) {
             /****** When Child row clicked then this function call *******/
 
             //Log.i("Noise", "parent == "+groupPosition+"=  child : =="+childPosition);
-            if( ChildClickStatus!=childPosition)
-            {
+            if (ChildClickStatus != childPosition) {
                 ChildClickStatus = childPosition;
             }
 
@@ -458,85 +450,77 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         }
 
         @Override
-        public int getChildrenCount(int groupPosition)
-        {
+        public int getChildrenCount(int groupPosition) {
             return 3;
         }
 
 
         @Override
-        public Object getGroup(int groupPosition)
-        {
+        public Object getGroup(int groupPosition) {
             //Log.i("Parent", groupPosition+"=  getGroup ");
 
             return opinionTypes.get(groupPosition);
         }
 
         @Override
-        public int getGroupCount()
-        {
+        public int getGroupCount() {
             return opinionTypes.size();
         }
 
         //Call when parent row clicked
         @Override
-        public long getGroupId(int groupPosition)
-        {
+        public long getGroupId(int groupPosition) {
             // Log.i("Parent", groupPosition+"=  getGroupId "+ParentClickStatus);
 
-            if(groupPosition==2 && ParentClickStatus!=groupPosition){
+            if (groupPosition == 2 && ParentClickStatus != groupPosition) {
 
             }
 
-            ParentClickStatus=groupPosition;
-            if(ParentClickStatus==0)
-                ParentClickStatus=-1;
+            ParentClickStatus = groupPosition;
+            if (ParentClickStatus == 0)
+                ParentClickStatus = -1;
 
             return groupPosition;
         }
 
         @Override
-        public void notifyDataSetChanged()
-        {
+        public void notifyDataSetChanged() {
             // Refresh List rows
             super.notifyDataSetChanged();
         }
 
         @Override
-        public boolean isEmpty()
-        {
+        public boolean isEmpty() {
             return ((opinionTypes == null) || opinionTypes.isEmpty());
         }
 
         @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition)
-        {
+        public boolean isChildSelectable(int groupPosition, int childPosition) {
             return true;
         }
 
         @Override
-        public boolean hasStableIds()
-        {
+        public boolean hasStableIds() {
             return true;
         }
 
         @Override
-        public boolean areAllItemsEnabled()
-        {
+        public boolean areAllItemsEnabled() {
             return true;
         }
     }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
+     * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    private class ViewHolder{
+    private class ViewHolder {
         private TextView opinion;
         private TextView username;
         private TextView date;
@@ -546,7 +530,8 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         private ImageButton plusBtn;
         private ImageButton minusBtn;
     }
-    public interface OnOpinionsFragmentListener{
+
+    public interface OnOpinionsFragmentListener {
         void startNewOpinionsFragment(Integer idPOI);
     }
 

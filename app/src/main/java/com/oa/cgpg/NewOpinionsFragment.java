@@ -1,7 +1,6 @@
 package com.oa.cgpg;
 
 
-
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.Editable;
@@ -26,7 +25,6 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- *
  */
 public class NewOpinionsFragment extends Fragment implements AsyncResponse {
     private int poiId;
@@ -38,6 +36,7 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
     public NewOpinionsFragment() {
         // Required empty public constructor
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -63,9 +62,9 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(editable.length() != 0){
+                if (editable.length() != 0) {
                     addOpinion.setEnabled(true);
-                }else{
+                } else {
                     addOpinion.setEnabled(false);
                 }
             }
@@ -73,7 +72,7 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
         opinionText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER){
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     sendOpinion(opinionText.getText().toString());
                     return true;
                 }
@@ -88,21 +87,24 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
         });
         return rootView;
     }
-    private void sendOpinion(String text){
-        int type = positive.isChecked()? POSITIVE : NEGATIVE;
+
+    private void sendOpinion(String text) {
+        int type = positive.isChecked() ? POSITIVE : NEGATIVE;
         List<opinionNetEntity> list = new ArrayList<opinionNetEntity>();
 
-        opinionNetEntity opinionEntity = new opinionNetEntity(1,text,LoggedUserInfo.getInstance().getUserName(),poiId,1,3,4,type, new Date());
+        opinionNetEntity opinionEntity = new opinionNetEntity(1, text, LoggedUserInfo.getInstance().getUserName(), poiId, 1, 3, 4, type, new Date());
         //TODO - wysłanie opinii
         list.add(opinionEntity);
-        XMLOpinionSend XOS = new XMLOpinionSend(getActivity(),list);
+        XMLOpinionSend XOS = new XMLOpinionSend(getActivity(), list);
         XOS.delegate = this;
         Log.i("dsasd", "sending xml");
         XOS.execute();
     }
+
     @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
     }
+
     @Override
     public void processFinish(String o) {
         getFragmentManager().popBackStack();

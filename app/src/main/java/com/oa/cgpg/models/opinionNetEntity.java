@@ -33,18 +33,18 @@ public class opinionNetEntity {
     }
 
     @Override
-    public String toString () {
+    public String toString() {
         return "opinionNetEntity{" +
-                       "id=" + id +
-                       ", opinionText='" + opinionText + '\'' +
-                       ", username='" + username + '\'' +
-                       ", poiId=" + poiId +
-                       ", ratingPlus=" + ratingPlus +
-                       ", ratingMinus=" + ratingMinus +
-                       ", val=" + val +
-                       ", opinionType=" + opinionType +
-                       ", addDate=" + addDate +
-                       '}';
+                "id=" + id +
+                ", opinionText='" + opinionText + '\'' +
+                ", username='" + username + '\'' +
+                ", poiId=" + poiId +
+                ", ratingPlus=" + ratingPlus +
+                ", ratingMinus=" + ratingMinus +
+                ", val=" + val +
+                ", opinionType=" + opinionType +
+                ", addDate=" + addDate +
+                '}';
     }
 
     public int getId() {
@@ -111,11 +111,11 @@ public class opinionNetEntity {
         this.addDate = addDate;
     }
 
-    public int getOpinionType () {
+    public int getOpinionType() {
         return opinionType;
     }
 
-    public void setOpinionType (int opinionType) {
+    public void setOpinionType(int opinionType) {
         this.opinionType = opinionType;
     }
 }

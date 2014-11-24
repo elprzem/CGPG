@@ -50,7 +50,7 @@ public class XMLUserClass extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPreExecute() {
-        if(register)
+        if (register)
             progressDialog = ProgressDialog.show(context, "Rejestracja użytkownika", "Proszę czekać...", true, false);
         else
             progressDialog = ProgressDialog.show(context, "Logowanie użytkownika", "Proszę czekać...", true, false);
@@ -66,7 +66,7 @@ public class XMLUserClass extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         try {
-            if(register)
+            if (register)
                 userToXmlRegister();
             else
                 userToXmlLogin();
@@ -76,7 +76,7 @@ public class XMLUserClass extends AsyncTask<Void, Void, Void> {
             Log.i(getClass().getName(), "create connection");
             StringEntity entity = null;
             entity = new StringEntity(xml, "UTF-8");
-            Log.i(getClass().getName(), "xml length "+xml.length());
+            Log.i(getClass().getName(), "xml length " + xml.length());
             entity.setContentType("application/xml");
             Log.i(getClass().getName(), "setEntityContent");
             httpPost.setEntity(entity);
@@ -97,49 +97,51 @@ public class XMLUserClass extends AsyncTask<Void, Void, Void> {
         xmlSerializer.setOutput(writer);
         xmlSerializer.startDocument("UTF-8", true);
         xmlSerializer.startTag("", "UsersReg");
-            xmlSerializer.startTag("", "User");
+        xmlSerializer.startTag("", "User");
 
-                xmlSerializer.startTag("", "username");
-                xmlSerializer.text(this.user);
-                xmlSerializer.endTag("", "username");
+        xmlSerializer.startTag("", "username");
+        xmlSerializer.text(this.user);
+        xmlSerializer.endTag("", "username");
 
-                xmlSerializer.startTag("", "password");
-                xmlSerializer.text(this.pass);
-                xmlSerializer.endTag("", "password");
+        xmlSerializer.startTag("", "password");
+        xmlSerializer.text(this.pass);
+        xmlSerializer.endTag("", "password");
 
-                xmlSerializer.startTag("", "email");
-                xmlSerializer.text(this.email);
-                xmlSerializer.endTag("", "email");
+        xmlSerializer.startTag("", "email");
+        xmlSerializer.text(this.email);
+        xmlSerializer.endTag("", "email");
 
-            xmlSerializer.endTag("", "User");
+        xmlSerializer.endTag("", "User");
         xmlSerializer.endTag("", "UsersReg");
         xmlSerializer.endDocument();
 
         xml = writer.toString();
     }
+
     private void userToXmlLogin() throws Exception {
         XmlSerializer xmlSerializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
         xmlSerializer.setOutput(writer);
         xmlSerializer.startDocument("UTF-8", true);
         xmlSerializer.startTag("", "UsersLog");
-            xmlSerializer.startTag("", "User");
+        xmlSerializer.startTag("", "User");
 
-                xmlSerializer.startTag("", "username");
-                xmlSerializer.text(this.user);
-                xmlSerializer.endTag("", "username");
+        xmlSerializer.startTag("", "username");
+        xmlSerializer.text(this.user);
+        xmlSerializer.endTag("", "username");
 
-                xmlSerializer.startTag("", "password");
-                xmlSerializer.text(this.pass);
-                xmlSerializer.endTag("", "password");
+        xmlSerializer.startTag("", "password");
+        xmlSerializer.text(this.pass);
+        xmlSerializer.endTag("", "password");
 
-            xmlSerializer.endTag("", "User");
+        xmlSerializer.endTag("", "User");
         xmlSerializer.endTag("", "UsersLog");
         xmlSerializer.endDocument();
 
         xml = writer.toString();
     }
-    public String getXML(){
+
+    public String getXML() {
         return this.xml;
     }
 }

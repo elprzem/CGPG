@@ -78,7 +78,7 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
             Log.i(getClass().getName(), "Get response");
             HttpEntity httpEntity = httpResponse.getEntity();
             Log.i(getClass().getName(), "Parse xml");
-            xml = EntityUtils.toString(httpEntity, HTTP.UTF_8 );
+            xml = EntityUtils.toString(httpEntity, HTTP.UTF_8);
             Log.i(getClass().getName(), "xml length " + xml.length());
             checkVersion();
         } catch (UnsupportedEncodingException e) {
@@ -102,12 +102,12 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
         try {
             InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
             int version = parseVersion(is);
-           // if (version != dbOps.getVersion().getVersionNumber()){
-                is.reset();
-                dbOps.update();
-                dbOps.changeVersion(version);
-                getList(is);
-           // }
+            // if (version != dbOps.getVersion().getVersionNumber()){
+            is.reset();
+            dbOps.update();
+            dbOps.changeVersion(version);
+            getList(is);
+            // }
 
             Log.i("VERSION:", version + "");
         } catch (UnsupportedEncodingException e) {
@@ -361,7 +361,7 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
                 }
                 buildingEntity b = dbOps.getBuildingById(buildingKey);
                 typeEntity t = dbOps.getTypeById(typeKey);
-                listPois.add(new poiEntity(id, name,  b, description, t,  ratingPlus,  ratingMinus,  link));
+                listPois.add(new poiEntity(id, name, b, description, t, ratingPlus, ratingMinus, link));
             } else {
                 skip(parser);
             }

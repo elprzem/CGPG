@@ -9,34 +9,38 @@ public class LoggedUserInfo {
     private int userId;
     private boolean isLoggedIn;
 
-    private LoggedUserInfo(){
-       isLoggedIn = false;
+    private LoggedUserInfo() {
+        isLoggedIn = false;
     }
 
-    public static LoggedUserInfo getInstance(){
-        if(singleInstance == null)
-        {
+    public static LoggedUserInfo getInstance() {
+        if (singleInstance == null) {
             singleInstance = new LoggedUserInfo();
         }
         return singleInstance;
     }
 
-    public String getUserName(){
+    public String getUserName() {
         return userName;
     }
-    public void setUserName(String userName){
+
+    public void setUserName(String userName) {
         //this.userName = userName;
     }
-    public int getUserId(){
+
+    public int getUserId() {
         return userId;
     }
-    public void setUserId(int userId){
+
+    public void setUserId(int userId) {
         this.userId = userId;
     }
-    public boolean isLoggedIn(){
+
+    public boolean isLoggedIn() {
         return isLoggedIn;
     }
-    public void setLoggedIn(boolean loggedIn){
+
+    public void setLoggedIn(boolean loggedIn) {
         this.isLoggedIn = loggedIn;
     }
 }

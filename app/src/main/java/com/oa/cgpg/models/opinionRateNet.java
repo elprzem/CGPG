@@ -41,7 +41,7 @@ public class opinionRateNet {
     }
 
     public String isUpdated() {
-        return isUpdated?"true":"false";
+        return isUpdated ? "true" : "false";
     }
 
     public void setUpdated(boolean isUpdated) {
