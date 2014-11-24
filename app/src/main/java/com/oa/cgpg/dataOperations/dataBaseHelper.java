@@ -41,7 +41,7 @@ public class dataBaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, typeEntity.class);
             TableUtils.createTable(connectionSource, poiEntity.class);
             TableUtils.createTable(connectionSource, versionEntity.class);
-            getVersionDAO().createOrUpdate(new versionEntity(1,DATABASE_VERSION));
+            getVersionDAO().createOrUpdate(new versionEntity(1,1));
         } catch (SQLException e) {
             Log.e(dataBaseHelper.class.getName(), "Can't create database", e);
         }
