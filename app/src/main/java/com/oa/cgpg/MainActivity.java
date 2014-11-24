@@ -3,6 +3,7 @@ package com.oa.cgpg;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -149,6 +150,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     }
 
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -199,25 +201,28 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         Fragment fragment = new POIFragment();
         ((POIFragment) fragment).setDbOps(dbOps);
         Bundle args = new Bundle();
-
+        FragmentManager fragmentManager = getFragmentManager();
         //TODO Gdzie przekazać buildingId?
         //TODO Jak wołać ten fragemnt? Bez, czy z setDatabaseRef?
         if(key.equals(Keys.BUILDING_ID)) {
             args.putInt(key, 18);
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
             fragment.setArguments(args);
         }else if(key.equals(Keys.TYPE_POI)){
             args.putInt(key, id);
             args.putInt(Keys.NR_ON_LIST, nrOnList);
             fragment.setArguments(args);
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
         }
+       // replaceFragment(fragment);
 
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
     }
 
     @Override
     public void startMapFragment(Integer value, String mode) {
         Fragment fragment = new MapFragment();
+        ((MapFragment) fragment).setDatabaseRef(dbOps);
         Bundle args = new Bundle();
         if (mode.equals(Keys.TYPE_POI)) {
             args.putInt(Keys.TYPE_POI, value);
@@ -226,9 +231,11 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             args.putInt(Keys.BUILDING_ID, value);
             fragment.setArguments(args);
         }
-        ((MapFragment) fragment).setDatabaseRef(dbOps);
+        //replaceFragment(fragment);
+
+
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_map").commit();
     }
 
     @Override
@@ -238,7 +245,8 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         args.putInt(Keys.POI_NUMBER, idPOI);
         args.putString(Keys.POI_TITLE, titlePOI);
         fragment.setArguments(args);
-        FragmentManager fragmentManager = getFragmentManager();
+        //replaceFragment(fragment);
+       FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
     }
 
@@ -248,8 +256,24 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         Bundle args = new Bundle();
         args.putInt(Keys.POI_NUMBER, idPOI);
         fragment.setArguments(args);
+       // replaceFragment(fragment);
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_opinions").commit();
+    }
+
+    private void replaceFragment (Fragment fragment){
+        String backStateName =  fragment.getClass().getName();
+        String fragmentTag = backStateName;
+
+        FragmentManager manager = getFragmentManager();
+        boolean fragmentPopped = manager.popBackStackImmediate (backStateName, 0);
+
+        if (!fragmentPopped && manager.findFragmentByTag(fragmentTag) == null){ //fragment not in back stack, create it.
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.replace(R.id.content_frame, fragment, fragmentTag);
+            ft.addToBackStack(backStateName);
+            ft.commit();
+        }
     }
    /* @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
@@ -280,8 +304,9 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             startPOIFragment(position, dbOps.getTypeIdByName(mPOItypes[position-1]), Keys.TYPE_POI);
         } else if (position == MenuItems.LOGIN) {//aktywność logowania lub rejestracji - info można przechować w klasie singleton
             Fragment fragment = new LoginFragment();
+            //replaceFragment(fragment);
             FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("login_fragment").commit();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
         }
     }
 
@@ -304,10 +329,16 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     }
     @Override
     public void onBackPressed() {
+        Log.i("back stack entry", String.valueOf(getFragmentManager().getBackStackEntryCount()));
         if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
             mDrawerLayout.closeDrawers();
-        }else{
-           getFragmentManager().popBackStack();
+        }else if (getFragmentManager().getBackStackEntryCount() == 1){
+            Log.i("back", "from else if");
+            finish();
+        }
+        else {
+            Log.i("back", "from else");
+           super.onBackPressed();
         }
 
     }
