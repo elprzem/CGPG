@@ -191,7 +191,7 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
             QueryBuilder<typeEntity, Integer> getTypes = typeDAO.queryBuilder();
             getTypes.where().eq("idType", typeId);
             List<poiEntity> listPoi = getPoi.join(getTypes).query();
-            for(poiEntity p : listPoi){
+            for (poiEntity p : listPoi) {
                 list.add(p.getIdPoi());
             }
         } catch (SQLException e) {
@@ -208,7 +208,7 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
             QueryBuilder<buildingEntity, Integer> getBuilding = buildingDAO.queryBuilder();
             getBuilding.where().eq("idBuilding", buildingId);
             List<poiEntity> listPoi = getPoi.join(getBuilding).query();
-            for(poiEntity p : listPoi){
+            for (poiEntity p : listPoi) {
                 list.add(p.getIdPoi());
             }
         } catch (SQLException e) {
@@ -219,9 +219,18 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
     }
 
     // TODO
-    public List<buildingEntity> getBuildingsByTypePOI() {
+    public List<buildingEntity> getBuildingsByTypePOI(int typeId) {
         List<buildingEntity> list = null;
-        QueryBuilder<buildingEntity, Integer> getById = buildingDAO.queryBuilder();
+        try {
+            QueryBuilder<buildingEntity, Integer> getBuilding = buildingDAO.queryBuilder();
+            QueryBuilder<poiEntity, Integer> getPoi = poiDAO.queryBuilder();
+            QueryBuilder<typeEntity, Integer> getTypes = typeDAO.queryBuilder();
+            getTypes.where().eq("idType", typeId);
+            getPoi.join(getTypes);
+            list = getBuilding.join(getPoi).query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return list;
     }
@@ -345,7 +354,6 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
             TableUtils.createTable(dbHelper.getConnectionSource(), typeEntity.class);
             TableUtils.createTable(dbHelper.getConnectionSource(), poiEntity.class);
 
-            changeVersion(213);
         } catch (SQLException e) {
             e.printStackTrace();
         }
