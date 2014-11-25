@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLDatabaseInsert;
 import com.oa.cgpg.dataOperations.XMLOpinionRateSend;
@@ -56,6 +57,16 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         setContentView(R.layout.activity_main);
         dbHelper = getHelper();
         dbOps = new dbOps(dbHelper);
+        if (dbOps.getVersion().getVersionNumber() == 1){
+            if (POIFragment.isNetworkAvailable(this)) {
+                XMLDatabaseInsert DI = new XMLDatabaseInsert(this, dbOps);
+                DI.execute();
+            }else{
+                NoConnectionDialog ncDialog = new NoConnectionDialog();
+                ncDialog.setMessage("Wymagane jest połączenie z Internetem do pobrania danych");
+                ncDialog.show(getFragmentManager(), "noConnection");
+            }
+        }
 /*
         for(poiEntity e : dbOps.getPois()){
             Log.i("POILSALSDAL",e.toString());

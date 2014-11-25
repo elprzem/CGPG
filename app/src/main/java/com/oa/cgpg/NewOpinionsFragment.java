@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLOpinionSend;
 import com.oa.cgpg.models.opinionNetEntity;
@@ -73,7 +74,13 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    sendOpinion(opinionText.getText().toString());
+                    if(POIFragment.isNetworkAvailable(getActivity()))
+                        sendOpinion(opinionText.getText().toString());
+                    else{
+                        NoConnectionDialog ncDialog = new NoConnectionDialog();
+                        ncDialog.setMessage("Brak połączenia z Internetem");
+                        ncDialog.show(getFragmentManager(), "no connection");
+                    }
                     return true;
                 }
                 return false;

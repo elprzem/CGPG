@@ -299,8 +299,11 @@ public class POIFragment extends Fragment implements AsyncResponse {
                 public void onClick(View view) {
                     if (isNetworkAvailable(getActivity()))
                         listener.startOpinionsFragment(poiItems.get(groupPosition).getId(), poiItems.get(groupPosition).getTitle());
-                    else
-                        (new NoConnectionDialog()).show(getFragmentManager(), "noConnection");
+                    else {
+                        NoConnectionDialog ncDialog = new NoConnectionDialog();
+                        ncDialog.setMessage("Brak połączenia z Internetem");
+                        ncDialog.show(getFragmentManager(), "noConnection");
+                    }
 
                    /* Intent intent = new Intent(getActivity(), OpinionsActivity.class);
                     intent.putExtra("poi", poiItems.get(groupPosition).getTitle());
