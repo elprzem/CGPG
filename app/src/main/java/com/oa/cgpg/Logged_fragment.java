@@ -20,12 +20,13 @@ public class Logged_fragment extends Fragment implements View.OnClickListener {
     public Logged_fragment() {
         // Required empty public constructor
     }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         getActivity().setTitle("Logowanie");
-        Log.d("TAG", LoggedUserInfo.getInstance().getUserName());
+
         // setLogin(LoggedUserInfo.getInstance().getUserName());
         return inflater.inflate(R.layout.fragment_logged, container, false);
     }

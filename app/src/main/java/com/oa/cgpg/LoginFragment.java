@@ -19,10 +19,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     public LoginFragment() {
         // Required empty public constructor
     }
-    @Override
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        getActivity().setTitle("Logowanie");
+        Log.d("TAG", "jest");
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
