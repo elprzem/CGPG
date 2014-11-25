@@ -211,9 +211,6 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             fragment.setArguments(args);
             fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
         }
-        // replaceFragment(fragment);
-
-
     }
 
     @Override
@@ -228,9 +225,6 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             args.putInt(Keys.BUILDING_ID, value);
             fragment.setArguments(args);
         }
-        //replaceFragment(fragment);
-
-
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_map").commit();
     }
@@ -242,7 +236,6 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         args.putInt(Keys.POI_NUMBER, idPOI);
         args.putString(Keys.POI_TITLE, titlePOI);
         fragment.setArguments(args);
-        //replaceFragment(fragment);
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
     }
@@ -253,7 +246,6 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         Bundle args = new Bundle();
         args.putInt(Keys.POI_NUMBER, idPOI);
         fragment.setArguments(args);
-        // replaceFragment(fragment);
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_opinions").commit();
     }
@@ -301,7 +293,6 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             startPOIFragment(position, dbOps.getTypeIdByName(mPOItypes[position - 1]), Keys.TYPE_POI);
         } else if (position == MenuItems.LOGIN) {//aktywność logowania lub rejestracji - info można przechować w klasie singleton
             Fragment fragment = new LoginFragment();
-            //replaceFragment(fragment);
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
         }

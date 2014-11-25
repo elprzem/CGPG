@@ -42,6 +42,7 @@ public class XMLOpinionRateUpdate extends AsyncTask<Void, Void, Void> {
     List<opinionRatingUpdateNet> listOfUpdate;
     private static final String ns = null;
     private dbOps dbOps;
+    public AsyncResponse delegate = null;
 
     public XMLOpinionRateUpdate(dbOps dbOps, List<Integer> list, Context context) {
         this.listOfId = list;
@@ -52,12 +53,13 @@ public class XMLOpinionRateUpdate extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPreExecute() {
-        progressDialog = ProgressDialog.show(context, "Update poi ratings", "Proszę czekać...", true, false);
+      //  progressDialog = ProgressDialog.show(context, "Update poi ratings", "Proszę czekać...", true, false);
     }
 
     @Override
     protected void onPostExecute(Void D) {
-        progressDialog.dismiss();
+        delegate.processFinish("");
+       // progressDialog.dismiss();
 
     }
 

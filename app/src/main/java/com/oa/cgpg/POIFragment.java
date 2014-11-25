@@ -22,7 +22,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.oa.cgpg.customControls.NoConnectionDialog;
+import com.oa.cgpg.dataOperations.AsyncResponse;
+import com.oa.cgpg.dataOperations.XMLOpinionRateUpdate;
 import com.oa.cgpg.dataOperations.dbOps;
+import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.poiEntity;
 
 import java.io.IOException;
@@ -44,7 +47,7 @@ import java.util.List;
 /**
  * Fragment that appears in the "content_frame", shows a planet
  */
-public class POIFragment extends Fragment {
+public class POIFragment extends Fragment implements AsyncResponse {
 
     private OnPOIFragmentListener listener;
     public ExpandableListView listView;
@@ -169,44 +172,38 @@ public class POIFragment extends Fragment {
     private ArrayList<POIItem> getDataFromDB(boolean poiType) {
         // Creating ArrayList of type parent class to store parent class objects
         final ArrayList<POIItem> list = new ArrayList<POIItem>();
-        List<poiEntity> pois = dbOps.getPois();
-        for (poiEntity poi : pois) {
+        List<Integer> idPOIs;
+        if (poiType) {//wczytanie id poi należących do danego typu
+            idPOIs = dbOps.getPoiIdByTypeId(typePOI);
+        }else{
+            idPOIs = dbOps.getPoiIdByBuildingId(buildingId);
+        }
+        if(isNetworkAvailable(getActivity())){//jeżeli sieć dostępna to aktualizacja ratingów poi
+            XMLOpinionRateUpdate ORU = new XMLOpinionRateUpdate(dbOps,idPOIs,getActivity());
+            ORU.delegate = this;
+            ORU.execute();
+        }
+        for (Integer id : idPOIs) {
             //Create parent class object
             final POIItem poiItem = new POIItem();
-            if (poiType && poi.getType().getIdType() == typePOI) {//wczytanie poi należących do danego typu
-                // Set values in parent class object
-                poiItem.setTitle(poi.getName());
-                poiItem.setId(poi.getIdPoi());
-                poiItem.setDetails(new ArrayList<POIDetails>());
-                // Create Child class object
-                final POIDetails details = new POIDetails();
-                Log.i("desc", poi.getDescription());
-                details.setDescription(poi.getDescription());
-                details.setImagePath(poi.getLinkToImage());
-                details.setPlusesCount(poi.getRatingPlus());
-                details.setMinusesCount(poi.getRatingMinus());
+            poiEntity poi = dbOps.getPoiById(id);
 
-                //Add Child class object to parent class object
-                poiItem.getDetails().add(details);
-                //Adding Parent class object to ArrayList
-                list.add(poiItem);
-            } else if (!poiType && poi.getBuilding().getIdBuilding() == buildingId) {//wczytanie poi znajdujacych sie w danym budynku
-                // Set values in parent class object
-                poiItem.setTitle(poi.getName());
-                poiItem.setId(poi.getIdPoi());
-                poiItem.setDetails(new ArrayList<POIDetails>());
-                // Create Child clłass object
-                final POIDetails details = new POIDetails();
-                details.setDescription(poi.getDescription());
-                details.setImagePath(poi.getLinkToImage());
-                details.setPlusesCount(poi.getRatingPlus());
-                details.setMinusesCount(poi.getRatingMinus());
+            // Set values in parent class object
+            poiItem.setTitle(poi.getName());
+            poiItem.setId(poi.getIdPoi());
+            poiItem.setDetails(new ArrayList<POIDetails>());
+            // Create Child class object
+            final POIDetails details = new POIDetails();
+            Log.i("desc", poi.getDescription());
+            details.setDescription(poi.getDescription());
+            details.setImagePath(poi.getLinkToImage());
+            details.setPlusesCount(poi.getRatingPlus());
+            details.setMinusesCount(poi.getRatingMinus());
 
-                //Add Child class object to parent class object
-                poiItem.getDetails().add(details);
-                //Adding Parent class object to ArrayList
-                list.add(poiItem);
-            }
+            //Add Child class object to parent class object
+            poiItem.getDetails().add(details);
+            //Adding Parent class object to ArrayList
+            list.add(poiItem);
         }
         return list;
     }
@@ -221,13 +218,13 @@ public class POIFragment extends Fragment {
         // Check for ExpandableListAdapter object
         if (listView.getExpandableListAdapter() == null) {
             //Create ExpandableListAdapter Object
-            final MyExpandableListAdapter mAdapter = new MyExpandableListAdapter();
+            final POIListAdapter mAdapter = new POIListAdapter();
 
             // Set Adapter to ExpandableList Adapter
             listView.setAdapter(mAdapter);
         } else {
             // Refresh ExpandableListView data
-            ((MyExpandableListAdapter) listView.getExpandableListAdapter()).notifyDataSetChanged();
+            ((POIListAdapter) listView.getExpandableListAdapter()).notifyDataSetChanged();
         }
     }
 
@@ -248,12 +245,12 @@ public class POIFragment extends Fragment {
     /**
      * A Custom adapter to create Parent view (Used poi_grouprowprow.xml) and Child View((Used poi_childrow.xml.xml).
      */
-    private class MyExpandableListAdapter extends BaseExpandableListAdapter {
+    private class POIListAdapter extends BaseExpandableListAdapter {
 
 
         private LayoutInflater inflater;
 
-        public MyExpandableListAdapter() {
+        public POIListAdapter() {
             // Create Layout Inflater
             inflater = LayoutInflater.from(getActivity());
         }
@@ -294,6 +291,8 @@ public class POIFragment extends Fragment {
             int width = displaymetrics.widthPixels;
             ((TextView) convertView.findViewById(R.id.text1)).setText(details.getDescription());
             ((TextView) convertView.findViewById(R.id.text1)).setWidth(2 * width / 3);
+            ((TextView) convertView.findViewById(R.id.count_plus)).setText(String.valueOf(details.getPlusesCount()));
+            ((TextView) convertView.findViewById(R.id.count_minus)).setText(String.valueOf(details.getMinusesCount()));
             ((ImageView) convertView.findViewById(R.id.image)).setImageDrawable(getImageFromAsstes(details.getImagePath()));
             ((Button) convertView.findViewById(R.id.button_opinions)).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -397,7 +396,21 @@ public class POIFragment extends Fragment {
         super.onDetach();
         listener = null;
     }
+    @Override
+    public void processFinishOpinion(List<opinionNetEntity> list) {
+    }
 
+    @Override
+    public void processFinish(String o) {
+        for(POIItem poiItem: poiItems){
+            ArrayList<POIDetails> details = poiItem.getDetails();
+            Integer id = poiItem.getId();
+            details.get(0).setPlusesCount(dbOps.getPoiById(id).getRatingPlus());
+            details.get(0).setMinusesCount(dbOps.getPoiById(id).getRatingMinus());
+            poiItem.setDetails(details);
+        }
+        ((POIListAdapter) listView.getAdapter()).notifyDataSetChanged();
+    }
     public interface OnPOIFragmentListener {
         void startMapFragment(Integer value, String mode);
 
