@@ -412,7 +412,7 @@ public class POIFragment extends Fragment implements AsyncResponse {
             details.get(0).setMinusesCount(dbOps.getPoiById(id).getRatingMinus());
             poiItem.setDetails(details);
         }
-        ((POIListAdapter) listView.getAdapter()).notifyDataSetChanged();
+        ((POIListAdapter) listView.getExpandableListAdapter()).notifyDataSetChanged();
     }
     public interface OnPOIFragmentListener {
         void startMapFragment(Integer value, String mode);
