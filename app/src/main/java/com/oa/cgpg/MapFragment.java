@@ -135,7 +135,7 @@ public class MapFragment extends Fragment {
             }
         }
 
-/*        initializeVisibleBitmap();
+       initializeVisibleBitmap();
         mapImageView = (ImageView) (view.findViewById(R.id.mapImageView));
         mapImageView.setOnTouchListener(new OnTouchMapListener());
 //        mapImageView.setImageResource(R.drawable.image_from_wikimedia);
@@ -166,7 +166,7 @@ public class MapFragment extends Fragment {
                     checkAndRedrawVisibleBitmap(newOffset);
                 }
             }
-        });*/
+        });
         return view;
     }
 

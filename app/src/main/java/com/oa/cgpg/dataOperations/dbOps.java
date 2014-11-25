@@ -127,6 +127,8 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
             poi = list.get(0);
         } catch (SQLException e) {
             e.printStackTrace();
+        }catch(IllegalStateException e){
+            e.printStackTrace();
         }
         return poi;
     }

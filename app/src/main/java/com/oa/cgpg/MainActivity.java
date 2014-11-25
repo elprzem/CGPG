@@ -228,16 +228,21 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     public void startMapFragment(Integer value, String mode) {
         Fragment fragment = new MapFragment();
         ((MapFragment) fragment).setDatabaseRef(dbOps);
+        FragmentManager fragmentManager = getFragmentManager();
         Bundle args = new Bundle();
         if (mode.equals(Keys.TYPE_POI)) {
             args.putInt(Keys.TYPE_POI, value);
             fragment.setArguments(args);
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_map").commit();
         } else if (mode.equals(Keys.BUILDING_ID)) {
             args.putInt(Keys.BUILDING_ID, value);
             fragment.setArguments(args);
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_map").commit();
+        }else{
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
         }
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_map").commit();
+
+
     }
 
     @Override
@@ -332,10 +337,10 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         Log.i("back stack entry", String.valueOf(getFragmentManager().getBackStackEntryCount()));
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawers();
-        } else if (getFragmentManager().getBackStackEntryCount() == 1) {
+        } /*else if (getFragmentManager().getBackStackEntryCount() == 1) {
             Log.i("back", "from else if");
             finish();
-        } else {
+        }*/ else {
             Log.i("back", "from else");
             super.onBackPressed();
         }
