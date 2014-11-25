@@ -416,7 +416,6 @@ public class POIFragment extends Fragment implements AsyncResponse {
     }
     public interface OnPOIFragmentListener {
         void startMapFragment(Integer value, String mode);
-
         void startOpinionsFragment(Integer idPOI, String titlePOI);
     }
 

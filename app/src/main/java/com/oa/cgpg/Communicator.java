@@ -1,4 +1,4 @@
-package com.oa.cgpg.models;
+package com.oa.cgpg;
 
 /**
  * Created by Sobczak on 2014-11-19.

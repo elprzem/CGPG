@@ -73,34 +73,21 @@ public class MapFragment extends Fragment {
     public void setDatabaseRef(dbOps database) {
         this.database = database;
         List<buildingEntity> list = database.getBuildings();
-        Log.d("test", String.valueOf(list.size()));
-        if (list.size() > 0)
-            Log.d("test", list.get(0).getDescription());
+        Log.i("test", String.valueOf(list.size()));
+        for(buildingEntity building : list) {
+            Log.i("test", building.getDescription());
+        }
     }
 
     public MapFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        initializeSourceMapBitmap();
-        offset = new Point(0, 0);
-        scale = .5f;
-    }
-
-    private void initializeSourceMapBitmap() {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inMutable = true;
-        sourceMapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.kampus, options);
-    }
-
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        Log.d(TEST_TAG, "onAttach");
         try {
             listener = (OnMapFragmentListener) activity;
         } catch (ClassCastException e) {
@@ -110,8 +97,26 @@ public class MapFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Log.d(TEST_TAG, "onCreate");
+
+        initializeSourceMapBitmap();
+        offset = new Point(0, 0);
+        scale = 1.f;//0.4822530864197531f;
+    }
+
+    private void initializeSourceMapBitmap() {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        sourceMapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.kampus, options);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TEST_TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         Log.i("viewDimensions", String.valueOf(view.getMeasuredWidth()) + " , " + String.valueOf(view.getMeasuredHeight()));
@@ -135,7 +140,7 @@ public class MapFragment extends Fragment {
             }
         }
 
-       initializeVisibleBitmap();
+        initializeVisibleBitmap();
         mapImageView = (ImageView) (view.findViewById(R.id.mapImageView));
         mapImageView.setOnTouchListener(new OnTouchMapListener());
 //        mapImageView.setImageResource(R.drawable.image_from_wikimedia);
@@ -190,7 +195,20 @@ public class MapFragment extends Fragment {
 
     @Override
     public void onResume() {
+        Log.d(TEST_TAG, "onResume");
         super.onResume();
+
+        if(sourceMapBitmap == null){
+            initializeSourceMapBitmap();
+        }
+
+        if(workingBitmap == null) {
+            initializeVisibleBitmap();
+            mapImageView = (ImageView) (getView().findViewById(R.id.mapImageView));
+            mapImageView.setOnTouchListener(new OnTouchMapListener());
+
+            mapImageView.setImageBitmap(visibleBitmap);
+        }
     }
 
     private void initializeFragmentSize() {
@@ -219,14 +237,15 @@ public class MapFragment extends Fragment {
         workingBitmapCanvas.drawBitmap(sourceMapBitmap, new Matrix(), new Paint());
 
         //TODO I wait for data in database
-        buildingsList = new ArrayList<buildingEntity>();
-        buildingsList.add(new buildingEntity(0, "name", "description",
+        buildingsList = new ArrayList<buildingEntity>(database.getBuildings());
+        /*buildingsList.add(new buildingEntity(0, "name", "description",
                 50, 100, 150, 110,
                 130, 250,
                 30, 220,
-                ""));
+                ""));*/
         //TODO whole stuff to draw on workingBitmap
         drawMarks();
+        drawPoints();
 
         visibleBitmap = Bitmap.createBitmap(
                 fragmentSize.x, fragmentSize.y,
@@ -243,6 +262,49 @@ public class MapFragment extends Fragment {
                 new Paint()
         );
 //        visibleBitmapCanvas.drawBitmap(workingBitmap,new Matrix(), new Paint());
+    }
+
+    private void drawPoints() {
+        if(buildingsList != null && buildingsList.size() > 0){
+            for(buildingEntity building : buildingsList){
+
+            //buildingEntity building;
+            //if((building = database.getBuildingById(20)) != null) {
+
+                Path path = new Path();
+                //path.setFillType(Path.FillType.WINDING);
+                path.moveTo(building.getX1()*scale, building.getY1()*scale);
+                path.lineTo(building.getX2()*scale, building.getY2()*scale);
+                path.lineTo(building.getX3()*scale, building.getY3()*scale);
+                path.lineTo(building.getX4()*scale, building.getY4()*scale);
+                //path.close();
+
+                Paint paint = new Paint();
+                paint.setAlpha(130);
+                paint.setStrokeWidth(5);
+
+                paint.setColor(Color.GREEN);
+
+                //workingBitmapCanvas.drawPath(path, paint);
+                workingBitmapCanvas.drawPoint(building.getX1()*scale, building.getY1()*scale, paint);
+                workingBitmapCanvas.drawPoint(building.getX2()*scale, building.getY2()*scale, paint);
+                workingBitmapCanvas.drawPoint(building.getX3()*scale, building.getY3()*scale, paint);
+                workingBitmapCanvas.drawPoint(building.getX4()*scale, building.getY4()*scale, paint);
+
+                workingBitmapCanvas.drawLine(building.getX1()*scale, building.getY1()*scale,
+                        building.getX2()*scale, building.getY2()*scale,
+                        paint);
+                workingBitmapCanvas.drawLine(building.getX2()*scale, building.getY2()*scale,
+                        building.getX3()*scale, building.getY3()*scale,
+                        paint);
+                workingBitmapCanvas.drawLine(building.getX3()*scale, building.getY3()*scale,
+                        building.getX4()*scale, building.getY4()*scale,
+                        paint);
+                workingBitmapCanvas.drawLine(building.getX4()*scale, building.getY4()*scale,
+                        building.getX1()*scale, building.getY1()*scale,
+                        paint);
+            }
+        }
     }
 
     private void drawMarks() {
@@ -392,18 +454,29 @@ public class MapFragment extends Fragment {
 
     private void onClick(int x, int y) {
         if (database != null) {// && !placeDialog.isShowing()){
-            Log.i("onClick", "x: " + x + " ,y: " + y);
-            buildingEntity building = whatIsHere(x, y);
+            Log.d(TEST_TAG + "_onClick", "x: " + x + " ,y: " + y);
+            buildingEntity building = null;
+
+            Point cords = calculateCords(x, y);
+            Log.d(TEST_TAG + "_onClick", "x = " + cords.x + "; y = " + cords.y);
+
+            try {
+                building = database.getBuildingById(database.getIdOfBuildingByCords(cords.x,cords.y));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             //TODO only temporary line below
-            building = buildingsList.get(0);
+            //building = buildingsList.get(0);
 
-            if (building == null)
-                return;
+            if (building == null){
+                building = whatIsHere(cords.x,cords.y);
+                if(building == null)
+                    return;
+            }
 
             Log.d(TEST_TAG, building.toString());
 
-            //TODO By lack of data in database it doesn't work so i stop method in the moment.
             String buildingName = building.getName();
             String buildingDescription = building.getDescription();
             //        final PlaceDialog placeDialog = new PlaceDialog(getActivity(), buildingName, buildingDescription);
@@ -439,6 +512,14 @@ public class MapFragment extends Fragment {
         }
     }
 
+    private Point calculateCords(int x, int y) {
+        x /= scale;
+        x += offset.x;
+        y /= scale;
+        y += offset.y;
+        return new Point(x,y);
+    }
+
     /// shape:
     //  __________
     //  |1       2|
@@ -450,13 +531,13 @@ public class MapFragment extends Fragment {
             for (buildingEntity building : database.getBuildings()) {
                 Log.d(TEST_TAG, building.toString());
                 if (x > building.getX1() &&
-                        y < building.getY1() &&
+                        y > building.getY1() &&
                         x < building.getX2() &&
-                        y < building.getY2() &&
+                        y > building.getY2() &&
                         x < building.getX3() &&
-                        y > building.getY3() &&
+                        y < building.getY3() &&
                         x > building.getX4() &&
-                        y > building.getY4()) {
+                        y < building.getY4()) {
                     return building;
                 }
             }
@@ -532,26 +613,43 @@ public class MapFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        listener = null;
+    public void onStop() {
+        super.onStop();
+
+        sourceMapBitmap.recycle();
+        sourceMapBitmap = null;
+        visibleBitmap.recycle();
+        visibleBitmap = null;
+        visibleBitmapCanvas = null;
+        workingBitmap.recycle();
+        workingBitmap = null;
+        workingBitmapCanvas = null;
+
+        Log.i(TEST_TAG, "onStop");
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy(){
+        super.onDestroy();
+
         listener = null;
-        // sourceMapBitmap.recycle();
+        /*sourceMapBitmap.recycle();
         sourceMapBitmap = null;
-        // visibleBitmap.recycle();
+        visibleBitmap.recycle();
         visibleBitmap = null;
         visibleBitmapCanvas = null;
-        //   workingBitmap.recycle();
+        workingBitmap.recycle();
         workingBitmap = null;
-        workingBitmapCanvas = null;
+        workingBitmapCanvas = null;*/
         database = null;
 
-        Log.i(TEST_TAG, "onStop");
+        Log.i(TEST_TAG, "onDestroy");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        //listener = null;
     }
 
     public interface OnMapFragmentListener {
