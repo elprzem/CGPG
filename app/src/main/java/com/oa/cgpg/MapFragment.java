@@ -73,18 +73,34 @@ public class MapFragment extends Fragment {
     public void setDatabaseRef(dbOps database) {
         this.database = database;
         List<buildingEntity> list = database.getBuildings();
-        Log.d("test", String.valueOf(list.size()));
-        if (list.size() > 0)
-            Log.d("test", list.get(0).getDescription());
+        Log.i("test", String.valueOf(list.size()));
+        for(buildingEntity building : list) {
+            Log.i("test", building.getDescription());
+        }
     }
 
     public MapFragment() {
         // Required empty public constructor
     }
 
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        Log.d(TEST_TAG, "onAttach");
+        try {
+            listener = (OnMapFragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnMapFragmentListener");
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d(TEST_TAG, "onCreate");
 
         initializeSourceMapBitmap();
         offset = new Point(0, 0);
@@ -97,21 +113,10 @@ public class MapFragment extends Fragment {
         sourceMapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.kampus, options);
     }
 
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            listener = (OnMapFragmentListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnMapFragmentListener");
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TEST_TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         Log.i("viewDimensions", String.valueOf(view.getMeasuredWidth()) + " , " + String.valueOf(view.getMeasuredHeight()));
@@ -135,7 +140,7 @@ public class MapFragment extends Fragment {
             }
         }
 
-       initializeVisibleBitmap();
+        initializeVisibleBitmap();
         mapImageView = (ImageView) (view.findViewById(R.id.mapImageView));
         mapImageView.setOnTouchListener(new OnTouchMapListener());
 //        mapImageView.setImageResource(R.drawable.image_from_wikimedia);
@@ -190,7 +195,20 @@ public class MapFragment extends Fragment {
 
     @Override
     public void onResume() {
+        Log.d(TEST_TAG, "onResume");
         super.onResume();
+
+        if(sourceMapBitmap == null){
+            initializeSourceMapBitmap();
+        }
+
+        if(workingBitmap == null) {
+            initializeVisibleBitmap();
+            mapImageView = (ImageView) (getView().findViewById(R.id.mapImageView));
+            mapImageView.setOnTouchListener(new OnTouchMapListener());
+
+            mapImageView.setImageBitmap(visibleBitmap);
+        }
     }
 
     private void initializeFragmentSize() {
@@ -393,17 +411,21 @@ public class MapFragment extends Fragment {
     private void onClick(int x, int y) {
         if (database != null) {// && !placeDialog.isShowing()){
             Log.i("onClick", "x: " + x + " ,y: " + y);
-            buildingEntity building = whatIsHere(x, y);
+            buildingEntity building = null;
+            try {
+                building = database.getBuildingById(database.getIdOfBuildingByCords(x,y));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             //TODO only temporary line below
-            building = buildingsList.get(0);
+            //building = buildingsList.get(0);
 
             if (building == null)
                 return;
 
             Log.d(TEST_TAG, building.toString());
 
-            //TODO By lack of data in database it doesn't work so i stop method in the moment.
             String buildingName = building.getName();
             String buildingDescription = building.getDescription();
             //        final PlaceDialog placeDialog = new PlaceDialog(getActivity(), buildingName, buildingDescription);
@@ -532,26 +554,44 @@ public class MapFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        listener = null;
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         listener = null;
-        // sourceMapBitmap.recycle();
+        sourceMapBitmap.recycle();
         sourceMapBitmap = null;
-        // visibleBitmap.recycle();
+        visibleBitmap.recycle();
         visibleBitmap = null;
         visibleBitmapCanvas = null;
-        //   workingBitmap.recycle();
+        workingBitmap.recycle();
         workingBitmap = null;
         workingBitmapCanvas = null;
         database = null;
 
         Log.i(TEST_TAG, "onStop");
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+
+        /*listener = null;
+        sourceMapBitmap.recycle();
+        sourceMapBitmap = null;
+        visibleBitmap.recycle();
+        visibleBitmap = null;
+        visibleBitmapCanvas = null;
+        workingBitmap.recycle();
+        workingBitmap = null;
+        workingBitmapCanvas = null;
+        database = null;*/
+
+        Log.i(TEST_TAG, "onDestroy");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        //listener = null;
     }
 
     public interface OnMapFragmentListener {
