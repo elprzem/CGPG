@@ -37,7 +37,7 @@ import java.util.List;
 
 public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         implements MapFragment.OnMapFragmentListener,
-        POIFragment.OnPOIFragmentListener, OpinionsFragment.OnOpinionsFragmentListener, AsyncResponse {
+        POIFragment.OnPOIFragmentListener, OpinionsFragment.OnOpinionsFragmentListener,LoginFragment.OnLOGINFragmentListener,Logged_fragment.OnLOGGEDFragmentListener, AsyncResponse {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -280,6 +280,13 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             ft.commit();
         }
     }
+
+    @Override
+    public void startLoggedFragment() {
+        Fragment fragment = new Logged_fragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+    }
    /* @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
         for(opinionNetEntity op : list){
@@ -308,6 +315,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         else if (position >= MenuItems.XERO && position <= MenuItems.BIKES) {
             startPOIFragment(position, dbOps.getTypeIdByName(mPOItypes[position - 1]), Keys.TYPE_POI);
         } else if (position == MenuItems.LOGIN) {//aktywność logowania lub rejestracji - info można przechować w klasie singleton
+
             Fragment fragment = new LoginFragment();
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();

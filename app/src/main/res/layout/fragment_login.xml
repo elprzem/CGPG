@@ -21,18 +21,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="password"
+        android:text="Hasło"
         android:id="@+id/textView2"
-        android:layout_marginTop="94dp"
-        android:layout_below="@+id/textView"
-        android:layout_alignLeft="@+id/button"
-        android:layout_alignStart="@+id/button" />
+        android:layout_above="@+id/editText"
+        android:layout_alignLeft="@+id/loginbt"
+        android:layout_alignStart="@+id/loginbt"
+        android:layout_marginBottom="46dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Zaloguj"
-        android:id="@+id/button"
+        android:id="@+id/loginbt"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="118dp" />
@@ -64,4 +64,10 @@
         android:id="@+id/editText2"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true" />
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignTop="@+id/textView2"
+        android:layout_centerHorizontal="true"></TableRow>
 </RelativeLayout>

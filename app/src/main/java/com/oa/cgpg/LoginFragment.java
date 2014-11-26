@@ -1,5 +1,6 @@
 package com.oa.cgpg;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,51 +9,47 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class LoginFragment extends Fragment implements View.OnClickListener{
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+public class LoginFragment extends Fragment {
 
-    Button button,button2;
-    EditText editText, editText2;
-    String pass, login;
-    Communicator comm;
+    private OnLOGINFragmentListener listener;
+    private Button LogIn;
+
+
     public LoginFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            listener = (OnLOGINFragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnLOGINFragmentListener");
+        }
+
+
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
         getActivity().setTitle("Logowanie");
-        Log.d("TAG", "jest");
-        return inflater.inflate(R.layout.fragment_login, container, false);
+        LogIn = (Button) rootView.findViewById(R.id.loginbt);
+        LogIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    listener.startLoggedFragment();
+
+            }
+        });
+        return rootView;
     }
 
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        comm = (Communicator) getActivity();
-        editText = (EditText) getActivity().findViewById(R.id.editText);
-        pass = editText.getText().toString();
-        editText2 = (EditText) getActivity().findViewById(R.id.editText2);
-        login = editText.getText().toString();
-
-        button = (Button) getActivity().findViewById(R.id.button);
-        button2= (Button) getActivity().findViewById(R.id.button2);
-        button.setOnClickListener(this);
-        button2.setOnClickListener(this);
-    }
-    @Override
-    public void onClick(View v) {
-        switch(v.getId())
-        {
-            case R.id.button :
-
-                comm.LoginButton(login, pass);
-                break;
-            case R.id.button2 :
-                comm.openRegister();
-                break;
 
 
-        }
+    public interface OnLOGINFragmentListener {
+        void startLoggedFragment();
     }
 }
