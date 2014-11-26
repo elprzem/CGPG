@@ -127,7 +127,7 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
             poi = list.get(0);
         } catch (SQLException e) {
             e.printStackTrace();
-        }catch(IllegalStateException e){
+        } catch (IllegalStateException e) {
             e.printStackTrace();
         }
         return poi;
@@ -135,13 +135,15 @@ public class dbOps extends OrmLiteBaseListActivity<dataBaseHelper> {
 
     public buildingEntity getBuildingById(int id) {
         buildingEntity build = null;
-        try {
-            QueryBuilder<buildingEntity, Integer> getById = buildingDAO.queryBuilder();
-            getById.where().eq("idBuilding", id);
-            List<buildingEntity> list = getById.query();
-            build = list.get(0);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (id != -1) {
+            try {
+                QueryBuilder<buildingEntity, Integer> getById = buildingDAO.queryBuilder();
+                getById.where().eq("idBuilding", id);
+                List<buildingEntity> list = getById.query();
+                build = list.get(0);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return build;
     }
