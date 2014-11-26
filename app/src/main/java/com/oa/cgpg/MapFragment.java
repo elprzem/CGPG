@@ -68,6 +68,8 @@ public class MapFragment extends Fragment {
 
     private final int SIZE_OF_SQAURE = 60;
     private final int HEIGHT_OF_TRIANGLE = 40;
+    private final float RESCALE_OF_BITMAP = 0.8920960698689956f;//0.8820960698689956f;
+    private boolean tempTestVal;
 
 
     public void setDatabaseRef(dbOps database) {
@@ -101,6 +103,8 @@ public class MapFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         Log.d(TEST_TAG, "onCreate");
+
+        tempTestVal = false;
 
         initializeSourceMapBitmap();
         offset = new Point(0, 0);
@@ -273,10 +277,10 @@ public class MapFragment extends Fragment {
 
                 Path path = new Path();
                 //path.setFillType(Path.FillType.WINDING);
-                path.moveTo(building.getX1()*scale, building.getY1()*scale);
-                path.lineTo(building.getX2()*scale, building.getY2()*scale);
-                path.lineTo(building.getX3()*scale, building.getY3()*scale);
-                path.lineTo(building.getX4()*scale, building.getY4()*scale);
+                path.moveTo(building.getX1()*scale*RESCALE_OF_BITMAP, building.getY1()*scale*RESCALE_OF_BITMAP);
+                path.lineTo(building.getX2()*scale*RESCALE_OF_BITMAP, building.getY2()*scale*RESCALE_OF_BITMAP);
+                path.lineTo(building.getX3()*scale*RESCALE_OF_BITMAP, building.getY3()*scale*RESCALE_OF_BITMAP);
+                path.lineTo(building.getX4()*scale*RESCALE_OF_BITMAP, building.getY4()*scale*RESCALE_OF_BITMAP);
                 //path.close();
 
                 Paint paint = new Paint();
@@ -286,23 +290,19 @@ public class MapFragment extends Fragment {
                 paint.setColor(Color.GREEN);
 
                 //workingBitmapCanvas.drawPath(path, paint);
-                workingBitmapCanvas.drawPoint(building.getX1()*scale, building.getY1()*scale, paint);
-                workingBitmapCanvas.drawPoint(building.getX2()*scale, building.getY2()*scale, paint);
-                workingBitmapCanvas.drawPoint(building.getX3()*scale, building.getY3()*scale, paint);
-                workingBitmapCanvas.drawPoint(building.getX4()*scale, building.getY4()*scale, paint);
+                workingBitmapCanvas.drawPoint(building.getX1()*scale*RESCALE_OF_BITMAP, building.getY1()*scale*RESCALE_OF_BITMAP, paint);
+                workingBitmapCanvas.drawPoint(building.getX2()*scale*RESCALE_OF_BITMAP, building.getY2()*scale*RESCALE_OF_BITMAP, paint);
+                workingBitmapCanvas.drawPoint(building.getX3()*scale*RESCALE_OF_BITMAP, building.getY3()*scale*RESCALE_OF_BITMAP, paint);
+                workingBitmapCanvas.drawPoint(building.getX4()*scale*RESCALE_OF_BITMAP, building.getY4()*scale*RESCALE_OF_BITMAP, paint);
 
-                workingBitmapCanvas.drawLine(building.getX1()*scale, building.getY1()*scale,
-                        building.getX2()*scale, building.getY2()*scale,
-                        paint);
-                workingBitmapCanvas.drawLine(building.getX2()*scale, building.getY2()*scale,
-                        building.getX3()*scale, building.getY3()*scale,
-                        paint);
-                workingBitmapCanvas.drawLine(building.getX3()*scale, building.getY3()*scale,
-                        building.getX4()*scale, building.getY4()*scale,
-                        paint);
-                workingBitmapCanvas.drawLine(building.getX4()*scale, building.getY4()*scale,
-                        building.getX1()*scale, building.getY1()*scale,
-                        paint);
+                workingBitmapCanvas.drawLine(building.getX1()*scale*RESCALE_OF_BITMAP, building.getY1()*scale*RESCALE_OF_BITMAP,
+                        building.getX2()*scale*RESCALE_OF_BITMAP, building.getY2()*scale*RESCALE_OF_BITMAP,                        paint);
+                workingBitmapCanvas.drawLine(building.getX2()*scale*RESCALE_OF_BITMAP, building.getY2()*scale*RESCALE_OF_BITMAP,
+                        building.getX3()*scale*RESCALE_OF_BITMAP, building.getY3()*scale*RESCALE_OF_BITMAP,                        paint);
+                workingBitmapCanvas.drawLine(building.getX3()*scale*RESCALE_OF_BITMAP, building.getY3()*scale*RESCALE_OF_BITMAP,
+                        building.getX4()*scale*RESCALE_OF_BITMAP, building.getY4()*scale*RESCALE_OF_BITMAP,                        paint);
+                workingBitmapCanvas.drawLine(building.getX4()*scale*RESCALE_OF_BITMAP, building.getY4()*scale*RESCALE_OF_BITMAP,
+                        building.getX1()*scale*RESCALE_OF_BITMAP, building.getY1()*scale*RESCALE_OF_BITMAP,                        paint);
             }
         }
     }
@@ -401,7 +401,7 @@ public class MapFragment extends Fragment {
                     if (Math.abs(offsetDeltaForOnClick.x - event.getX()) < 7
                             && Math.abs(offsetDeltaForOnClick.y - event.getY()) < 7) {
                         Log.i("ACTION_UP", String.valueOf(offsetDeltaForOnClick.x - event.getX()));
-                        onClick((int) event.getX(), (int) event.getY());
+                        onClick(event.getX(), event.getY());
                     }
                     return true;
                 case MotionEvent.ACTION_MOVE:
@@ -452,16 +452,16 @@ public class MapFragment extends Fragment {
         }
     }
 
-    private void onClick(int x, int y) {
+    private void onClick(float x, float y) {
         if (database != null) {// && !placeDialog.isShowing()){
             Log.d(TEST_TAG + "_onClick", "x: " + x + " ,y: " + y);
             buildingEntity building = null;
 
-            Point cords = calculateCords(x, y);
+            PointF cords = calculateCords(x, y);
             Log.d(TEST_TAG + "_onClick", "x = " + cords.x + "; y = " + cords.y);
 
             try {
-                building = database.getBuildingById(database.getIdOfBuildingByCords(cords.x,cords.y));
+                building = database.getBuildingById(database.getIdOfBuildingByCords((int) cords.x, (int) cords.y));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -484,8 +484,8 @@ public class MapFragment extends Fragment {
             placeDialog = new Dialog(getActivity());
             WindowManager.LayoutParams wmlp = placeDialog.getWindow().getAttributes();
             wmlp.gravity = Gravity.TOP | Gravity.START;
-            wmlp.x = x;   //x position
-            wmlp.y = y;   //y position
+            wmlp.x = (int) x;   //x position
+            wmlp.y = (int) y;   //y position
             placeDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             placeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             ColorDrawable colorDrawable = new ColorDrawable(Color.WHITE);
@@ -512,12 +512,16 @@ public class MapFragment extends Fragment {
         }
     }
 
-    private Point calculateCords(int x, int y) {
+    private PointF calculateCords(float x, float y) {
         x /= scale;
         x += offset.x;
+        x /= RESCALE_OF_BITMAP;
+
         y /= scale;
         y += offset.y;
-        return new Point(x,y);
+        y /= RESCALE_OF_BITMAP;
+
+        return new PointF(x,y);
     }
 
     /// shape:
@@ -526,24 +530,84 @@ public class MapFragment extends Fragment {
     //  |         |
     //  |4       3|
     /// ----------
-    private buildingEntity whatIsHere(int x, int y) {
+    private buildingEntity whatIsHere(float x, float y) {
         if (database != null) {
             for (buildingEntity building : database.getBuildings()) {
-                Log.d(TEST_TAG, building.toString());
-                if (x > building.getX1() &&
-                        y > building.getY1() &&
-                        x < building.getX2() &&
-                        y > building.getY2() &&
-                        x < building.getX3() &&
-                        y < building.getY3() &&
-                        x > building.getX4() &&
-                        y < building.getY4()) {
-                    return building;
+
+                tempTestVal = false;
+                if(building.getName().equals("Budynek Wydziału Zarządzania i Ekonomii")){
+                    Log.d(TEST_TAG, building.toString());
+                    Log.d(TEST_TAG, "x, y: (" + x + ", " + y + ")");
+                    tempTestVal = true;
+                }
+
+                //Log.d(TEST_TAG, building.toString());
+                if(isPointBetweenLines(x, y,
+                        building.getX1(), building.getY1(),
+                        building.getX2(), building.getY2(),
+                        building.getX3(), building.getY3())){
+                    if(isPointBetweenLines(x, y,
+                            building.getX2(), building.getY2(),
+                            building.getX3(), building.getY3(),
+                            building.getX4(), building.getY4())){
+                        if(isPointBetweenLines(x, y,
+                                building.getX3(), building.getY3(),
+                                building.getX4(), building.getY4(),
+                                building.getX1(), building.getY1())){
+                            if(isPointBetweenLines(x, y,
+                                    building.getX4(), building.getY4(),
+                                    building.getX1(), building.getY1(),
+                                    building.getX2(), building.getY2())){
+
+                                tempTestVal = false;
+                                return building;
+                            }
+                        }
+                    }
                 }
             }
         }
-
+        tempTestVal = false;
         return null;
+    }
+
+    private boolean isPointBetweenLines(float x, float y, int x1, int y1, int x2, int y2, int x3, int y3) {
+        Double a = null;
+        Double b = null;
+
+        if (x2 - x1 != 0) {
+            a =  ((double) (y2 - y1)) / ((double) (x2 - x1));
+            b = ((double) y1) - ((double) x1) * a;
+            if(tempTestVal)
+                Log.d(TEST_TAG, "a, b: " + "(" + a + ", " + b + ")");
+        }
+        else if (tempTestVal)
+            Log.d(TEST_TAG, "a, b: null");
+
+        //It returns true for situation when three points are in one line.
+        if(a != null){
+            if(y3 < a * ((double) x3) + b){
+                if(y < a * ((double) x) + b)
+                    return true;
+            } else if(y3 > a * ((double) x3) + b) {
+                if(y > a * ((double) x) + b)
+                    return true;
+            } else{
+                return true;
+            }
+        } else {
+            if(x3 < x1) {
+                if (x < x1)
+                    return true;
+            } else if(x3 > x1){
+                if (x > x1)
+                    return true;
+            } else {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -608,7 +672,7 @@ public class MapFragment extends Fragment {
                 new Rect(0, 0, fragmentSize.x, fragmentSize.y),
                 new Paint()
         );
-        Log.d("redrawVisibleBitmap", "scale: " + scale);
+//        Log.d("redrawVisibleBitmap", "scale: " + scale);
         mapImageView.setImageBitmap(visibleBitmap);
     }
 
