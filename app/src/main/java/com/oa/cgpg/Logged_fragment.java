@@ -8,12 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 public class Logged_fragment extends Fragment {
 
     private OnLOGGEDFragmentListener listener;
     private Button LogOut;
-
+    private TextView Logintx;
 
     public Logged_fragment() {
         // Required empty public constructor
@@ -44,6 +47,8 @@ public class Logged_fragment extends Fragment {
 
             }
         });
+        Logintx = (TextView) rootView.findViewById(R.id.logintext);
+        Logintx.setText(LoggedUserInfo.getInstance().getUserName());
         return rootView;
     }
 

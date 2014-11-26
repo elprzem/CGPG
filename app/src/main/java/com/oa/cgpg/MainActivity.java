@@ -30,6 +30,7 @@ import com.oa.cgpg.models.buildingEntity;
 import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.opinionRateNet;
 import com.oa.cgpg.models.poiEntity;
+import com.oa.cgpg.models.userNetEntity;
 
 import java.security.Key;
 import java.util.ArrayList;
@@ -314,6 +315,12 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         Fragment fragment = new LoginFragment();
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+    }
+
+    @Override
+    public void createaccount(String login, String password) {
+        Log.d("TAG10000", "new account ");
+       // userNetEntity user = new userNetEntity(login , password, context , d);
     }
    /* @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
