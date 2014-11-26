@@ -12,7 +12,7 @@ import android.widget.EditText;
 public class Logged_fragment extends Fragment {
 
     private OnLOGGEDFragmentListener listener;
- //   private Button LogIn;
+    private Button LogOut;
 
 
     public Logged_fragment() {
@@ -36,14 +36,14 @@ public class Logged_fragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_logged, container, false);
         getActivity().setTitle("Logowanie");
-       /* LogIn = (Button) rootView.findViewById(R.id.loginbt);
-        LogIn.setOnClickListener(new View.OnClickListener() {
+        LogOut = (Button) rootView.findViewById(R.id.logoutbt);
+        LogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.startLoggedFragment();
+                listener.startLoginFragment();
 
             }
-        });*/
+        });
         return rootView;
     }
 
@@ -51,5 +51,6 @@ public class Logged_fragment extends Fragment {
 
     public interface OnLOGGEDFragmentListener {
 
+        void startLoginFragment();
     }
 }

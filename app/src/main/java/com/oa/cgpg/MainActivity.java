@@ -37,7 +37,9 @@ import java.util.List;
 
 public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         implements MapFragment.OnMapFragmentListener,
-        POIFragment.OnPOIFragmentListener, OpinionsFragment.OnOpinionsFragmentListener,LoginFragment.OnLOGINFragmentListener,Logged_fragment.OnLOGGEDFragmentListener, AsyncResponse {
+        POIFragment.OnPOIFragmentListener, OpinionsFragment.OnOpinionsFragmentListener
+        ,LoginFragment.OnLOGINFragmentListener,Logged_fragment.OnLOGGEDFragmentListener,
+        RegisterFragment.OnRegisterFragmentListener, AsyncResponse {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -283,7 +285,33 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
 
     @Override
     public void startLoggedFragment() {
+
+        LoggedUserInfo.getInstance().setLoggedIn(true);
+        LoggedUserInfo.getInstance().setUserName("zalogowany");
         Fragment fragment = new Logged_fragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+    }
+
+    @Override
+    public void startRegisterFragment() {
+        Fragment fragment = new RegisterFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+    }
+
+    @Override
+    public void startLoginFragment() {
+        LoggedUserInfo.getInstance().setLoggedIn(false);
+        LoggedUserInfo.getInstance().setUserName("");
+        Fragment fragment = new LoginFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+    }
+
+    @Override
+    public void backLoginFragment() {
+        Fragment fragment = new LoginFragment();
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
@@ -315,10 +343,16 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         else if (position >= MenuItems.XERO && position <= MenuItems.BIKES) {
             startPOIFragment(position, dbOps.getTypeIdByName(mPOItypes[position - 1]), Keys.TYPE_POI);
         } else if (position == MenuItems.LOGIN) {//aktywność logowania lub rejestracji - info można przechować w klasie singleton
+            if(LoggedUserInfo.getInstance().isLoggedIn()){
+                Fragment fragment = new Logged_fragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
-            Fragment fragment = new LoginFragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+            }else {
+                Fragment fragment = new LoginFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+            }
         }
     }
 

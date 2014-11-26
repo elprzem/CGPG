@@ -12,7 +12,7 @@ import android.widget.EditText;
 public class LoginFragment extends Fragment {
 
     private OnLOGINFragmentListener listener;
-    private Button LogIn;
+    private Button LogIn, Register;
 
 
     public LoginFragment() {
@@ -44,6 +44,14 @@ public class LoginFragment extends Fragment {
 
             }
         });
+        Register = (Button) rootView.findViewById(R.id.registerbt);
+        Register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.startRegisterFragment();
+
+            }
+        });
         return rootView;
     }
 
@@ -51,5 +59,7 @@ public class LoginFragment extends Fragment {
 
     public interface OnLOGINFragmentListener {
         void startLoggedFragment();
+
+        void startRegisterFragment();
     }
 }

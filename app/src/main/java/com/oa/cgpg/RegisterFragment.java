@@ -1,26 +1,18 @@
 package com.oa.cgpg;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link register.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link register#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class RegisterFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
+    private OnRegisterFragmentListener listener;
+    private Button Back;
 
 
     public RegisterFragment() {
@@ -28,19 +20,37 @@ public class RegisterFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            listener = (OnRegisterFragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnRegisterFragmentListener");
+        }
+
 
     }
 
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
+        View rootView = inflater.inflate(R.layout.fragment_register, container, false);
         getActivity().setTitle("Logowanie");
-        return inflater.inflate(R.layout.fragment_register, container, false);
+        Back = (Button) rootView.findViewById(R.id.backbt);
+        Back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.backLoginFragment();
+
+            }
+        });
+        return rootView;
     }
 
 
+
+    public interface OnRegisterFragmentListener {
+
+        void backLoginFragment();
+    }
 }
