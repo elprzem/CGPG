@@ -408,9 +408,12 @@ public class POIFragment extends Fragment implements AsyncResponse {
         for(POIItem poiItem: poiItems){
             ArrayList<POIDetails> details = poiItem.getDetails();
             Integer id = poiItem.getId();
-            details.get(0).setPlusesCount(dbOps.getPoiById(id).getRatingPlus());
-            details.get(0).setMinusesCount(dbOps.getPoiById(id).getRatingMinus());
-            poiItem.setDetails(details);
+            poiEntity poi = dbOps.getPoiById(id);
+            if(poi != null) {
+                details.get(0).setPlusesCount(poi.getRatingPlus());
+                details.get(0).setMinusesCount(poi.getRatingMinus());
+                poiItem.setDetails(details);
+            }
         }
         ((POIListAdapter) listView.getExpandableListAdapter()).notifyDataSetChanged();
     }

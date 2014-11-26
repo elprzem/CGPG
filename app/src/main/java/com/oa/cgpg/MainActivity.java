@@ -345,10 +345,10 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         Log.i("back stack entry", String.valueOf(getFragmentManager().getBackStackEntryCount()));
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawers();
-        } /*else if (getFragmentManager().getBackStackEntryCount() == 1) {
+        } else if (getFragmentManager().getBackStackEntryCount() == 0) {
             Log.i("back", "from else if");
-            finish();
-        }*/ else {
+           // finish();
+        } else {
             Log.i("back", "from else");
             super.onBackPressed();
         }
