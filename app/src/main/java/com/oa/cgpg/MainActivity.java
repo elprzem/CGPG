@@ -3,6 +3,7 @@ package com.oa.cgpg;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -11,12 +12,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.oa.cgpg.customControls.LogOutDialog;
 import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLDatabaseInsert;
@@ -166,6 +170,10 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
         // boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        if(LoggedUserInfo.getInstance().isLoggedIn())
+            menu.getItem(menu.size()-1).setTitle("Wyloguj");
+        else
+            menu.getItem(menu.size()-1).setTitle("Zaloguj");
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -179,9 +187,17 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         // Handle action buttons
         switch (item.getItemId()) {
             case R.id.action_update:
-                // TODO aktualizacja bazy
                 XMLDatabaseInsert DI = new XMLDatabaseInsert(this, dbOps);
                 DI.execute();
+                return true;
+            case R.id.action_login:
+                if(LoggedUserInfo.getInstance().isLoggedIn()) {
+                    LogOutDialog dialog = new LogOutDialog();
+                    dialog.show(getFragmentManager(), "log_out");
+                }else {
+                    startLoginFragment();
+                }
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -293,7 +309,6 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             System.out.println(op.toString());
         }
     }*/
-
     /* The click listner for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override

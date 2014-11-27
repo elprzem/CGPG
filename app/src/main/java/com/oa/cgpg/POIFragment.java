@@ -297,12 +297,16 @@ public class POIFragment extends Fragment implements AsyncResponse {
             ((Button) convertView.findViewById(R.id.button_opinions)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (isNetworkAvailable(getActivity()))
-                        listener.startOpinionsFragment(poiItems.get(groupPosition).getId(), poiItems.get(groupPosition).getTitle());
-                    else {
-                        NoConnectionDialog ncDialog = new NoConnectionDialog();
-                        ncDialog.setMessage("Brak połączenia z Internetem");
-                        ncDialog.show(getFragmentManager(), "noConnection");
+                    if(LoggedUserInfo.getInstance().isLoggedIn()) {
+                        if (isNetworkAvailable(getActivity()))
+                            listener.startOpinionsFragment(poiItems.get(groupPosition).getId(), poiItems.get(groupPosition).getTitle());
+                        else {
+                            NoConnectionDialog ncDialog = new NoConnectionDialog();
+                            ncDialog.setMessage("Brak połączenia z Internetem");
+                            ncDialog.show(getFragmentManager(), "noConnection");
+                        }
+                    }else{
+                        listener.startLoginFragment();
                     }
 
                    /* Intent intent = new Intent(getActivity(), OpinionsActivity.class);
@@ -420,6 +424,7 @@ public class POIFragment extends Fragment implements AsyncResponse {
     public interface OnPOIFragmentListener {
         void startMapFragment(Integer value, String mode);
         void startOpinionsFragment(Integer idPOI, String titlePOI);
+        void startLoginFragment();
     }
 
     //sprawdzenie polaczenia z Internetem

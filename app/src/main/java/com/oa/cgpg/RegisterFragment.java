@@ -20,6 +20,7 @@ import com.oa.cgpg.customControls.RegisterUnsuccessfulDialogFragment;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLUserClass;
 import com.oa.cgpg.models.opinionNetEntity;
+import com.oa.cgpg.models.userNetEntity;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -73,8 +74,12 @@ public class RegisterFragment extends Fragment implements  AsyncResponse {
             @Override
             public void onClick(View view) {
                 if (checkUserInput(username.getText().toString(), email.getText().toString(), pass.getText().toString(), passConfirm.getText().toString())) {
-                    XMLUserClass xmlUserClass = new XMLUserClass(getActivity(), (AsyncResponse) getActivity().getFragmentManager().findFragmentById(R.id.content_frame), username.getText().toString(), pass.getText().toString(), email.getText().toString());
-                    xmlUserClass.execute();
+                    try {
+                        userNetEntity UNE = new userNetEntity(username.getText().toString(), pass.getText().toString(), email.getText().toString(),getActivity(), (AsyncResponse) getActivity().getFragmentManager().findFragmentById(R.id.content_frame));
+                        UNE.register();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

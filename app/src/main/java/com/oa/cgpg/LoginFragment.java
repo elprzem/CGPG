@@ -1,12 +1,15 @@
 package com.oa.cgpg;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -14,6 +17,7 @@ import com.oa.cgpg.customControls.NotValidDataDialog;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLUserClass;
 import com.oa.cgpg.models.opinionNetEntity;
+import com.oa.cgpg.models.userNetEntity;
 
 import java.util.List;
 
@@ -41,6 +45,16 @@ public class LoginFragment extends Fragment implements AsyncResponse{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+
+        rootView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                return true;
+            }
+        });
+
         getActivity().setTitle("Logowanie");
         Button registerBtn = (Button) rootView.findViewById(R.id.registerBtn);
         registerBtn.setOnClickListener(new View.OnClickListener() {
@@ -56,8 +70,15 @@ public class LoginFragment extends Fragment implements AsyncResponse{
             @Override
             public void onClick(View view) {
                 if(username.getText().toString().length() > 3 && pass.getText().toString().length() > 3) {
-                    XMLUserClass xmlUserClass = new XMLUserClass(getActivity(), (AsyncResponse) getFragmentManager().findFragmentById(R.id.content_frame), username.getText().toString(), pass.getText().toString());
-                    xmlUserClass.execute();
+                    try {
+                        userNetEntity UNE = new userNetEntity(username.getText().toString(), pass.getText().toString(),getActivity(), (AsyncResponse) getFragmentManager().findFragmentById(R.id.content_frame));
+                        UNE.login();
+                    } catch (Exception e) {
+                        Log.i("no connection", "tu");
+                        e.printStackTrace();
+                    }
+
+
                 }
                 else{
                     NotValidDataDialog dialog = new NotValidDataDialog();

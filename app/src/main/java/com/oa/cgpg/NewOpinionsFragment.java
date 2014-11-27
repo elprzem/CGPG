@@ -1,6 +1,7 @@
 package com.oa.cgpg;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.Editable;
@@ -8,8 +9,10 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -43,6 +46,15 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_new_opinions, container, false);
+
+        rootView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                return true;
+            }
+        });
         Bundle args = getArguments();
         poiId = args.getInt(Keys.POI_NUMBER, 0);
         final Button addOpinion = (Button) rootView.findViewById(R.id.addOpinion);
@@ -105,7 +117,7 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
         int type = positive.isChecked() ? POSITIVE : NEGATIVE;
         List<opinionNetEntity> list = new ArrayList<opinionNetEntity>();
 
-        opinionNetEntity opinionEntity = new opinionNetEntity(1, text, LoggedUserInfo.getInstance().getUserName(), poiId, 1, 3, 4, type, new Date());
+        opinionNetEntity opinionEntity = new opinionNetEntity(1, text, LoggedUserInfo.getInstance().getUserName(), poiId, 0, 0, -1, type, new Date());
         //TODO - wysłanie opinii
         list.add(opinionEntity);
         XMLOpinionSend XOS = new XMLOpinionSend(getActivity(), list);
