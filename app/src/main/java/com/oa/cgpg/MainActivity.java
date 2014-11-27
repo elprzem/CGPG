@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.oa.cgpg.connectivity.Connectivity;
 import com.oa.cgpg.customControls.LogOutDialog;
 import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.dataOperations.AsyncResponse;
@@ -57,7 +58,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         dbHelper = getHelper();
         dbOps = new dbOps(dbHelper);
         if (dbOps.getVersion().getVersionNumber() == 1){
-            if (POIFragment.isNetworkAvailable(this)) {
+            if (Connectivity.isNetworkAvailable(this)) {
                 XMLDatabaseInsert DI = new XMLDatabaseInsert(this, dbOps);
                 DI.execute();
             }else{

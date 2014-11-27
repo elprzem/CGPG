@@ -22,11 +22,13 @@
                     android:src="@drawable/ic_launcher"
                     android:layout_width="100dp"
                     android:layout_height="150dp"
+                    android:layout_marginLeft="10dp"
                     android:id="@+id/image" />
             </TableRow>
             <TableRow
                 android:weightSum="6"
-                android:layout_marginBottom="5dp">
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp">
                 <ImageView
                     android:src="@drawable/ic_launcher"
                     android:layout_width="0dp"

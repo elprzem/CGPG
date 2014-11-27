@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.oa.cgpg.connectivity.Connectivity;
+import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.customControls.NotValidDataDialog;
 import com.oa.cgpg.customControls.RegisterSuccessfulDialogFragment;
 import com.oa.cgpg.customControls.RegisterUnsuccessfulDialogFragment;
@@ -75,8 +77,14 @@ public class RegisterFragment extends Fragment implements  AsyncResponse {
             public void onClick(View view) {
                 if (checkUserInput(username.getText().toString(), email.getText().toString(), pass.getText().toString(), passConfirm.getText().toString())) {
                     try {
-                        userNetEntity UNE = new userNetEntity(username.getText().toString(), pass.getText().toString(), email.getText().toString(),getActivity(), (AsyncResponse) getActivity().getFragmentManager().findFragmentById(R.id.content_frame));
-                        UNE.register();
+                        if(Connectivity.isNetworkAvailable(getActivity())) {
+                            userNetEntity UNE = new userNetEntity(username.getText().toString(), pass.getText().toString(), email.getText().toString(), getActivity(), (AsyncResponse) getActivity().getFragmentManager().findFragmentById(R.id.content_frame));
+                            UNE.register();
+                        }else {
+                            NoConnectionDialog ncDialog = new NoConnectionDialog();
+                            ncDialog.setMessage("Brak połączenia z Internetem");
+                            ncDialog.show(getFragmentManager(), "noConnection");
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

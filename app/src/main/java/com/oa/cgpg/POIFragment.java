@@ -21,6 +21,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.oa.cgpg.connectivity.Connectivity;
 import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLOpinionRateUpdate;
@@ -178,7 +179,7 @@ public class POIFragment extends Fragment implements AsyncResponse {
         }else{
             idPOIs = dbOps.getPoiIdByBuildingId(buildingId);
         }
-        if(isNetworkAvailable(getActivity())){//jeżeli sieć dostępna to aktualizacja ratingów poi
+        if(Connectivity.isNetworkAvailable(getActivity())){//jeżeli sieć dostępna to aktualizacja ratingów poi
             XMLOpinionRateUpdate ORU = new XMLOpinionRateUpdate(dbOps,idPOIs,getActivity());
             ORU.delegate = this;
             ORU.execute();
@@ -298,7 +299,7 @@ public class POIFragment extends Fragment implements AsyncResponse {
                 @Override
                 public void onClick(View view) {
                     if(LoggedUserInfo.getInstance().isLoggedIn()) {
-                        if (isNetworkAvailable(getActivity()))
+                        if (Connectivity.isNetworkAvailable(getActivity()))
                             listener.startOpinionsFragment(poiItems.get(groupPosition).getId(), poiItems.get(groupPosition).getTitle());
                         else {
                             NoConnectionDialog ncDialog = new NoConnectionDialog();
@@ -427,21 +428,5 @@ public class POIFragment extends Fragment implements AsyncResponse {
         void startLoginFragment();
     }
 
-    //sprawdzenie polaczenia z Internetem
-    public static boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivity == null) {
-            return false;
-        } else {
-            NetworkInfo[] info = connectivity.getAllNetworkInfo();
-            if (info != null) {
-                for (int i = 0; i < info.length; i++) {
-                    if (info[i].getState() == NetworkInfo.State.CONNECTED) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+
 }

@@ -13,6 +13,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.oa.cgpg.connectivity.Connectivity;
+import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.customControls.NotValidDataDialog;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLUserClass;
@@ -71,8 +73,14 @@ public class LoginFragment extends Fragment implements AsyncResponse{
             public void onClick(View view) {
                 if(username.getText().toString().length() > 3 && pass.getText().toString().length() > 3) {
                     try {
-                        userNetEntity UNE = new userNetEntity(username.getText().toString(), pass.getText().toString(),getActivity(), (AsyncResponse) getFragmentManager().findFragmentById(R.id.content_frame));
-                        UNE.login();
+                        if(Connectivity.isNetworkAvailable(getActivity())) {
+                            userNetEntity UNE = new userNetEntity(username.getText().toString(), pass.getText().toString(), getActivity(), (AsyncResponse) getFragmentManager().findFragmentById(R.id.content_frame));
+                            UNE.login();
+                        }else {
+                            NoConnectionDialog ncDialog = new NoConnectionDialog();
+                            ncDialog.setMessage("Brak połączenia z Internetem");
+                            ncDialog.show(getFragmentManager(), "noConnection");
+                        }
                     } catch (Exception e) {
                         Log.i("no connection", "tu");
                         e.printStackTrace();
