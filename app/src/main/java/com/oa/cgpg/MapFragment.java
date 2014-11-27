@@ -106,15 +106,8 @@ public class MapFragment extends Fragment {
 
         tempTestVal = false;
 
-        initializeSourceMapBitmap();
         offset = new Point(0, 0);
         scale = 1.f;//0.4822530864197531f;
-    }
-
-    private void initializeSourceMapBitmap() {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inMutable = true;
-        sourceMapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.kampus, options);
     }
 
     @Override
@@ -202,10 +195,6 @@ public class MapFragment extends Fragment {
         Log.d(TEST_TAG, "onResume");
         super.onResume();
 
-        if(sourceMapBitmap == null){
-            initializeSourceMapBitmap();
-        }
-
         if(workingBitmap == null) {
             initializeVisibleBitmap();
             mapImageView = (ImageView) (getView().findViewById(R.id.mapImageView));
@@ -231,6 +220,10 @@ public class MapFragment extends Fragment {
     }
 
     private void initializeVisibleBitmap() {
+        if(sourceMapBitmap == null){
+            initializeSourceMapBitmap();
+        }
+
         workingBitmap = Bitmap.createBitmap(
                 sourceMapBitmap.getWidth(),
                 sourceMapBitmap.getHeight(),
@@ -266,6 +259,12 @@ public class MapFragment extends Fragment {
                 new Paint()
         );
 //        visibleBitmapCanvas.drawBitmap(workingBitmap,new Matrix(), new Paint());
+    }
+
+    private void initializeSourceMapBitmap() {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        sourceMapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.kampus, options);
     }
 
     private void drawPoints() {
@@ -636,6 +635,10 @@ public class MapFragment extends Fragment {
      */
 
     private void checkAndRedrawVisibleBitmap(Point newOffset) {
+        if(sourceMapBitmap == null){
+            initializeSourceMapBitmap();
+        }
+
         if (newOffset.x <= 0)
             newOffset.x = 0;
         else if (newOffset.x > sourceMapBitmap.getWidth() - fragmentSize.x / scale) {
