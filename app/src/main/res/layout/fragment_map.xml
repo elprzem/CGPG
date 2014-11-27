@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.oa.cgpg.MapFragment"
+    android:background="@color/background"
     android:id="@+id/mainLayout">
 
     <!-- TODO: Update blank fragment layout -->

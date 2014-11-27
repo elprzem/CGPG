@@ -7,25 +7,19 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 /**
- * Created by Izabela on 2014-11-20.
+ * Created by Izabela on 2014-11-27.
  */
-public class NoConnectionDialog extends DialogFragment {
-    private String message;
-
-    public void setMessage(String message){
-        this.message = message;
-    }
+public class RegisterSuccessfulDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(message)
-                .setTitle("Błąd")
+        builder.setMessage("Zarejestrowano nowego użytkownika")
+                .setTitle("Rejestracja")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
-                       if(message.equals("Wymagane jest połączenie z Internetem do pobrania danych"))
-                            getActivity().onBackPressed();
+                        getActivity().onBackPressed();
                     }
                 });
         return builder.create();

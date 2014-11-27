@@ -22,7 +22,7 @@ import java.io.StringWriter;
 public class XMLUserClass extends AsyncTask<Void, Void, Void> {
     private ProgressDialog progressDialog;
     private Context context;
-    public AsyncResponse delegate = null;
+    private AsyncResponse delegate = null;
     private String user;
     private String pass;
     private String email;

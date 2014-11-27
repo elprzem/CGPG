@@ -3,8 +3,11 @@
     <color name="dark_gray">#ff7b7b80</color>
     <color name="light_gray">#ffe0e0e0</color>
     <color name="white">#ffffffff</color>
-    <color name="buttonBlue">#0099FF</color>
+    <color name="buttonBlue">#40A8F6</color>
     <color name="buttonHighlight">#1F3D7A</color>
-    <color name="greenBorder">#ff4db330</color>
-    <color name="redBorder">#FF0000</color>
+    <color name="greenBorder">#4ABC2D</color>
+    <color name="redBorder">#E66355</color>
+    <color name="register">#526A85</color>
+    <color name="background">#BACDE2</color>
+    <color name="menu">#17476F</color>
 </resources>

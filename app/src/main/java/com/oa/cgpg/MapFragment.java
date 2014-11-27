@@ -135,6 +135,8 @@ public class MapFragment extends Fragment {
                         getArguments().getInt(Keys.BUILDING_ID)
                 ));
             }
+        }else{
+            getActivity().setTitle("Mapa kampusu");
         }
 
         initializeVisibleBitmap();

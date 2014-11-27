@@ -1,8 +1,12 @@
 package com.oa.cgpg;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +14,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class RegisterFragment extends Fragment {
+import com.oa.cgpg.customControls.NotValidDataDialog;
+import com.oa.cgpg.customControls.RegisterSuccessfulDialogFragment;
+import com.oa.cgpg.customControls.RegisterUnsuccessfulDialogFragment;
+import com.oa.cgpg.dataOperations.AsyncResponse;
+import com.oa.cgpg.dataOperations.XMLUserClass;
+import com.oa.cgpg.models.opinionNetEntity;
 
-    private OnRegisterFragmentListener listener;
-    private Button Back , Register;
-    String login, password;
-    TextView emailText , passText;
+import java.util.List;
+import java.util.regex.Pattern;
+
+public class RegisterFragment extends Fragment implements  AsyncResponse {
+
     public RegisterFragment() {
         // Required empty public constructor
     }
@@ -23,49 +33,99 @@ public class RegisterFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            listener = (OnRegisterFragmentListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnRegisterFragmentListener");
-        }
-
-
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_register, container, false);
-        getActivity().setTitle("Logowanie");
-        emailText = (TextView) rootView.findViewById(R.id.emailTextreg);
-        login = emailText.toString();
-        passText = (TextView) rootView.findViewById(R.id.passwordTextreg);
-        password = passText.toString();
-        Back = (Button) rootView.findViewById(R.id.backbt);
-        Back.setOnClickListener(new View.OnClickListener() {
+        getActivity().setTitle("Rejestracja");
+        final Button registerBtn = (Button) rootView.findViewById(R.id.registerBtn);
+        final EditText username = (EditText) rootView.findViewById(R.id.loginText);
+        final EditText pass = (EditText) rootView.findViewById(R.id.passText);
+        final EditText passConfirm = (EditText) rootView.findViewById(R.id.passRepeatText);
+        final EditText email = (EditText) rootView.findViewById(R.id.emailText);
+        TextWatcher isFieldEmpty  =  new TextWatcher() {
             @Override
-            public void onClick(View view) {
-                listener.backLoginFragment();
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
 
             }
-        });
-        Register = (Button) rootView.findViewById(R.id.createacount);
-        Register.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (passConfirm.length() != 0 && username.getText().toString().length() != 0 && pass.getText().toString().length() != 0 && email.getText().toString().length() != 0) {
+                    registerBtn.setEnabled(true);
+                } else {
+                    registerBtn.setEnabled(false);
+                }
+            }
+        };
+        passConfirm.addTextChangedListener(isFieldEmpty);
+        pass.addTextChangedListener(isFieldEmpty);
+        username.addTextChangedListener(isFieldEmpty);
+        email.addTextChangedListener(isFieldEmpty);
+
+        registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.createaccount(login, password);
-
+                if (checkUserInput(username.getText().toString(), email.getText().toString(), pass.getText().toString(), passConfirm.getText().toString())) {
+                    XMLUserClass xmlUserClass = new XMLUserClass(getActivity(), (AsyncResponse) getActivity().getFragmentManager().findFragmentById(R.id.content_frame), username.getText().toString(), pass.getText().toString(), email.getText().toString());
+                    xmlUserClass.execute();
+                }
             }
         });
         return rootView;
     }
 
+    boolean checkUserInput(String username, String email, String pass1, String pass2){
+        if(isValidEmail(email)){
+            if(username.length() < 4){
+                NotValidDataDialog dialog = new NotValidDataDialog();
+                dialog.setMessage("Login powinien mieć długość od 4 do 10 znaków");
+                dialog.show(getFragmentManager(), "not_valid_data");
+                return false;
+            }
+            else if(pass1.length() < 4 || pass1.length() > 10 | pass2.length() < 4 | pass2.length() > 10){
+                NotValidDataDialog dialog = new NotValidDataDialog();
+                dialog.setMessage("Hasło powinno mieć długość od 4 do 10 znaków");
+                dialog.show(getFragmentManager(), "not_valid_data");
+                return false;
+            }else if(!pass1.equals(pass2)){
+                NotValidDataDialog dialog = new NotValidDataDialog();
+                dialog.setMessage("Potwierdź hasło");
+                dialog.show(getFragmentManager(), "not_valid_data");
+                return false;
+            }
+            return true;
+        }else{
+            NotValidDataDialog dialog = new NotValidDataDialog();
+            dialog.setMessage("Nieprawidłowy format adresu email");
+            dialog.show(getFragmentManager(), "not_valid_data");
+            return false;
+        }
+    }
+    @Override
+    public void processFinishOpinion(List<opinionNetEntity> list) {
 
+    }
 
-    public interface OnRegisterFragmentListener {
-
-        void backLoginFragment();
-
-        void createaccount(String login,String password);
+    @Override
+    public void processFinish(String o) {
+        if(o.equals("OK")) {
+            RegisterSuccessfulDialogFragment dialog = new RegisterSuccessfulDialogFragment();
+            dialog.show(getFragmentManager(), "register_successful");
+        }else{
+            RegisterUnsuccessfulDialogFragment dialog = new RegisterUnsuccessfulDialogFragment();
+            dialog.show(getFragmentManager(), "register_unsuccessful");
+        }
+    }
+    public final static boolean isValidEmail(CharSequence target) {
+        if (target == null)
+            return false;
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 }

@@ -89,7 +89,13 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
         addOpinion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendOpinion(opinionText.getText().toString());
+                if(POIFragment.isNetworkAvailable(getActivity()))
+                    sendOpinion(opinionText.getText().toString());
+                else{
+                    NoConnectionDialog ncDialog = new NoConnectionDialog();
+                    ncDialog.setMessage("Brak połączenia z Internetem");
+                    ncDialog.show(getFragmentManager(), "no connection");
+                }
             }
         });
         return rootView;

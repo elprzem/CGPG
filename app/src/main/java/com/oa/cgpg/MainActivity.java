@@ -3,7 +3,6 @@ package com.oa.cgpg;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -21,26 +20,19 @@ import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLDatabaseInsert;
-import com.oa.cgpg.dataOperations.XMLOpinionRateSend;
 
 import com.oa.cgpg.dataOperations.createTestEntities;
 import com.oa.cgpg.dataOperations.dataBaseHelper;
 import com.oa.cgpg.dataOperations.dbOps;
-import com.oa.cgpg.models.buildingEntity;
 import com.oa.cgpg.models.opinionNetEntity;
-import com.oa.cgpg.models.opinionRateNet;
-import com.oa.cgpg.models.poiEntity;
-import com.oa.cgpg.models.userNetEntity;
 
-import java.security.Key;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         implements MapFragment.OnMapFragmentListener,
         POIFragment.OnPOIFragmentListener, OpinionsFragment.OnOpinionsFragmentListener
-        ,LoginFragment.OnLOGINFragmentListener,Logged_fragment.OnLOGGEDFragmentListener,
-        RegisterFragment.OnRegisterFragmentListener, AsyncResponse {
+        ,LoginFragment.OnLoginFragmentListener,LoggedFragment.OnLoggedFragmentListener, AsyncResponse {
+
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -269,27 +261,12 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_opinions").commit();
     }
 
-    private void replaceFragment(Fragment fragment) {
-        String backStateName = fragment.getClass().getName();
-        String fragmentTag = backStateName;
-
-        FragmentManager manager = getFragmentManager();
-        boolean fragmentPopped = manager.popBackStackImmediate(backStateName, 0);
-
-        if (!fragmentPopped && manager.findFragmentByTag(fragmentTag) == null) { //fragment not in back stack, create it.
-            FragmentTransaction ft = manager.beginTransaction();
-            ft.replace(R.id.content_frame, fragment, fragmentTag);
-            ft.addToBackStack(backStateName);
-            ft.commit();
-        }
-    }
-
     @Override
-    public void startLoggedFragment() {
-
-        LoggedUserInfo.getInstance().setLoggedIn(true);
-        LoggedUserInfo.getInstance().setUserName("zalogowany");
-        Fragment fragment = new Logged_fragment();
+    public void startLoggedFragment(){
+        mMenuTitles[MenuItems.LOGIN] = "Profil";
+        ((ArrayAdapter) mDrawerList.getAdapter()).notifyDataSetChanged();
+        Fragment fragment = new LoggedFragment();
+        Bundle args = new Bundle();
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
@@ -298,29 +275,17 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     public void startRegisterFragment() {
         Fragment fragment = new RegisterFragment();
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_login").commit();
     }
 
-    @Override
     public void startLoginFragment() {
+        mMenuTitles[MenuItems.LOGIN] = "Logowanie";
+        ((ArrayAdapter) mDrawerList.getAdapter()).notifyDataSetChanged();
         LoggedUserInfo.getInstance().setLoggedIn(false);
         LoggedUserInfo.getInstance().setUserName("");
         Fragment fragment = new LoginFragment();
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-    }
-
-    @Override
-    public void backLoginFragment() {
-        Fragment fragment = new LoginFragment();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-    }
-
-    @Override
-    public void createaccount(String login, String password) {
-        Log.d("TAG10000", "new account ");
-       // userNetEntity user = new userNetEntity(login , password, context , d);
     }
    /* @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
@@ -343,6 +308,12 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         setTitle(mMenuTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
 
+        FragmentManager fm = getFragmentManager();
+        int count = fm.getBackStackEntryCount();
+        for(int i = 0; i < count; ++i) {
+            fm.popBackStackImmediate();
+        }
+
         if (position == MenuItems.MAP) {
             startMapFragment(0, Keys.CLEAR);
         }
@@ -351,14 +322,10 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             startPOIFragment(position, dbOps.getTypeIdByName(mPOItypes[position - 1]), Keys.TYPE_POI);
         } else if (position == MenuItems.LOGIN) {//aktywność logowania lub rejestracji - info można przechować w klasie singleton
             if(LoggedUserInfo.getInstance().isLoggedIn()){
-                Fragment fragment = new Logged_fragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+               startLoggedFragment();
 
             }else {
-                Fragment fragment = new LoginFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+                startLoginFragment();;
             }
         }
     }
@@ -387,11 +354,15 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawers();
         } else if (getFragmentManager().getBackStackEntryCount() == 0) {
+            if(getFragmentManager().findFragmentById(R.id.content_frame) instanceof MapFragment){
+                finish();
+            }else{
+                startMapFragment(0, Keys.CLEAR);
+            }
             Log.i("back", "from else if");
-           // finish();
         } else {
             Log.i("back", "from else");
-            super.onBackPressed();
+            getFragmentManager().popBackStack();
         }
 
     }

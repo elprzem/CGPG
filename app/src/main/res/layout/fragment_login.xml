@@ -1,73 +1,66 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.oa.cgpg.LoginFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
-
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Login"
-        android:id="@+id/textView"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="52dp" />
+        android:layout_marginBottom="40dp"
+        android:layout_above="@+id/loginText"
+        android:id="@+id/logo"
+        android:src="@drawable/ic_launcher"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <EditText
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_above="@+id/passText"
+    android:singleLine="true"
+    android:id="@+id/loginText"
+    android:hint="Login"
+    android:layout_margin="10dp"/>
+
+    <EditText
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Hasło"
-        android:id="@+id/textView2"
-        android:layout_above="@+id/editText"
-        android:layout_alignLeft="@+id/loginbt"
-        android:layout_alignStart="@+id/loginbt"
-        android:layout_marginBottom="46dp" />
+        android:layout_above="@+id/loginBtn"
+        android:singleLine="true"
+        android:id="@+id/passText"
+        android:hint="Hasło"
+        android:layout_margin="10dp"
+        android:inputType="textPassword" />
+
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/loginBtn"
+        android:layout_margin="10dp"
+        android:layout_above="@+id/registerBtn"
         android:text="Zaloguj"
-        android:id="@+id/loginbt"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="118dp" />
+        android:textColor="@color/white"
+        android:background="@drawable/bottom_button"
+        android:textSize="30dp"/>
 
     <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="załóż konto"
-        android:id="@+id/registerbt"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/registerBtn"
+        android:background="@drawable/bottom_button_register"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="46dp"
-        />
+        android:textColor="@color/white"
+        android:text="Zarejestruj"/>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/editText"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/editText2"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true" />
 
-    <TableRow
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignTop="@+id/textView2"
-        android:layout_centerHorizontal="true"></TableRow>
 </RelativeLayout>
+</FrameLayout>
