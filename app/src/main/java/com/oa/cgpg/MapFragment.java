@@ -68,7 +68,7 @@ public class MapFragment extends Fragment {
 
     private final int SIZE_OF_SQAURE = 60;
     private final int HEIGHT_OF_TRIANGLE = 40;
-    private final float RESCALE_OF_BITMAP = 0.8920960698689956f;//0.8820960698689956f;
+    //private final float RESCALE_OF_BITMAP = 1.f;//0.8920960698689956f;//0.8820960698689956f;
     private boolean tempTestVal;
 
 
@@ -128,7 +128,7 @@ public class MapFragment extends Fragment {
             if (getArguments().containsKey(Keys.TYPE_POI)) {
                 typePOI = getArguments().getInt(Keys.TYPE_POI);
                 //TODO uncomment when method and data in database are prepared
-                //buildingsList = database.getBuildingsCoordinatesByTypePOI(typePOI);
+                buildingsList = new ArrayList<buildingEntity>(database.getBuildingsByTypePOI(typePOI));
             } else if (getArguments().containsKey(Keys.BUILDING_ID)) {
                 buildingsList = new ArrayList<buildingEntity>();
                 buildingsList.add(database.getBuildingById(
@@ -174,6 +174,21 @@ public class MapFragment extends Fragment {
         return view;
     }
 
+    private void initializeFragmentSize() {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+
+        int fragmentWidth = displaymetrics.widthPixels;
+        int fragmentHeight = displaymetrics.heightPixels;
+
+        final TypedArray styledAttributes = getActivity().getTheme().obtainStyledAttributes(
+                new int[]{android.R.attr.actionBarSize});
+        int actionBarSize = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
+
+        fragmentSize = new Point(fragmentWidth, fragmentHeight - actionBarSize);
+    }
+
     /**
      * Called when the fragment's activity has been created and this
      * fragment's view hierarchy instantiated.  It can be used to do final
@@ -206,19 +221,11 @@ public class MapFragment extends Fragment {
         }
     }
 
-    private void initializeFragmentSize() {
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-
-        int fragmentWidth = displaymetrics.widthPixels;
-        int fragmentHeight = displaymetrics.heightPixels;
-
-        final TypedArray styledAttributes = getActivity().getTheme().obtainStyledAttributes(
-                new int[]{android.R.attr.actionBarSize});
-        int actionBarSize = (int) styledAttributes.getDimension(0, 0);
-        styledAttributes.recycle();
-
-        fragmentSize = new Point(fragmentWidth, fragmentHeight - actionBarSize);
+    private void initializeSourceMapBitmap() {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        options.inScaled = false;
+        sourceMapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.kampus, options);
     }
 
     private void initializeVisibleBitmap() {
@@ -232,19 +239,19 @@ public class MapFragment extends Fragment {
                 Bitmap.Config.ARGB_8888
         );
         workingBitmapCanvas = new Canvas(workingBitmap);
-        workingBitmapCanvas.drawColor(Color.GREEN);
+        //workingBitmapCanvas.drawColor(Color.GREEN);
         workingBitmapCanvas.drawBitmap(sourceMapBitmap, new Matrix(), new Paint());
 
         //TODO I wait for data in database
-        buildingsList = new ArrayList<buildingEntity>(database.getBuildings());
+        //buildingsList = new ArrayList<buildingEntity>(database.getBuildings());
         /*buildingsList.add(new buildingEntity(0, "name", "description",
                 50, 100, 150, 110,
                 130, 250,
                 30, 220,
                 ""));*/
         //TODO whole stuff to draw on workingBitmap
+        //drawPoints();
         drawMarks();
-        drawPoints();
 
         visibleBitmap = Bitmap.createBitmap(
                 fragmentSize.x, fragmentSize.y,
@@ -263,25 +270,19 @@ public class MapFragment extends Fragment {
 //        visibleBitmapCanvas.drawBitmap(workingBitmap,new Matrix(), new Paint());
     }
 
-    private void initializeSourceMapBitmap() {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inMutable = true;
-        sourceMapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.kampus, options);
-    }
-
     private void drawPoints() {
-        if(buildingsList != null && buildingsList.size() > 0){
-            for(buildingEntity building : buildingsList){
+        //if(buildingsList != null && buildingsList.size() > 0){
+            for(buildingEntity building : database.getBuildings()){
 
             //buildingEntity building;
             //if((building = database.getBuildingById(20)) != null) {
 
                 Path path = new Path();
                 //path.setFillType(Path.FillType.WINDING);
-                path.moveTo(building.getX1()*scale*RESCALE_OF_BITMAP, building.getY1()*scale*RESCALE_OF_BITMAP);
-                path.lineTo(building.getX2()*scale*RESCALE_OF_BITMAP, building.getY2()*scale*RESCALE_OF_BITMAP);
-                path.lineTo(building.getX3()*scale*RESCALE_OF_BITMAP, building.getY3()*scale*RESCALE_OF_BITMAP);
-                path.lineTo(building.getX4()*scale*RESCALE_OF_BITMAP, building.getY4()*scale*RESCALE_OF_BITMAP);
+                path.moveTo(building.getX1()/**scale*/, building.getY1()/**scale*/);
+                path.lineTo(building.getX2()/**scale*/, building.getY2()/**scale*/);
+                path.lineTo(building.getX3()/**scale*/, building.getY3()/**scale*/);
+                path.lineTo(building.getX4()/**scale*/, building.getY4()/**scale*/);
                 //path.close();
 
                 Paint paint = new Paint();
@@ -291,41 +292,46 @@ public class MapFragment extends Fragment {
                 paint.setColor(Color.GREEN);
 
                 //workingBitmapCanvas.drawPath(path, paint);
-                workingBitmapCanvas.drawPoint(building.getX1()*scale*RESCALE_OF_BITMAP, building.getY1()*scale*RESCALE_OF_BITMAP, paint);
-                workingBitmapCanvas.drawPoint(building.getX2()*scale*RESCALE_OF_BITMAP, building.getY2()*scale*RESCALE_OF_BITMAP, paint);
-                workingBitmapCanvas.drawPoint(building.getX3()*scale*RESCALE_OF_BITMAP, building.getY3()*scale*RESCALE_OF_BITMAP, paint);
-                workingBitmapCanvas.drawPoint(building.getX4()*scale*RESCALE_OF_BITMAP, building.getY4()*scale*RESCALE_OF_BITMAP, paint);
+                workingBitmapCanvas.drawPoint(building.getX1()/**scale*/, building.getY1()/**scale*/, paint);
+                workingBitmapCanvas.drawPoint(building.getX2()/**scale*/, building.getY2()/**scale*/, paint);
+                workingBitmapCanvas.drawPoint(building.getX3()/**scale*/, building.getY3()/**scale*/, paint);
+                workingBitmapCanvas.drawPoint(building.getX4()/**scale*/, building.getY4()/**scale*/, paint);
 
-                workingBitmapCanvas.drawLine(building.getX1()*scale*RESCALE_OF_BITMAP, building.getY1()*scale*RESCALE_OF_BITMAP,
-                        building.getX2()*scale*RESCALE_OF_BITMAP, building.getY2()*scale*RESCALE_OF_BITMAP,                        paint);
-                workingBitmapCanvas.drawLine(building.getX2()*scale*RESCALE_OF_BITMAP, building.getY2()*scale*RESCALE_OF_BITMAP,
-                        building.getX3()*scale*RESCALE_OF_BITMAP, building.getY3()*scale*RESCALE_OF_BITMAP,                        paint);
-                workingBitmapCanvas.drawLine(building.getX3()*scale*RESCALE_OF_BITMAP, building.getY3()*scale*RESCALE_OF_BITMAP,
-                        building.getX4()*scale*RESCALE_OF_BITMAP, building.getY4()*scale*RESCALE_OF_BITMAP,                        paint);
-                workingBitmapCanvas.drawLine(building.getX4()*scale*RESCALE_OF_BITMAP, building.getY4()*scale*RESCALE_OF_BITMAP,
-                        building.getX1()*scale*RESCALE_OF_BITMAP, building.getY1()*scale*RESCALE_OF_BITMAP,                        paint);
+                workingBitmapCanvas.drawLine(building.getX1()/**scale*/, building.getY1()/**scale*/,
+                        building.getX2()/**scale*/, building.getY2()/**scale*/,
+                        paint);
+                workingBitmapCanvas.drawLine(building.getX2()/**scale*/, building.getY2()/**scale*/,
+                        building.getX3()/**scale*/, building.getY3()/**scale*/,
+                        paint);
+                workingBitmapCanvas.drawLine(building.getX3()/**scale*/, building.getY3()/**scale*/,
+                        building.getX4()/**scale*/, building.getY4()/**scale*/,
+                        paint);
+                workingBitmapCanvas.drawLine(building.getX4()/**scale*/, building.getY4()/**scale*/,
+                        building.getX1()/**scale*/, building.getY1()/**scale*/,
+                        paint);
             }
-        }
+        //}
     }
 
+    //TODO poprawic brak czulosci na zoom, offset, co wazne przy cofaniu...
     private void drawMarks() {
-        if (typePOI != null) {
+        if (typePOI != null || (buildingsList != null && buildingsList.size() > 0)) {
             Point middlePointOfBuilding = new Point();
 
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            Paint paint = new Paint();//Paint.ANTI_ALIAS_FLAG);
 
             paint.setStrokeWidth(2);
             paint.setARGB(255, 255, 177, 6);
             paint.setStyle(Paint.Style.FILL_AND_STROKE);
-            paint.setAntiAlias(true);
 
-            for (buildingEntity building : buildingsList) {
+            for (buildingEntity building : database.getBuildings()) {
                 middlePointOfBuilding.set(
                         arithmeticAverage(building.getX1(), building.getX2(),
                                 building.getX3(), building.getX4()),
                         arithmeticAverage(building.getY1(), building.getY2(),
                                 building.getY3(), building.getY4())
                 );
+
                 workingBitmapCanvas.drawRect(
                         middlePointOfBuilding.x - SIZE_OF_SQAURE / 2,
                         middlePointOfBuilding.y - SIZE_OF_SQAURE - HEIGHT_OF_TRIANGLE,
@@ -361,7 +367,12 @@ public class MapFragment extends Fragment {
                 pointPaint.setStrokeWidth(10);
                 workingBitmapCanvas.drawPoint(
                         middlePointOfBuilding.x, middlePointOfBuilding.y, pointPaint);
-                        */
+
+                workingBitmapCanvas.drawText(building.getName(),
+                        middlePointOfBuilding.x,
+                        middlePointOfBuilding.y,
+                        new Paint());
+                */
             }
         }
     }
@@ -516,11 +527,9 @@ public class MapFragment extends Fragment {
     private PointF calculateCords(float x, float y) {
         x /= scale;
         x += offset.x;
-        x /= RESCALE_OF_BITMAP;
 
         y /= scale;
         y += offset.y;
-        y /= RESCALE_OF_BITMAP;
 
         return new PointF(x,y);
     }
