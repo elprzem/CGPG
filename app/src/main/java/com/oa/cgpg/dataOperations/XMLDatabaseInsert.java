@@ -245,8 +245,8 @@ public class XMLDatabaseInsert extends AsyncTask<Void, Void, Void> {
                         x2 = readInt(parser, "x2");
                     } else if (nodeName.equals("x3")) {
                         x3 = readInt(parser, "x3");
-                    } else if (nodeName.equals("x3")) {
-                        x4 = readInt(parser, "x3");
+                    } else if (nodeName.equals("x4")) {
+                        x4 = readInt(parser, "x4");
                     } else if (nodeName.equals("y1")) {
                         y1 = readInt(parser, "y1");
                     } else if (nodeName.equals("y2")) {
