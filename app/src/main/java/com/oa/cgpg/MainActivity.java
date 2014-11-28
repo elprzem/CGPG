@@ -1,5 +1,4 @@
 package com.oa.cgpg;
-//Sobczak
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -29,7 +28,9 @@ import com.oa.cgpg.dataOperations.XMLDatabaseInsert;
 import com.oa.cgpg.dataOperations.createTestEntities;
 import com.oa.cgpg.dataOperations.dataBaseHelper;
 import com.oa.cgpg.dataOperations.dbOps;
+import com.oa.cgpg.models.buildingEntity;
 import com.oa.cgpg.models.opinionNetEntity;
+import com.oa.cgpg.models.poiEntity;
 
 import java.util.List;
 
@@ -67,9 +68,9 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
                 ncDialog.show(getFragmentManager(), "noConnection");
             }
         }
-/*
-        for(poiEntity e : dbOps.getPois()){
-            Log.i("POILSALSDAL",e.toString());
+
+       /* for(buildingEntity e : dbOps.getBuildings()){
+            Log.i("building",e.toString());
         }*/
         //   dbOps.clearData();
         //  testEntities = new createTestEntities(dbOps);
@@ -188,8 +189,14 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         // Handle action buttons
         switch (item.getItemId()) {
             case R.id.action_update:
-                XMLDatabaseInsert DI = new XMLDatabaseInsert(this, dbOps);
-                DI.execute();
+                if(Connectivity.isNetworkAvailable(this)) {
+                    XMLDatabaseInsert DI = new XMLDatabaseInsert(this, dbOps);
+                    DI.execute();
+                }else{
+                    NoConnectionDialog ncDialog = new NoConnectionDialog();
+                    ncDialog.setMessage("Do aktualizacji danych wymagane jest połączenie z Interentem");
+                    ncDialog.show(getFragmentManager(), "noConnection");
+                }
                 return true;
             case R.id.action_login:
                 if(LoggedUserInfo.getInstance().isLoggedIn()) {
@@ -283,7 +290,6 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         mMenuTitles[MenuItems.LOGIN] = "Profil";
         ((ArrayAdapter) mDrawerList.getAdapter()).notifyDataSetChanged();
         Fragment fragment = new LoggedFragment();
-        Bundle args = new Bundle();
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
@@ -294,7 +300,16 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_login").commit();
     }
-
+    @Override
+    public void startEditUserFragment(String username, String email){
+        Fragment fragment = new EditUserFragment();
+        Bundle args = new Bundle();
+        args.putString(Keys.USER_NAME, username);
+        args.putString(Keys.EMAIL, email);
+        fragment.setArguments(args);
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_logged").commit();
+    }
     public void startLoginFragment() {
         mMenuTitles[MenuItems.LOGIN] = "Logowanie";
         ((ArrayAdapter) mDrawerList.getAdapter()).notifyDataSetChanged();

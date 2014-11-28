@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context="com.oa.cgpg.LoggedFragment">
+    tools:context="com.oa.cgpg.EditUserFragment">
 
 <RelativeLayout
     android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="15dp"
-        android:textSize="20dp"
+        android:textSize="19dp"
         android:text="Login"
         android:id="@+id/loginLabel"/>
 
@@ -28,7 +28,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:textSize="22dp"
+        android:textSize="20dp"
         android:text="student56865"
         android:id="@+id/loginText"
         android:singleLine="true" />
@@ -37,13 +37,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="15dp"
-        android:textSize="20dp"
+        android:layout_marginTop="10dp"
+        android:textSize="19dp"
         android:text="e-mail"
         android:layout_below="@+id/loginText"
         android:id="@+id/emailLabel"/>
 
-    <TextView
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/emailLabel"
@@ -53,11 +53,62 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:textSize="22dp"
+        android:textSize="20dp"
         android:text="student@student.pg.gda.pl"
         android:id="@+id/emailText"
         android:maxLines="1"
         android:singleLine="true" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/emailText"
+        android:background="@color/light_gray"
+        android:textColor="@color/dark_gray"
+        android:padding = "5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp"
+        android:hint="Stare hasło"
+        android:id="@+id/oldPassText"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/oldPassText"
+        android:background="@color/light_gray"
+        android:textColor="@color/dark_gray"
+        android:padding = "5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="18dp"
+        android:textSize="20dp"
+        android:hint="Nowe hasło"
+        android:id="@+id/newPassText"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newPassText"
+        android:background="@color/light_gray"
+        android:textColor="@color/dark_gray"
+        android:padding = "5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="18dp"
+        android:textSize="20dp"
+        android:hint="Powtórz hasło"
+        android:id="@+id/newPassConfText"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:inputType="textPassword" />
 
     <Button
         android:layout_width="match_parent"
@@ -68,8 +119,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:textColor="@color/white"
-        android:text="Edytuj dane"
-        android:id="@+id/editBtn"/>
-
+        android:text="Zatwierdź zmiany"
+        android:id="@+id/confirmChangesBtn"/>
 </RelativeLayout>
 </FrameLayout>

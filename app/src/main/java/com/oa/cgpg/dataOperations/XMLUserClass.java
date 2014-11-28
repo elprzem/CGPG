@@ -51,9 +51,9 @@ public class XMLUserClass extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPreExecute() {
         if (register)
-            progressDialog = ProgressDialog.show(context, "Rejestracja użytkownika", "Proszę czekać...", true, false);
+            progressDialog = ProgressDialog.show(context, "Trwa rejestracja", "Proszę czekać...", true, false);
         else
-            progressDialog = ProgressDialog.show(context, "Logowanie użytkownika", "Proszę czekać...", true, false);
+            progressDialog = ProgressDialog.show(context, "Trwa logowanie", "Proszę czekać...", true, false);
     }
 
     @Override

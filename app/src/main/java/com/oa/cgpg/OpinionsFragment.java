@@ -71,6 +71,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         poiId = args.getInt(Keys.POI_NUMBER, 0);
         getActivity().setTitle(title);
 
+        Log.i("userId", String.valueOf(LoggedUserInfo.getInstance().getUserId()));
         XMLOpinionGet opinionParser = new XMLOpinionGet(getActivity(), LoggedUserInfo.getInstance().getUserId(), poiId);
         opinionParser.delegate = this;
         opinionParser.execute();
@@ -374,7 +375,7 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
     private void sendOpinionRate(int opinionId, int value, boolean isUpdated) {
         List<opinionRateNet> list = new ArrayList<opinionRateNet>();
         Log.i("sendOpinionRate", String.valueOf(opinionId) + " " + String.valueOf(value) + " " + String.valueOf(isUpdated));
-        list.add(new opinionRateNet(1, opinionId, value, isUpdated));
+        list.add(new opinionRateNet(LoggedUserInfo.getInstance().getUserId(), opinionId, value, isUpdated));
         XMLOpinionRateSend ORS = new XMLOpinionRateSend(list, getActivity());
         ORS.delegate = this;
         ORS.execute();
