@@ -26,6 +26,7 @@ import com.oa.cgpg.dataOperations.XMLOpinionRateSend;
 import com.oa.cgpg.dataOperations.XMLOpinionSend;
 import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.opinionRateNet;
+import com.oa.cgpg.models.userNetEntity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -193,6 +194,11 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
     @Override
     public void processFinish(String o) {
         ((OpinionsAdapter) listViewOpinions.getAdapter()).notifyDataSetChanged();
+    }
+
+    @Override
+    public void processFinish(userNetEntity output) {
+
     }
 
     class OpinionsAdapter extends BaseAdapter {

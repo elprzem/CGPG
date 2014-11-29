@@ -13,9 +13,11 @@ import java.security.MessageDigest;
 public class userNetEntity {
     private String username;
     private String password;
+    private String newPassword;
     private String email;
     private Context context;
     private AsyncResponse del;
+    private int userId;
 
     public userNetEntity(String username, String password, String email, Context context, AsyncResponse d) throws Exception {
         this.username = username;
@@ -25,11 +27,39 @@ public class userNetEntity {
         this.del = d;
     }
 
+    public userNetEntity(int userId, String username, String email) {
+        this.userId = userId;
+        this.username = username;
+        this.email = email;
+    }
+
     public userNetEntity(String username, String password, Context context, AsyncResponse d) throws Exception {
         this.username = username;
         this.password = sha512(password);
         this.context = context;
         this.del = d;
+    }
+
+    public userNetEntity(int userId, String password, String newPassword, String email, Context context, AsyncResponse del) throws Exception{
+        this.userId = userId;
+        this.password = sha512(password);
+        this.newPassword = sha512(newPassword);
+        this.email = email;
+        this.context = context;
+        this.del = del;
+    }
+
+    @Override
+    public String toString() {
+        return "userNetEntity{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", newPassword='" + newPassword + '\'' +
+                ", email='" + email + '\'' +
+                ", context=" + context +
+                ", del=" + del +
+                ", userId=" + userId +
+                '}';
     }
 
     private String sha512(String s) throws Exception {
@@ -60,6 +90,11 @@ public class userNetEntity {
      */
     public void login() {
         XMLUserClass UCR = new XMLUserClass(context, del, username, password);
+        UCR.execute();
+    }
+
+    public void update(){
+        XMLUserClass UCR = new XMLUserClass(context, del, userId, password,newPassword,email);
         UCR.execute();
     }
 }

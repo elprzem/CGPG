@@ -31,6 +31,7 @@ import com.oa.cgpg.dataOperations.dbOps;
 import com.oa.cgpg.models.buildingEntity;
 import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.poiEntity;
+import com.oa.cgpg.models.userNetEntity;
 
 import java.util.List;
 
@@ -69,53 +70,13 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             }
         }
 
-       /* for(buildingEntity e : dbOps.getBuildings()){
-            Log.i("building",e.toString());
-        }*/
-        //   dbOps.clearData();
-        //  testEntities = new createTestEntities(dbOps);
-        //  testEntities.generateTemplateEntities();
-
-        //to już jest w NewOpinionsFragment
-        /*List<opinionNetEntity> list = new ArrayList<opinionNetEntity>();
-        list.add(new opinionNetEntity(1,"dsa","dsadsa",5,5,3,4,5,new Date(312312)));
-        list.add(new opinionNetEntity(23,"dsa","dsadsa",5,5,3,4,5,new Date(312312)));
-
-        XMLOpinionSendParsing XOS = new XMLOpinionSendParsing(this,list);
-        Log.i("dsasd", "sending xml");
-        XOS.execute();*/
-
-       /* String x = null;
-        XMLParsing xmlPars = new XMLParsing(this, x);
-        xmlPars.delegate = this;
-        xmlPars.execute();*/
-/*
-        try {
-            userNetEntity uE = new userNetEntity("la2233213la","12345","tom@gm213al.com",this,this);
-            uE.login();
+       /* try {
+            userNetEntity user = new userNetEntity("tomuszom","8x2pqqjn",this,this);
+            user.login();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-*/
-        /*List<opinionRateNet> list = new ArrayList<opinionRateNet>();
-        list.add(new opinionRateNet(1,1,1));
-        XMLOpinionRateSend ORS = new XMLOpinionRateSend(list, this);
-        ORS.execute();
-*/
-/*
-        for(int i:dbOps.getPoiIdByTypeId(dbOps.getTypeIdByName("XERO"))){
-            System.out.println("POI ID "+i);
         }*/
-/*
-        for(int i:dbOps.getPoiIdByBuildingId(18)){
-            System.out.println("POI ID "+i);
-        }
-*/
-/*
-        for(buildingEntity b : dbOps.getBuildingsByTypePOI(dbOps.getTypeIdByName("XERO"))){
-            System.out.println(b.toString());
-        }
-*/
+
         mTitle = mDrawerTitle = getTitle();
         mMenuTitles = getResources().getStringArray(R.array.menu_array);
         mPOItypes = getResources().getStringArray(R.array.poi_types);
@@ -216,6 +177,11 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         //this you will received result fired from async class of onPostExecute(result) method.
         Log.i("async response: ", output);
         // System.out.print(output);
+    }
+
+    @Override
+    public void processFinish(userNetEntity output) {
+        Log.i("LOGOWANIE ", output.toString());
     }
 
     @Override

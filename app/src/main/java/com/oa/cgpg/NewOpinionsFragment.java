@@ -22,6 +22,7 @@ import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLOpinionSend;
 import com.oa.cgpg.models.opinionNetEntity;
+import com.oa.cgpg.models.userNetEntity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -134,5 +135,10 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
     @Override
     public void processFinish(String o) {
         getFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void processFinish(userNetEntity output) {
+
     }
 }

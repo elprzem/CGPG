@@ -126,6 +126,12 @@ public class LoginFragment extends Fragment implements AsyncResponse{
             dialog.show(getFragmentManager(), "not_valid_data");
         }
     }
+
+    @Override
+    public void processFinish(userNetEntity output) {
+
+    }
+
     @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
 

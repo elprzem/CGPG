@@ -28,6 +28,7 @@ import com.oa.cgpg.dataOperations.XMLOpinionRateUpdate;
 import com.oa.cgpg.dataOperations.dbOps;
 import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.poiEntity;
+import com.oa.cgpg.models.userNetEntity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -423,6 +424,12 @@ public class POIFragment extends Fragment implements AsyncResponse {
         }
         ((POIListAdapter) listView.getExpandableListAdapter()).notifyDataSetChanged();
     }
+
+    @Override
+    public void processFinish(userNetEntity output) {
+
+    }
+
     public interface OnPOIFragmentListener {
         void startMapFragment(Integer value, String mode);
         void startOpinionsFragment(boolean addToBackStack, Integer idPOI, String titlePOI);

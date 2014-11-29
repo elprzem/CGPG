@@ -22,6 +22,7 @@ import com.oa.cgpg.customControls.RegisterSuccessfulDialogFragment;
 import com.oa.cgpg.customControls.RegisterUnsuccessfulDialogFragment;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.models.opinionNetEntity;
+import com.oa.cgpg.models.userNetEntity;
 
 import org.w3c.dom.Text;
 
@@ -117,5 +118,10 @@ public class EditUserFragment extends Fragment implements AsyncResponse {
     @Override
     public void processFinish(String o) {
        //TODO udało się lub nie zmienic dane użytkownika
+    }
+
+    @Override
+    public void processFinish(userNetEntity output) {
+
     }
 }

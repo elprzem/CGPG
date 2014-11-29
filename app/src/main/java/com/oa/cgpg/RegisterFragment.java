@@ -136,6 +136,12 @@ public class RegisterFragment extends Fragment implements  AsyncResponse {
             dialog.show(getFragmentManager(), "register_unsuccessful");
         }
     }
+
+    @Override
+    public void processFinish(userNetEntity output) {
+
+    }
+
     public final static boolean isValidEmail(CharSequence target) {
         if (target == null)
             return false;
