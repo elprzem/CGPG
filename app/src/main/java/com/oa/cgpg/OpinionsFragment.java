@@ -18,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.oa.cgpg.connectivity.Connectivity;
+import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.dataOperations.XMLOpinionGet;
 import com.oa.cgpg.dataOperations.XMLOpinionRateSend;
@@ -72,9 +74,16 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
         getActivity().setTitle(title);
 
         Log.i("userId", String.valueOf(LoggedUserInfo.getInstance().getUserId()));
-        XMLOpinionGet opinionParser = new XMLOpinionGet(getActivity(), LoggedUserInfo.getInstance().getUserId(), poiId);
-        opinionParser.delegate = this;
-        opinionParser.execute();
+
+        if(Connectivity.isNetworkAvailable(getActivity())) {
+            XMLOpinionGet opinionParser = new XMLOpinionGet(getActivity(), LoggedUserInfo.getInstance().getUserId(), poiId);
+            opinionParser.delegate = this;
+            opinionParser.execute();
+        }else{
+            NoConnectionDialog ncDialog = new NoConnectionDialog();
+            ncDialog.setMessage("Wymagane jest połączenie z Internetem do pobrania danych");
+            ncDialog.show(getFragmentManager(), "noConnection");
+        }
 
 
         newOpinion = (Button) rootView.findViewById(R.id.newOpinion);

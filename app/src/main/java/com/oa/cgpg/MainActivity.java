@@ -229,8 +229,6 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         ((POIFragment) fragment).setDbOps(dbOps);
         Bundle args = new Bundle();
         FragmentManager fragmentManager = getFragmentManager();
-        //TODO Gdzie przekazać buildingId?
-        //TODO Jak wołać ten fragemnt? Bez, czy z setDatabaseRef?
         if (key.equals(Keys.BUILDING_ID)) {
             args.putInt(key, 18);
             fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
@@ -265,15 +263,19 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     }
 
     @Override
-    public void startOpinionsFragment(Integer idPOI, String titlePOI) {
+    public void startOpinionsFragment(boolean addToBackStack, Integer idPOI, String titlePOI) {
         Fragment fragment = new OpinionsFragment();
         Bundle args = new Bundle();
         args.putInt(Keys.POI_NUMBER, idPOI);
         args.putString(Keys.POI_TITLE, titlePOI);
         fragment.setArguments(args);
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
+        if(addToBackStack)
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
+        else
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
+
 
     @Override
     public void startNewOpinionsFragment(Integer idPOI) {
@@ -319,12 +321,21 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
-   /* @Override
-    public void processFinishOpinion(List<opinionNetEntity> list) {
-        for(opinionNetEntity op : list){
-            System.out.println(op.toString());
-        }
-    }*/
+    public void startLoginFragment(boolean toOpinions, Integer poiId,String poiTitle){
+        mMenuTitles[MenuItems.LOGIN] = "Logowanie";
+        mDrawerList.setItemChecked(MenuItems.LOGIN, true);
+        ((ArrayAdapter) mDrawerList.getAdapter()).notifyDataSetChanged();
+        LoggedUserInfo.getInstance().setLoggedIn(false);
+        LoggedUserInfo.getInstance().setUserName("");
+        Fragment fragment = new LoginFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(Keys.TO_OPINIONS, toOpinions);
+        args.putInt(Keys.POI_NUMBER, poiId);
+        args.putString(Keys.POI_TITLE, poiTitle);
+        fragment.setArguments(args);
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+    }
     /* The click listner for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -356,7 +367,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
                startLoggedFragment();
 
             }else {
-                startLoginFragment();;
+                startLoginFragment();
             }
         }
     }
@@ -367,6 +378,9 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         getActionBar().setTitle(mTitle);
     }
 
+    public void highlightMenuItem(int position){
+        mDrawerList.setItemChecked(position, true);
+    }
     /**
      * When using the ActionBarDrawerToggle, you must call it during
      * onPostCreate() and onConfigurationChanged()...
@@ -389,6 +403,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
                 finish();
             }else{
                 startMapFragment(0, Keys.CLEAR);
+                highlightMenuItem(0);
             }
             Log.i("back", "from else if");
         } else {

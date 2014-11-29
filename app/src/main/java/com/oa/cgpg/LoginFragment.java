@@ -26,6 +26,9 @@ import java.util.List;
 public class LoginFragment extends Fragment implements AsyncResponse{
 
     private OnLoginFragmentListener listener;
+    private boolean toOpinions;
+    private Integer poiId;
+    private String poiTitle;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -58,6 +61,13 @@ public class LoginFragment extends Fragment implements AsyncResponse{
         });
 
         getActivity().setTitle("Logowanie");
+        Bundle args = getArguments();
+        if(args != null && args.containsKey(Keys.POI_TITLE) && args.containsKey(Keys.POI_NUMBER) && args.containsKey(Keys.TO_OPINIONS)){
+            toOpinions = getArguments().getBoolean(Keys.TO_OPINIONS);
+            poiId = getArguments().getInt(Keys.POI_NUMBER);
+            poiTitle = getArguments().getString(Keys.POI_TITLE);
+        }
+
         Button registerBtn = (Button) rootView.findViewById(R.id.registerBtn);
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,12 +110,16 @@ public class LoginFragment extends Fragment implements AsyncResponse{
 
     @Override
     public void processFinish(String output){
-        //listener.startLoggedFragment();
+        //TODO userEntity zamiast output
         Log.i("login response", output);
         if(Integer.parseInt(output) > -1) {
             LoggedUserInfo.getInstance().setLoggedIn(true);
             LoggedUserInfo.getInstance().setUserId(Integer.parseInt(output));
-            listener.startLoggedFragment();
+            if(toOpinions){
+                listener.startOpinionsFragment(false, poiId, poiTitle);
+            }
+            else
+                listener.startLoggedFragment();
         }else{
             NotValidDataDialog dialog = new NotValidDataDialog();
             dialog.setMessage("Nie znaleziono użytkownika");
@@ -120,5 +134,6 @@ public class LoginFragment extends Fragment implements AsyncResponse{
     public interface OnLoginFragmentListener {
         void startLoggedFragment();
         void startRegisterFragment();
+        void startOpinionsFragment(boolean addToBackStack, Integer idPOI, String titlePOI);
     }
 }
