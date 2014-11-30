@@ -40,10 +40,13 @@ public class userNetEntity {
         this.del = d;
     }
 
-    public userNetEntity(int userId, String password, String newPassword, String email, Context context, AsyncResponse del) throws Exception{
+    public userNetEntity(int userId, String password, String newPassword, String email, Context context, AsyncResponse del) throws Exception {
         this.userId = userId;
         this.password = sha512(password);
-        this.newPassword = sha512(newPassword);
+        if (!newPassword.isEmpty())
+            this.newPassword = sha512(newPassword);
+        else
+            this.newPassword = "";
         this.email = email;
         this.context = context;
         this.del = del;
@@ -105,8 +108,8 @@ public class userNetEntity {
         UCR.execute();
     }
 
-    public void update(){
-        XMLUserClass UCR = new XMLUserClass(context, del, userId, password,newPassword,email);
+    public void update() {
+        XMLUserClass UCR = new XMLUserClass(context, del, userId, password, newPassword, email);
         UCR.execute();
     }
 }
