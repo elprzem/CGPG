@@ -49,6 +49,18 @@ public class userNetEntity {
         this.del = del;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     @Override
     public String toString() {
         return "userNetEntity{" +
