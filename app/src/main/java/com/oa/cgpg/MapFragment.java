@@ -472,11 +472,11 @@ public class MapFragment extends Fragment {
             PointF cords = calculateCords(x, y);
             Log.d(TEST_TAG + "_onClick", "x = " + cords.x + "; y = " + cords.y);
 
-            try {
+          /*  try {
                 building = database.getBuildingById(database.getIdOfBuildingByCords((int) cords.x, (int) cords.y));
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
 
             //TODO only temporary line below
             //building = buildingsList.get(0);

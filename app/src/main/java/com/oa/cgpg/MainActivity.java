@@ -196,7 +196,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         Bundle args = new Bundle();
         FragmentManager fragmentManager = getFragmentManager();
         if (key.equals(Keys.BUILDING_ID)) {
-            args.putInt(key, 18);
+            args.putInt(key, id);
             fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_poi").commit();
             fragment.setArguments(args);
         } else if (key.equals(Keys.TYPE_POI)) {
