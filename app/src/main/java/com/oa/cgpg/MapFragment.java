@@ -315,7 +315,7 @@ public class MapFragment extends Fragment {
 
     //TODO poprawic brak czulosci na zoom, offset, co wazne przy cofaniu...
     private void drawMarks() {
-        if (typePOI != null || (buildingsList != null && buildingsList.size() > 0)) {
+        if (buildingsList != null && buildingsList.size() > 0) {
             Point middlePointOfBuilding = new Point();
 
             Paint paint = new Paint();//Paint.ANTI_ALIAS_FLAG);
@@ -324,7 +324,7 @@ public class MapFragment extends Fragment {
             paint.setARGB(255, 255, 177, 6);
             paint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-            for (buildingEntity building : database.getBuildings()) {
+            for (buildingEntity building : buildingsList) {
                 middlePointOfBuilding.set(
                         arithmeticAverage(building.getX1(), building.getX2(),
                                 building.getX3(), building.getX4()),
