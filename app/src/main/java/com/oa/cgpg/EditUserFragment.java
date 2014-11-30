@@ -18,13 +18,11 @@ import android.widget.TextView;
 import com.oa.cgpg.connectivity.Connectivity;
 import com.oa.cgpg.customControls.NoConnectionDialog;
 import com.oa.cgpg.customControls.NotValidDataDialog;
-import com.oa.cgpg.customControls.RegisterSuccessfulDialogFragment;
-import com.oa.cgpg.customControls.RegisterUnsuccessfulDialogFragment;
+import com.oa.cgpg.customControls.UpdateSuccessfulDialogFragment;
+import com.oa.cgpg.customControls.UpdateUnsuccessfulDialogFragment;
 import com.oa.cgpg.dataOperations.AsyncResponse;
 import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.userNetEntity;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -36,6 +34,8 @@ import java.util.List;
 public class EditUserFragment extends Fragment implements AsyncResponse {
     private String userName;
     private String email;
+    private Integer userId;
+    private String newEmail;
 
     public EditUserFragment() {
         // Required empty public constructor
@@ -56,9 +56,9 @@ public class EditUserFragment extends Fragment implements AsyncResponse {
             }
         });
         getActivity().setTitle("Edytuj dane");
-        Bundle args = getArguments();
-        userName = args.getString(Keys.USER_NAME);
-        email = args.getString(Keys.EMAIL);
+        userName = LoggedUserInfo.getInstance().getUserName();
+        email = LoggedUserInfo.getInstance().getEmail();
+        userId = LoggedUserInfo.getInstance().getUserId();
         TextView loginText = (TextView) rootView.findViewById(R.id.loginText);
         final EditText emailText = (EditText) rootView.findViewById(R.id.emailText);
         loginText.setText(userName);
@@ -73,6 +73,13 @@ public class EditUserFragment extends Fragment implements AsyncResponse {
                 if(checkUserInput(emailText.getText().toString(), oldPass.getText().toString(), newPass.getText().toString(), newPassConf.getText().toString())){
                     if(Connectivity.isNetworkAvailable(getActivity())) {
                         //edycja na serwerze
+                        try {
+                            newEmail = emailText.getText().toString();
+                            userNetEntity UNE = new userNetEntity(userId, oldPass.getText().toString(), newPass.getText().toString(),newEmail, getActivity(), (AsyncResponse) getActivity().getFragmentManager().findFragmentById(R.id.content_frame) );
+                            UNE.update();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }else{
                         NoConnectionDialog ncDialog = new NoConnectionDialog();
                         ncDialog.setMessage("Brak połączenia z Internetem");
@@ -85,8 +92,9 @@ public class EditUserFragment extends Fragment implements AsyncResponse {
     }
 
     boolean checkUserInput(String email, String pass1, String pass2, String pass3){
+        Log.i("check", String.valueOf(pass1.length())+ " " +String.valueOf(pass2.length())+" "+String.valueOf(pass3.length()) );
         if(isValidEmail(email)){
-            if(pass1.length() < 4 || pass1.length() > 10 || pass2.length() < 4 || pass2.length() > 10 || pass3.length() < 4 || pass3.length() > 10){
+            if(pass1.length() < 4 || pass1.length() > 10 ||( pass2.length() < 4 || pass2.length() > 10 || pass3.length() < 4 || pass3.length() > 10 )&&(pass2.length() != 0 && pass3.length() != 0)){
                 NotValidDataDialog dialog = new NotValidDataDialog();
                 dialog.setMessage("Hasło powinno mieć długość od 4 do 10 znaków");
                 dialog.show(getFragmentManager(), "not_valid_data");
@@ -117,7 +125,18 @@ public class EditUserFragment extends Fragment implements AsyncResponse {
 
     @Override
     public void processFinish(String o) {
-       //TODO udało się lub nie zmienic dane użytkownika
+        if(o.equals("Pass does not match")){
+            NotValidDataDialog dialog = new NotValidDataDialog();
+            dialog.setMessage("Błędne hasło");
+            dialog.show(getFragmentManager(), "not_valid_data");
+        }else if(o.equals("OK")){
+            UpdateSuccessfulDialogFragment dialog = new UpdateSuccessfulDialogFragment();
+            dialog.show(getFragmentManager(), "update_successful");
+            LoggedUserInfo.getInstance().setEmail(newEmail);
+        }else{
+            UpdateUnsuccessfulDialogFragment dialog = new UpdateUnsuccessfulDialogFragment();
+            dialog.show(getFragmentManager(), "update_unsuccessful");
+        }
     }
 
     @Override

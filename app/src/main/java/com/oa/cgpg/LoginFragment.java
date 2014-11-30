@@ -109,12 +109,13 @@ public class LoginFragment extends Fragment implements AsyncResponse{
     }
 
     @Override
-    public void processFinish(String output){
-        //TODO userEntity zamiast output
-        Log.i("login response", output);
-        if(Integer.parseInt(output) > -1) {
+    public void processFinish(userNetEntity output){
+        if(output != null && output.getUserId() > -1) {
+            Log.i("username",output.getUsername());
             LoggedUserInfo.getInstance().setLoggedIn(true);
-            LoggedUserInfo.getInstance().setUserId(Integer.parseInt(output));
+            LoggedUserInfo.getInstance().setUserId(output.getUserId());
+            LoggedUserInfo.getInstance().setUserName(output.getUsername());
+            LoggedUserInfo.getInstance().setEmail(output.getEmail());
             if(toOpinions){
                 listener.startOpinionsFragment(false, poiId, poiTitle);
             }
@@ -128,15 +129,14 @@ public class LoginFragment extends Fragment implements AsyncResponse{
     }
 
     @Override
-    public void processFinish(userNetEntity output) {
-
-    }
-
-    @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
 
     }
 
+    @Override
+    public void processFinish(String output){
+
+    }
     public interface OnLoginFragmentListener {
         void startLoggedFragment();
         void startRegisterFragment();

@@ -5,7 +5,8 @@ package com.oa.cgpg;
  */
 public class LoggedUserInfo {
     private static LoggedUserInfo singleInstance = null;
-    final private String userName = "testowy";
+    private String userName;
+    private String email;
     private int userId;
     private boolean isLoggedIn;
 
@@ -25,7 +26,7 @@ public class LoggedUserInfo {
     }
 
     public void setUserName(String userName) {
-        //this.userName = userName;
+        this.userName = userName;
     }
 
     public int getUserId() {
@@ -43,4 +44,6 @@ public class LoggedUserInfo {
     public void setLoggedIn(boolean loggedIn) {
         this.isLoggedIn = loggedIn;
     }
+    public void setEmail(String email){ this.email = email;}
+    public String getEmail () {return this.email;}
 }

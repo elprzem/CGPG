@@ -34,13 +34,15 @@ public class LoggedFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_logged, container, false);
         getActivity().setTitle("Profil");
+        TextView usernameText = (TextView) rootView.findViewById(R.id.loginText);
+        TextView emailText = (TextView) rootView.findViewById(R.id.emailText);
+        usernameText.setText(LoggedUserInfo.getInstance().getUserName());
+        emailText.setText(LoggedUserInfo.getInstance().getEmail());
         Button editBtn = (Button) rootView.findViewById(R.id.editBtn);
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username = (String) ((TextView)rootView.findViewById(R.id.loginText)).getText().toString();
-                String email = (String) ((TextView)rootView.findViewById(R.id.emailText)).getText().toString();
-                listener.startEditUserFragment(username, email);
+                listener.startEditUserFragment();
             }
         });
         return rootView;
@@ -49,6 +51,6 @@ public class LoggedFragment extends Fragment {
 
 
     public interface OnLoggedFragmentListener {
-        public void startEditUserFragment(String username, String email);
+        public void startEditUserFragment();
     }
 }

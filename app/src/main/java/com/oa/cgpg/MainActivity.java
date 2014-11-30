@@ -269,12 +269,8 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_login").commit();
     }
     @Override
-    public void startEditUserFragment(String username, String email){
+    public void startEditUserFragment(){
         Fragment fragment = new EditUserFragment();
-        Bundle args = new Bundle();
-        args.putString(Keys.USER_NAME, username);
-        args.putString(Keys.EMAIL, email);
-        fragment.setArguments(args);
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_logged").commit();
     }
