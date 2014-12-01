@@ -93,7 +93,7 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
                 for (int i = start; i < end; i++) {
                     String checkMe = String.valueOf(source.charAt(i));
 
-                    Pattern pattern = Pattern.compile("[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789_]*");
+                    Pattern pattern = Pattern.compile("[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789_:;/\")$%^&(][!?><',.-]*");
                     Matcher matcher = pattern.matcher(checkMe);
                     boolean valid = matcher.matches();
                     if(!valid){
