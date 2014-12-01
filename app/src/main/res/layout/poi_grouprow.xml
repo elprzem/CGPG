@@ -10,9 +10,9 @@
     >
 
     <ImageView
-        android:src="@drawable/ic_launcher"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:src="@drawable/arrow_right"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:id="@+id/indicator"
         android:layout_weight="1" />
 

@@ -4,19 +4,28 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.oa.cgpg.connectivity.Connectivity;
@@ -33,6 +42,8 @@ import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.poiEntity;
 import com.oa.cgpg.models.userNetEntity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
@@ -46,8 +57,9 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private String[] mMenuTitles;
-    private String[] mPOItypes;
+    private ArrayList<Integer> menuIcons;
+    private List<String> mMenuTitles;
+    private List<String> mPOItypes;
     private dbOps dbOps;
     private createTestEntities testEntities;
     private dataBaseHelper dbHelper;
@@ -78,16 +90,20 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         }*/
 
         mTitle = mDrawerTitle = getTitle();
-        mMenuTitles = getResources().getStringArray(R.array.menu_array);
-        mPOItypes = getResources().getStringArray(R.array.poi_types);
+        String[] menuTitles = getResources().getStringArray(R.array.menu_array);
+        mMenuTitles = (List<String>)Arrays.asList(menuTitles);
+        String[] poiTypes = getResources().getStringArray(R.array.poi_types);
+        mPOItypes = (List<String>)Arrays.asList(poiTypes);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
+        menuIcons = new ArrayList<Integer>();
+        initMenuIcons();
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, mMenuTitles));
+       // mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+         //       R.layout.drawer_list_item, mMenuTitles));
+        mDrawerList.setAdapter(new MenuAdapter());
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         // enable ActionBar app icon to behave as action to toggle nav drawer
@@ -119,8 +135,29 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
             selectItem(0);
         }
     }
+    private void loadMenuItemsIntoAdapter() {
+        if (mDrawerList.getAdapter() == null) {
+            //Create ExpandableListAdapter Object
+            final MenuAdapter mAdapter = new MenuAdapter();
 
-
+            // Set Adapter to ExpandableList Adapter
+            mDrawerList.setAdapter(mAdapter);
+        } else {
+            // Refresh ExpandableListView data
+            ((MenuAdapter) mDrawerList.getAdapter()).notifyDataSetChanged();
+        }
+    }
+    private void initMenuIcons(){
+        menuIcons.add((int)R.drawable.mapa);
+        menuIcons.add((int)R.drawable.ksero);
+        menuIcons.add((int)R.drawable.bufet);
+        menuIcons.add((int)R.drawable.automat);
+        menuIcons.add((int)R.drawable.czytelnia);
+        menuIcons.add((int)R.drawable.bankomat);
+        menuIcons.add((int)R.drawable.odpoczynek);
+        menuIcons.add((int)R.drawable.rower);
+        menuIcons.add((int)R.drawable.login);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -173,10 +210,45 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         }
     }
 
-    public void processFinish(String output) {
-        //this you will received result fired from async class of onPostExecute(result) method.
-        Log.i("async response: ", output);
-        // System.out.print(output);
+    class MenuAdapter extends BaseAdapter {
+
+        private LayoutInflater inflater = null;
+
+        public MenuAdapter() {
+            // Create Layout Inflater
+            inflater = LayoutInflater.from(getApplicationContext());
+        }
+
+        @Override
+        public int getCount() {
+            // TODO Auto-generated method stub
+            return mMenuTitles.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            // TODO Auto-generated method stub
+            return mMenuTitles.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            // TODO Auto-generated method stub
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {//setting opinion values in row
+            // TODO Auto-generated method stub
+            Log.i("menu item", mMenuTitles.get(position));
+            View rowView = convertView;
+            rowView = inflater.inflate(R.layout.drawer_list_item, null);
+            TextView text = (TextView) rowView.findViewById(R.id.menuItemTitle);
+            ImageView icon = (ImageView) rowView.findViewById(R.id.menuItemIcon);
+            icon.setImageResource(menuIcons.get(position));
+            text.setText(mMenuTitles.get(position));
+            return rowView;
+        }
     }
 
     @Override
@@ -186,6 +258,10 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
 
     @Override
     public void processFinishOpinion(List<opinionNetEntity> list) {
+
+    }
+    @Override
+    public void processFinish(String o) {
 
     }
 
@@ -255,8 +331,9 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
 
     @Override
     public void startLoggedFragment(){
-        mMenuTitles[MenuItems.LOGIN] = "Profil";
-        ((ArrayAdapter) mDrawerList.getAdapter()).notifyDataSetChanged();
+        mMenuTitles.set(MenuItems.LOGIN, "Profil");
+        ((MenuAdapter)mDrawerList.getAdapter()).notifyDataSetChanged();
+     //   ((ArrayAdapter) mDrawerList.getAdapter()).notifyDataSetChanged();
         Fragment fragment = new LoggedFragment();
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
@@ -275,8 +352,9 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("fragment_logged").commit();
     }
     public void startLoginFragment() {
-        mMenuTitles[MenuItems.LOGIN] = "Logowanie";
-        ((ArrayAdapter) mDrawerList.getAdapter()).notifyDataSetChanged();
+        mMenuTitles.set(MenuItems.LOGIN, "Logowanie");
+        ((MenuAdapter)mDrawerList.getAdapter()).notifyDataSetChanged();
+       // ((ArrayAdapter) mDrawerList.getAdapter()).notifyDataSetChanged();
         LoggedUserInfo.getInstance().setLoggedIn(false);
         LoggedUserInfo.getInstance().setUserName("");
         Fragment fragment = new LoginFragment();
@@ -284,9 +362,10 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
     public void startLoginFragment(boolean toOpinions, Integer poiId,String poiTitle){
-        mMenuTitles[MenuItems.LOGIN] = "Logowanie";
+        mMenuTitles.set(MenuItems.LOGIN, "Logowanie");
         mDrawerList.setItemChecked(MenuItems.LOGIN, true);
-        ((ArrayAdapter) mDrawerList.getAdapter()).notifyDataSetChanged();
+        ((MenuAdapter)mDrawerList.getAdapter()).notifyDataSetChanged();
+      //  ((ArrayAdapter) mDrawerList.getAdapter()).notifyDataSetChanged();
         LoggedUserInfo.getInstance().setLoggedIn(false);
         LoggedUserInfo.getInstance().setUserName("");
         Fragment fragment = new LoginFragment();
@@ -309,7 +388,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
     private void selectItem(int position) {
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
-        setTitle(mMenuTitles[position]);
+        setTitle(mMenuTitles.get(position));
         mDrawerLayout.closeDrawer(mDrawerList);
 
         FragmentManager fm = getFragmentManager();
@@ -323,7 +402,7 @@ public class MainActivity extends OrmLiteBaseActivity<dataBaseHelper>
         }
         // nowy fragment - widok typu punktu usługowego (lista wszystkich punktów danego typu)
         else if (position >= MenuItems.XERO && position <= MenuItems.BIKES) {
-            startPOIFragment(position, dbOps.getTypeIdByName(mPOItypes[position - 1]), Keys.TYPE_POI);
+            startPOIFragment(position, dbOps.getTypeIdByName(mPOItypes.get(position - 1)), Keys.TYPE_POI);
         } else if (position == MenuItems.LOGIN) {//aktywność logowania lub rejestracji - info można przechować w klasie singleton
             if(LoggedUserInfo.getInstance().isLoggedIn()){
                startLoggedFragment();

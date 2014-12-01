@@ -2,7 +2,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:id="@+id/opinionLayout"
     android:background="@drawable/rounded_layout_red">
     <View
@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Nowa opinia"
-        android:textSize="17dp"
+        android:textSize="15dp"
         android:layout_margin="10dp"
         android:id="@+id/opinionText" />
     <View
@@ -24,16 +24,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="12dp"
         android:layout_margin="10dp"
         android:text="User"
         android:id="@+id/usernameText" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="12dp"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="5dp"
         android:text="Data"
@@ -45,8 +49,10 @@
             android:orientation="horizontal">
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:scaleType="fitXY"
+            android:background="@color/light_gray"
             android:layout_toLeftOf="@+id/plusText"
             android:src="@drawable/plus"
             android:id="@+id/plusButton" />
@@ -62,9 +68,11 @@
             android:layout_marginLeft="0dp" />
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:scaleType="fitXY"
             android:layout_toLeftOf="@+id/minusText"
+            android:background="@color/light_gray"
             android:src="@drawable/minus"
             android:id="@+id/minusButton" />
 

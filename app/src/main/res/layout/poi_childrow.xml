@@ -30,7 +30,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp">
                 <ImageView
-                    android:src="@drawable/ic_launcher"
+                    android:src="@drawable/plus"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
@@ -44,7 +44,7 @@
                     android:textSize="12sp"/>
 
                 <ImageView
-                    android:src="@drawable/ic_launcher"
+                    android:src="@drawable/minus"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/minus"

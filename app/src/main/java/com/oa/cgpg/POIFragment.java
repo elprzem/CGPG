@@ -108,11 +108,20 @@ public class POIFragment extends Fragment implements AsyncResponse {
         seeOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: przekazać do MApFragment id budynków do wyświetlenia
                 if (typePOI != null)
                     listener.startMapFragment(typePOI, Keys.TYPE_POI);
                 else if (buildingId != null)
                     listener.startMapFragment(buildingId, Keys.BUILDING_ID);
+            }
+        });
+        listView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int position) {
+                if (position > -1) {
+                    Log.i("group position", String.valueOf(position));
+                    poiItems.get(position).setChecked(!poiItems.get(position).isChecked());
+                    ((POIListAdapter) listView.getExpandableListAdapter()).notifyDataSetChanged();
+                }
             }
         });
         //collapse other expanded items
@@ -121,9 +130,13 @@ public class POIFragment extends Fragment implements AsyncResponse {
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                if (groupPosition != previousGroup)
+
+                if (groupPosition != previousGroup) {
                     listView.collapseGroup(previousGroup);
+                }
                 previousGroup = groupPosition;
+                poiItems.get(previousGroup).setChecked(!poiItems.get(previousGroup).isChecked());
+                ((POIListAdapter) listView.getExpandableListAdapter()).notifyDataSetChanged();
             }
         });
         //Creating static data in arraylist
@@ -270,7 +283,11 @@ public class POIFragment extends Fragment implements AsyncResponse {
 
             // Get poi_grouprow.xml.xml file elements and set values
             ((TextView) convertView.findViewById(R.id.text1)).setText(parent.getTitle());
-
+            if(parent.isChecked()){
+                ((ImageView)convertView.findViewById(R.id.indicator)).setImageResource(R.drawable.arrow_down);
+            }else{
+                ((ImageView)convertView.findViewById(R.id.indicator)).setImageResource(R.drawable.arrow_right);
+            }
             //Log.i("onCheckedChanged", "isChecked: "+parent.isChecked());
 
             return convertView;
