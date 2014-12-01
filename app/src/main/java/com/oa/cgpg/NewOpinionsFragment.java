@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -27,6 +29,8 @@ import com.oa.cgpg.models.userNetEntity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -84,6 +88,24 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
                 }
             }
         });
+        InputFilter filter= new InputFilter() {
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                for (int i = start; i < end; i++) {
+                    String checkMe = String.valueOf(source.charAt(i));
+
+                    Pattern pattern = Pattern.compile("[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789_]*");
+                    Matcher matcher = pattern.matcher(checkMe);
+                    boolean valid = matcher.matches();
+                    if(!valid){
+                        Log.d("", "invalid");
+                        return "";
+                    }
+                }
+                return null;
+            }
+        };
+
+        opinionText.setFilters(new InputFilter[]{filter});
         opinionText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.userNetEntity;
 
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegisterFragment extends Fragment implements  AsyncResponse {
@@ -71,6 +74,28 @@ public class RegisterFragment extends Fragment implements  AsyncResponse {
         pass.addTextChangedListener(isFieldEmpty);
         username.addTextChangedListener(isFieldEmpty);
         email.addTextChangedListener(isFieldEmpty);
+
+        InputFilter filter= new InputFilter() {
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                for (int i = start; i < end; i++) {
+                    String checkMe = String.valueOf(source.charAt(i));
+
+                    Pattern pattern = Pattern.compile("[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789_.@]*");
+                    Matcher matcher = pattern.matcher(checkMe);
+                    boolean valid = matcher.matches();
+                    if(!valid){
+                        Log.d("", "invalid");
+                        return "";
+                    }
+                }
+                return null;
+            }
+        };
+
+        passConfirm.setFilters(new InputFilter[]{filter});
+        email.setFilters(new InputFilter[]{filter});
+        username.setFilters(new InputFilter[]{filter});
+        pass.setFilters(new InputFilter[]{filter});
 
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override

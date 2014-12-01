@@ -5,6 +5,8 @@ package com.oa.cgpg;
 import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,6 +27,8 @@ import com.oa.cgpg.models.opinionNetEntity;
 import com.oa.cgpg.models.userNetEntity;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -88,6 +92,27 @@ public class EditUserFragment extends Fragment implements AsyncResponse {
                 }
             }
         });
+        InputFilter filter= new InputFilter() {
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                for (int i = start; i < end; i++) {
+                    String checkMe = String.valueOf(source.charAt(i));
+
+                    Pattern pattern = Pattern.compile("[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789_.@]*");
+                    Matcher matcher = pattern.matcher(checkMe);
+                    boolean valid = matcher.matches();
+                    if(!valid){
+                        Log.d("", "invalid");
+                        return "";
+                    }
+                }
+                return null;
+            }
+        };
+
+        emailText.setFilters(new InputFilter[]{filter});
+        oldPass.setFilters(new InputFilter[]{filter});
+        newPass.setFilters(new InputFilter[]{filter});
+        newPassConf.setFilters(new InputFilter[]{filter});
         return rootView;
     }
 
