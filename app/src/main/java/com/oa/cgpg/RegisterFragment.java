@@ -91,11 +91,28 @@ public class RegisterFragment extends Fragment implements  AsyncResponse {
                 return null;
             }
         };
+        InputFilter filterPassword= new InputFilter() {
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                for (int i = start; i < end; i++) {
+                    String checkMe = String.valueOf(source.charAt(i));
 
-        passConfirm.setFilters(new InputFilter[]{filter});
+                    Pattern pattern = Pattern.compile("[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789[]]\n _:;/\"*+-@#)$%^&(!?><',.\\\\]*");
+                    Matcher matcher = pattern.matcher(checkMe);
+                    boolean valid = matcher.matches();
+                    if(!valid){
+                        Log.d("", "invalid");
+                        return "";
+                    }
+                }
+                return null;
+            }
+        };
+
+
+        passConfirm.setFilters(new InputFilter[]{filterPassword});
         email.setFilters(new InputFilter[]{filter});
         username.setFilters(new InputFilter[]{filter});
-        pass.setFilters(new InputFilter[]{filter});
+        pass.setFilters(new InputFilter[]{filterPassword});
 
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,8 +137,9 @@ public class RegisterFragment extends Fragment implements  AsyncResponse {
     }
 
     boolean checkUserInput(String username, String email, String pass1, String pass2){
+        Log.i("username length",String.valueOf(username.length()));
         if(isValidEmail(email)){
-            if(username.length() < 4){
+            if(username.length() < 4 || username.length() > 10){
                 NotValidDataDialog dialog = new NotValidDataDialog();
                 dialog.setMessage("Login powinien mieć długość od 4 do 10 znaków");
                 dialog.show(getFragmentManager(), "not_valid_data");

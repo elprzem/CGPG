@@ -258,7 +258,7 @@ public class MapFragment extends Fragment {
                 Bitmap.Config.ARGB_8888
         );
         visibleBitmapCanvas = new Canvas(visibleBitmap);
-        visibleBitmapCanvas.drawColor(Color.WHITE);
+        visibleBitmapCanvas.drawColor(Color.LTGRAY);
         visibleBitmapCanvas.drawBitmap(
                 workingBitmap,
                 new Rect(offset.x, offset.y,
@@ -677,7 +677,7 @@ public class MapFragment extends Fragment {
     }
 
     private void redrawVisibleBitmap() {
-        visibleBitmapCanvas.drawColor(Color.WHITE);
+        visibleBitmapCanvas.drawColor(Color.LTGRAY);
         visibleBitmapCanvas.drawBitmap(
                 workingBitmap,
                 new Rect(offset.x, offset.y,

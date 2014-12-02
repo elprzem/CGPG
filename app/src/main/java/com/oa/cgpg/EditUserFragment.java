@@ -108,11 +108,26 @@ public class EditUserFragment extends Fragment implements AsyncResponse {
                 return null;
             }
         };
+        InputFilter filterPassword= new InputFilter() {
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                for (int i = start; i < end; i++) {
+                    String checkMe = String.valueOf(source.charAt(i));
 
+                    Pattern pattern = Pattern.compile("[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789[]]\n _:;/\"*+-@#)$%^&(!?><',.\\\\]*");
+                    Matcher matcher = pattern.matcher(checkMe);
+                    boolean valid = matcher.matches();
+                    if(!valid){
+                        Log.d("", "invalid");
+                        return "";
+                    }
+                }
+                return null;
+            }
+        };
         emailText.setFilters(new InputFilter[]{filter});
-        oldPass.setFilters(new InputFilter[]{filter});
-        newPass.setFilters(new InputFilter[]{filter});
-        newPassConf.setFilters(new InputFilter[]{filter});
+        oldPass.setFilters(new InputFilter[]{filterPassword});
+        newPass.setFilters(new InputFilter[]{filterPassword});
+        newPassConf.setFilters(new InputFilter[]{filterPassword});
         return rootView;
     }
 

@@ -41,7 +41,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_gravity="start|center_vertical"
-                    android:textSize="12sp"/>
+                    android:textSize="13dp"/>
 
                 <ImageView
                     android:src="@drawable/minus"
@@ -56,7 +56,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_gravity="left|center_vertical"
-                    android:textSize="12sp"
+                    android:textSize="13dp"
                     android:layout_column="5" />
             </TableRow>
     </TableLayout>
@@ -81,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:paddingRight="5dp"
                 android:paddingLeft="5dp"
-                android:textSize="12sp"
+                android:textSize="14dp"
                 android:gravity="bottom"
                 android:layout_gravity="center" />
         </TableRow>

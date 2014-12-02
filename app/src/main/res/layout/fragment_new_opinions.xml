@@ -72,15 +72,21 @@
                 />
             <EditText
                 android:id="@+id/newOpinionText"
-                android:imeOptions="actionDone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textImeMultiLine"
-                android:minLines="3"
+                android:freezesText="true"
+                android:imeOptions="actionNext"
+                android:maxLength="100"
+                android:nextFocusDown="@null"
+                android:minLines = "2"
+                android:ellipsize="end"
+                android:selectAllOnFocus="true"
                 android:layout_margin="20dp"
-                android:background="@color/white"
+                android:background="@color/light_gray"
                 android:enabled="true"
-                android:hint="Tekst opinii" />
+                android:hint="Tekst opinii
+
+                " />
         </LinearLayout>
         <Button
             android:layout_width="match_parent"

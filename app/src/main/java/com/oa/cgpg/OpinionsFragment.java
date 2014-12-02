@@ -281,10 +281,6 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
                     if (isUpdated)
                         opinionsPresented.get(position).setRatingMinus(opinionsPresented.get(position).getRatingMinus() - 1);
                     opinionsPresented.get(position).setRatingPlus(opinionsPresented.get(position).getRatingPlus() + 1);
-
-                    // notifyDataSetChanged();
-                    // ((ImageButton)view).setImageDrawable(getResources().getDrawable(R.drawable.plus_disabled));
-                    // view.setEnabled(false);
                 }
             });
             if (opinionsPresented.get(position).getVal() == PLUS_ADDED) {
@@ -305,9 +301,6 @@ public class OpinionsFragment extends Fragment implements AsyncResponse {
                     if (isUpdated)
                         opinionsPresented.get(position).setRatingPlus(opinionsPresented.get(position).getRatingPlus() - 1);
                     opinionsPresented.get(position).setRatingMinus(opinionsPresented.get(position).getRatingMinus() + 1);
-                    // notifyDataSetChanged();
-                    // ((ImageButton)view).setImageDrawable(getResources().getDrawable(R.drawable.minus_disabled));
-                    // view.setEnabled(false);
                 }
             });
             if (opinionsPresented.get(position).getVal() == MINUS_ADDED) {
