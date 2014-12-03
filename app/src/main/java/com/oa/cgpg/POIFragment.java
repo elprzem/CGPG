@@ -60,6 +60,8 @@ public class POIFragment extends Fragment implements AsyncResponse {
     private ArrayList<POIItem> poiItems;
     private dbOps dbOps;
     private Button seeOnMap;
+    private int previousGroup = -1;
+
 
     public POIFragment() {
         // Empty constructor required for fragment subclasses
@@ -86,7 +88,7 @@ public class POIFragment extends Fragment implements AsyncResponse {
         View rootView = inflater.inflate(R.layout.fragment_poi, container, false);
         listView = (ExpandableListView) rootView.findViewById(R.id.expandableListView);
         // Set ExpandableListView values
-
+        Log.i("onCreateView", "tu");
         listView.setGroupIndicator(null);
         listView.setDividerHeight(1);
         registerForContextMenu(listView);
@@ -117,17 +119,18 @@ public class POIFragment extends Fragment implements AsyncResponse {
         listView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
             @Override
             public void onGroupCollapse(int position) {
-                if (position > -1) {
-                    Log.i("group position", String.valueOf(position));
-                    poiItems.get(position).setChecked(!poiItems.get(position).isChecked());
-                    ((POIListAdapter) listView.getExpandableListAdapter()).notifyDataSetChanged();
-                }
+                    for( POIItem p: poiItems){
+                        p.setChecked(false);
+                    }
+                 //   Log.i("group position", String.valueOf(position));
+                 //   POIItem parent = poiItems.get(position);
+                 //   parent.setChecked(!parent.isChecked());
+                 //   poiItems.set(position,parent);
+                 //   ((POIListAdapter) listView.getExpandableListAdapter()).notifyDataSetChanged();
             }
         });
         //collapse other expanded items
         listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            int previousGroup = -1;
-
             @Override
             public void onGroupExpand(int groupPosition) {
 
@@ -135,7 +138,12 @@ public class POIFragment extends Fragment implements AsyncResponse {
                     listView.collapseGroup(previousGroup);
                 }
                 previousGroup = groupPosition;
-                poiItems.get(previousGroup).setChecked(!poiItems.get(previousGroup).isChecked());
+                for( POIItem p: poiItems){
+                    p.setChecked(false);
+                }
+                POIItem parent = poiItems.get(previousGroup);
+                parent.setChecked(!parent.isChecked());
+                poiItems.set(previousGroup,parent);
                 ((POIListAdapter) listView.getExpandableListAdapter()).notifyDataSetChanged();
             }
         });
@@ -198,11 +206,14 @@ public class POIFragment extends Fragment implements AsyncResponse {
             ORU.delegate = this;
             ORU.execute();
         }
+        int i = 0;
         for (Integer id : idPOIs) {
             //Create parent class object
             final POIItem poiItem = new POIItem();
             poiEntity poi = dbOps.getPoiById(id);
 
+            if(i == previousGroup)
+                poiItem.setChecked(true);
             // Set values in parent class object
             poiItem.setTitle(poi.getName());
             poiItem.setId(poi.getIdPoi());
@@ -219,6 +230,7 @@ public class POIFragment extends Fragment implements AsyncResponse {
             poiItem.getDetails().add(details);
             //Adding Parent class object to ArrayList
             list.add(poiItem);
+            i++;
         }
         return list;
     }
@@ -276,8 +288,9 @@ public class POIFragment extends Fragment implements AsyncResponse {
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded,
                                  View convertView, ViewGroup parentView) {
-            final POIItem parent = poiItems.get(groupPosition);
 
+            final POIItem parent = poiItems.get(groupPosition);
+            Log.i("group view", "position "+String.valueOf(groupPosition)+" isChecked "+String.valueOf(parent.isChecked()));
             // Inflate poi_grouprow.xml.xml file for parent rows
             convertView = inflater.inflate(R.layout.poi_grouprow, parentView, false);
 
