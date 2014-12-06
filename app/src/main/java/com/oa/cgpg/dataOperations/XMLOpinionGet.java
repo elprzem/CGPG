@@ -79,7 +79,7 @@ public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
             Log.i(getClass().getName(), "Get response");
             HttpEntity httpEntity = httpResponse.getEntity();
             Log.i(getClass().getName(), "Parse xml");
-            xml = EntityUtils.toString(httpEntity);
+            xml = EntityUtils.toString(httpEntity, "UTF-8");
             Log.i(getClass().getName(), "XML Length " + xml.length());
             //  Log.i(getClass().getName(), xml);
         } catch (UnsupportedEncodingException e) {
