@@ -290,7 +290,7 @@ public class POIFragment extends Fragment implements AsyncResponse {
                                  View convertView, ViewGroup parentView) {
 
             final POIItem parent = poiItems.get(groupPosition);
-            Log.i("group view", "position "+String.valueOf(groupPosition)+" isChecked "+String.valueOf(parent.isChecked()));
+            Log.i("group view", "position "+String.valueOf(groupPosition)+" photo "+parent.getDetails().get(0).getImagePath());
             // Inflate poi_grouprow.xml.xml file for parent rows
             convertView = inflater.inflate(R.layout.poi_grouprow, parentView, false);
 
