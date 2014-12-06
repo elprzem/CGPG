@@ -93,7 +93,7 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
                 for (int i = start; i < end; i++) {
                     String checkMe = String.valueOf(source.charAt(i));
 
-                    Pattern pattern = Pattern.compile("[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789[]]\n _:;/\"*+-@#)$%^&(!?><',.\\\\]*");
+                    Pattern pattern = Pattern.compile("[ABCDEFGHIJKLMNOPQRSTUVWXYZaąbcćdeęfghijklłmnoópqrstuvwxyzżź123456789[]]\n _:;/\"*+-@#)$%^&(!?><',.\\\\]*");
                     Matcher matcher = pattern.matcher(checkMe);
                     boolean valid = matcher.matches();
                     if(!valid){
@@ -138,7 +138,7 @@ public class NewOpinionsFragment extends Fragment implements AsyncResponse {
     }
 
     private void sendOpinion(String text) {
-        int type = positive.isChecked() ? POSITIVE : NEGATIVE;
+        int type = (positive.isChecked() == true) ? POSITIVE : NEGATIVE;
         List<opinionNetEntity> list = new ArrayList<opinionNetEntity>();
 
         opinionNetEntity opinionEntity = new opinionNetEntity(1, text, LoggedUserInfo.getInstance().getUserName(), poiId, 0, 0, -1, type, new Date());
