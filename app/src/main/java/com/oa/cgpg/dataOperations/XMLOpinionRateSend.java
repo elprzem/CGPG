@@ -49,7 +49,7 @@ public class XMLOpinionRateSend extends AsyncTask<Void, Void, Void> {
         try {
             listToXmlString();
             DefaultHttpClient httpclient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost("http://cgpg.zz.mu/webservice2.php");
+            HttpPost httpPost = new HttpPost("http://cgpg1.zz.mu/webservice2.php");
             httpPost.addHeader("Content-Type", "application/xml");
             Log.i(getClass().getName(), "create connection");
             StringEntity entity = null;

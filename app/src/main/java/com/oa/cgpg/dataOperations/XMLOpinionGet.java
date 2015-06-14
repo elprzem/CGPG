@@ -33,7 +33,7 @@ import java.util.List;
  * Created by Tomasz on 2014-11-07.
  */
 public class XMLOpinionGet extends AsyncTask<Void, Void, Void> {
-    private static final String HTTP_URL = "http://cgpg.zz.mu/webservice1.php?";
+    private static final String HTTP_URL = "http://cgpg1.zz.mu/webservice1.php?";
     private static final String ns = null;
     private String xml;
     private ProgressDialog progressDialog;
